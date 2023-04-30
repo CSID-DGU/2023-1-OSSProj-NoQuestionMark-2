@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
 import * as Api from '../lib/Api';
+import {IAuthForm} from '../interfaces/IAuthForm';
 
 const Container = styled.div`
     flex-direction: column;
@@ -45,15 +46,6 @@ const Input = styled.input`
     height: 1.8rem;
 `;
 
-interface IAuthForm {
-    name: string;
-    schoolNumber: string;
-    email: string;
-    password: string;
-    passwordConfirm: string;
-    userType: string;
-};
-
 const SignUp = () => {
 
     const navigate = useNavigate();
@@ -70,7 +62,7 @@ const SignUp = () => {
         return pw || '';
     }
     
-    const join = async ({ name, schoolNumber, email, password,userType }:IAuthForm) => {
+    const join = async ({ name, schoolNumber, email, password, userType}:IAuthForm) => {
 		try {
 			const joinData = { name, schoolNumber, email, password,userType };
 			await Api.post(`/signin`, joinData).then((res) => {
