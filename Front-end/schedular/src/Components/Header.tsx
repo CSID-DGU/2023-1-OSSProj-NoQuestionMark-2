@@ -2,8 +2,7 @@ import SignIn from "../SignIn";
 import styled from "styled-components";
 import eclass_logo from "../Images/eclass_logo.png"
 
-
-      
+   
 const Header = () => {
   return(
     <HeaderWapper>
