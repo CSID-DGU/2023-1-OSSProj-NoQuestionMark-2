@@ -1,23 +1,16 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
-
-interface IAuthForm {
-    userName: string;
-    userNumber: string;
-    userEmail: string;
-    userPassword: string;
-    passwordConfirm: string;
-    userIdentity: string;
-};
+import * as Api from '../lib/Api';
 
 const Container = styled.div`
     flex-direction: column;
     margin : 5rem auto;
 `;
-
 const Form = styled.form`
     height: 100vh;
+    width : 100vw;
 `;
 const Grid = styled.div`
     display: grid;
@@ -26,12 +19,11 @@ const Grid = styled.div`
     justify-content : left;
     text-align: right;
 
-    width: 35%;
-    margin: 1rem auto 2rem auto;
+    width: 50%;
+    margin: 1rem auto;
     border: 1px solid black;
     padding: 2rem 2rem;
 `;
-
 const RadioGroup = styled.div`
     display: felx;
     flex-direction: row;
@@ -53,20 +45,44 @@ const Input = styled.input`
     height: 1.8rem;
 `;
 
+interface IAuthForm {
+    userName: string;
+    userNumber: string;
+    userEmail: string;
+    userPassword: string;
+    passwordConfirm: string;
+    userIdentity: string;
+};
+
 const SignUp = () => {
 
+    const navigate = useNavigate();
     const {     
         register,
         formState: { errors },
         handleSubmit,
     } = useForm<IAuthForm>({mode : 'onBlur'});
     
-    const onSubmit: SubmitHandler<IAuthForm> = data => console.log(data);
+    const onSubmit: SubmitHandler<IAuthForm> = data => join(data);
     
     const getValue = (id : string) : (string | null) =>{
         const pw = (document.querySelector(`#${id}`) as HTMLInputElement | null)?.value;
         return pw || '';
     }
+    
+    const join = async ({ userName, userNumber, userEmail, passwordConfirm,userIdentity }:IAuthForm) => {
+		try {
+			const joinData = { userName, userNumber, userEmail, passwordConfirm,userIdentity };
+			await Api.post(`/users/info`, joinData).then((res) => {
+                console.log(res.data);
+				alert(`정상적으로 회원 가입되었습니다.`);
+				navigate('/');
+			});
+		} catch (e) {
+			alert(e);
+		}
+	};
+
     return (
         <Container>
             <h1>회원가입</h1>
