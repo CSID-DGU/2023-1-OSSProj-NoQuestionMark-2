@@ -1,5 +1,6 @@
 package com.NoQuestionMark.schedular.util;
 
+import com.NoQuestionMark.schedular.model.entity.UserType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,9 +29,11 @@ public class JwtTokenUtils {
     }
 
     // token username 넣고, key는 userName 넣은 값을 암호화, 유효 기간
-    public static String generateToken(String schoolNumber, String key, long expiredTimeMs){
+    public static String generateToken(String schoolNumber, String name, UserType userType, String key, long expiredTimeMs){
         Claims claims = Jwts.claims();
         claims.put("schoolNumber", schoolNumber);
+        claims.put("name", name);
+        claims.put("userType", userType);
 
         return Jwts.builder()
                 .setClaims(claims)

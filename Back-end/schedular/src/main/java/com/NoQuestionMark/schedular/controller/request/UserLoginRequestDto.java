@@ -7,8 +7,6 @@ import lombok.Getter;
 @Getter
 public class UserLoginRequestDto {
 
-    protected UserLoginRequestDto(){}
-
     private String schoolNumber;
     private String password;
 }

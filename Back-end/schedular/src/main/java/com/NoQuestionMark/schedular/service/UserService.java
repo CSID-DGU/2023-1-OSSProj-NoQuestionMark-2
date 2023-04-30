@@ -62,6 +62,6 @@ public class UserService {
         }
 
         // 토큰 생성 과정
-        return JwtTokenUtils.generateToken(schoolNumber, secretKey, expiredTimeMs);
+        return JwtTokenUtils.generateToken(schoolNumber, user.getName(), user.getUserType(), secretKey, expiredTimeMs);
     }
 }

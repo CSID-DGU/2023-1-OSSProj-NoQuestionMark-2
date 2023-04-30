@@ -7,7 +7,7 @@ spring.jpa:
   show-sql: true
 spring.datasource:
   hikari.maximum-pool-size: 4
-  url: jdbc:postgresql://localhost:5432/schedule
+  url: jdbc:postgresql://localhost:5432/schedular
   username: ${DATASOURCE_USERNAME}
   password: ${DATASOURCE_PASSWORD}
   platform: postgres
