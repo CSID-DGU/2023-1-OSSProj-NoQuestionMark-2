@@ -46,12 +46,12 @@ const Input = styled.input`
 `;
 
 interface IAuthForm {
-    userName: string;
-    userNumber: string;
-    userEmail: string;
-    userPassword: string;
+    name: string;
+    schoolNumber: string;
+    email: string;
+    password: string;
     passwordConfirm: string;
-    userIdentity: string;
+    userType: string;
 };
 
 const SignUp = () => {
@@ -70,11 +70,13 @@ const SignUp = () => {
         return pw || '';
     }
     
-    const join = async ({ userName, userNumber, userEmail, passwordConfirm,userIdentity }:IAuthForm) => {
+    const join = async ({ name, schoolNumber, email, password,userType }:IAuthForm) => {
 		try {
-			const joinData = { userName, userNumber, userEmail, passwordConfirm,userIdentity };
-			await Api.post(`/users/info`, joinData).then((res) => {
-                console.log(res.data);
+			const joinData = { name, schoolNumber, email, password,userType };
+			await Api.post(`/signin`, joinData).then((res) => {
+                //console.log(res.data.resultCode);
+	            //console.log(res.data.result);
+                console.log(res);
 				alert(`정상적으로 회원 가입되었습니다.`);
 				navigate('/');
 			});
@@ -89,13 +91,13 @@ const SignUp = () => {
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Grid>
                 
-                <label htmlFor='userName'>이름</label>
+                <label htmlFor='name'>이름</label>
                 <InputDiv>
                 <Input 
-                    id = 'userName'
+                    id = 'name'
                     type = 'text'
                     placeholder='이름을 입력해주세요.'
-                    {...register('userName', {    
+                    {...register('name', {    
                             required: '이름을 입력해주세요.',
                             minLength: { 
                                 value: 2,
@@ -108,17 +110,17 @@ const SignUp = () => {
                         }
                     )}
                 />
-                {errors.userName && <small role='alert'>{errors.userName.message}</small>}
+                {errors.name && <small role='alert'>{errors.name.message}</small>}
 
                 </InputDiv>
                 
-                <label htmlFor='userNumber'>학번</label>
+                <label htmlFor='schoolNumber'>학번</label>
                 <InputDiv>
                 <Input 
-                    id = 'userNumber'
+                    id = 'schoolNumber'
                     type = 'text'
                     placeholder='학번을 입력해주세요.'
-                    {...register('userNumber', {
+                    {...register('schoolNumber', {
                         required: '학번을 입력해주세요.',
                         pattern: {
                             value: /[0-9]{10}/,
@@ -127,7 +129,7 @@ const SignUp = () => {
                     })} 
                 />
                 
-                {errors.userNumber && <small role='alert'>{errors.userNumber.message}</small>}
+                {errors.schoolNumber && <small role='alert'>{errors.schoolNumber.message}</small>}
                 </InputDiv>
                 
                 <label htmlFor='email'>e-mail</label>
@@ -136,7 +138,7 @@ const SignUp = () => {
                     id='email'
                     type='text'
                     placeholder='test@email.com'
-                    {...register('userEmail', {
+                    {...register('email', {
                         required: '이메일을 입력해주세요.',
                         pattern: {
                             value: /\S+@\S+\.\S+/,
@@ -144,18 +146,18 @@ const SignUp = () => {
                         },
                     })}
                 />
-                {errors.userEmail && <small role='alert'>{errors.userEmail.message}</small>}
+                {errors.email && <small role='alert'>{errors.email.message}</small>}
                 </InputDiv>
 
                 <label>신분</label>                
                 <RadioGroup>
                     <RadioButton>
-                        <input type='radio' id='student' value='STUDENT' defaultChecked {...register('userIdentity')}/> 
+                        <input type='radio' id='student' value='STUDENT' defaultChecked {...register('userType')}/> 
                         <label htmlFor='student'>학생</label>
                     </RadioButton>
 
                     <RadioButton>
-                        <input type='radio' id='prof' value='PROFESSOR' {...register('userIdentity')}/> 
+                        <input type='radio' id='prof' value='PROFESSOR' {...register('userType')}/> 
                         <label htmlFor='prof'>교수</label>
                     </RadioButton>
                 </RadioGroup>
@@ -166,7 +168,7 @@ const SignUp = () => {
                     id='password'
                     type='password'
                     placeholder='********'
-                    {...register('userPassword', {
+                    {...register('password', {
                         required: '비밀번호는 필수 입력입니다.',
                         minLength: {
                             value: 8,
@@ -178,7 +180,7 @@ const SignUp = () => {
                         }
                     })}
                 />
-                {errors.userPassword && <small role='alert'>{errors.userPassword.message}</small>}
+                {errors.password && <small role='alert'>{errors.password.message}</small>}
                 </InputDiv>
                 <label htmlFor='password'>비밀번호 확인</label>
                 <InputDiv>
