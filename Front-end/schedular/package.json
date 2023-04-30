@@ -4,6 +4,11 @@
   "private": true,
   "proxy": "http://localhost:8080",
   "dependencies": {
+    "@fullcalendar/core": "^6.1.6",
+    "@fullcalendar/daygrid": "^6.1.6",
+    "@fullcalendar/interaction": "^6.1.6",
+    "@fullcalendar/react": "^6.1.6",
+    "@fullcalendar/timegrid": "^6.1.6",
     "@hookform/resolvers": "^3.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
