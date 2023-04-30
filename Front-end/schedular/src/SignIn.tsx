@@ -4,8 +4,8 @@ import styled from "styled-components";
 
 const SignIn = () => {
   type SignInValue = {
-    userNumber: string;
-    userPassword: string;
+    SchoolNumber: string;
+    Password: string;
   }
 
   const { 
@@ -29,13 +29,13 @@ const SignIn = () => {
             <IdInput
               type="text"
               placeholder="아이디"
-              {...register("userNumber", { required: true })} />
+              {...register("SchoolNumber", { required: true })} />
           </InputLine>
           <InputLine>
             <PasswordInput
               type="password"
               placeholder="비밀번호"
-              {...register("userPassword", { required: true })} />
+              {...register("Password", { required: true })} />
           </InputLine>
         </InputWapper>
           <SignInButton
