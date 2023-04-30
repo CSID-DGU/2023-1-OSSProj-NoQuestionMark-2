@@ -1,23 +1,17 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
-
-interface IAuthForm {
-    userName: string;
-    userNumber: string;
-    userEmail: string;
-    userPassword: string;
-    passwordConfirm: string;
-    userIdentity: string;
-};
+import * as Api from '../lib/Api';
+import {IAuthForm} from '../interfaces/IAuthForm';
 
 const Container = styled.div`
     flex-direction: column;
     margin : 5rem auto;
 `;
-
 const Form = styled.form`
     height: 100vh;
+    width : 100vw;
 `;
 const Grid = styled.div`
     display: grid;
@@ -26,12 +20,11 @@ const Grid = styled.div`
     justify-content : left;
     text-align: right;
 
-    width: 35%;
-    margin: 1rem auto 2rem auto;
+    width: 50%;
+    margin: 1rem auto;
     border: 1px solid black;
     padding: 2rem 2rem;
 `;
-
 const RadioGroup = styled.div`
     display: felx;
     flex-direction: row;
@@ -55,31 +48,48 @@ const Input = styled.input`
 
 const SignUp = () => {
 
+    const navigate = useNavigate();
     const {     
         register,
         formState: { errors },
         handleSubmit,
     } = useForm<IAuthForm>({mode : 'onBlur'});
     
-    const onSubmit: SubmitHandler<IAuthForm> = data => console.log(data);
+    const onSubmit: SubmitHandler<IAuthForm> = data => join(data);
     
     const getValue = (id : string) : (string | null) =>{
         const pw = (document.querySelector(`#${id}`) as HTMLInputElement | null)?.value;
         return pw || '';
     }
+    
+    const join = async ({ name, schoolNumber, email, password, userType}:IAuthForm) => {
+		try {
+			const joinData = { name, schoolNumber, email, password,userType };
+			await Api.post(`/signin`, joinData).then((res) => {
+                //console.log(res.data.resultCode);
+	            //console.log(res.data.result);
+                console.log(res);
+				alert(`정상적으로 회원 가입되었습니다.`);
+				navigate('/');
+			});
+		} catch (e) {
+			alert(e);
+		}
+	};
+
     return (
         <Container>
             <h1>회원가입</h1>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Grid>
                 
-                <label htmlFor='userName'>이름</label>
+                <label htmlFor='name'>이름</label>
                 <InputDiv>
                 <Input 
-                    id = 'userName'
+                    id = 'name'
                     type = 'text'
                     placeholder='이름을 입력해주세요.'
-                    {...register('userName', {    
+                    {...register('name', {    
                             required: '이름을 입력해주세요.',
                             minLength: { 
                                 value: 2,
@@ -92,17 +102,17 @@ const SignUp = () => {
                         }
                     )}
                 />
-                {errors.userName && <small role='alert'>{errors.userName.message}</small>}
+                {errors.name && <small role='alert'>{errors.name.message}</small>}
 
                 </InputDiv>
                 
-                <label htmlFor='userNumber'>학번</label>
+                <label htmlFor='schoolNumber'>학번</label>
                 <InputDiv>
                 <Input 
-                    id = 'userNumber'
+                    id = 'schoolNumber'
                     type = 'text'
                     placeholder='학번을 입력해주세요.'
-                    {...register('userNumber', {
+                    {...register('schoolNumber', {
                         required: '학번을 입력해주세요.',
                         pattern: {
                             value: /[0-9]{10}/,
@@ -111,7 +121,7 @@ const SignUp = () => {
                     })} 
                 />
                 
-                {errors.userNumber && <small role='alert'>{errors.userNumber.message}</small>}
+                {errors.schoolNumber && <small role='alert'>{errors.schoolNumber.message}</small>}
                 </InputDiv>
                 
                 <label htmlFor='email'>e-mail</label>
@@ -120,7 +130,7 @@ const SignUp = () => {
                     id='email'
                     type='text'
                     placeholder='test@email.com'
-                    {...register('userEmail', {
+                    {...register('email', {
                         required: '이메일을 입력해주세요.',
                         pattern: {
                             value: /\S+@\S+\.\S+/,
@@ -128,18 +138,18 @@ const SignUp = () => {
                         },
                     })}
                 />
-                {errors.userEmail && <small role='alert'>{errors.userEmail.message}</small>}
+                {errors.email && <small role='alert'>{errors.email.message}</small>}
                 </InputDiv>
 
                 <label>신분</label>                
                 <RadioGroup>
                     <RadioButton>
-                        <input type='radio' id='student' value='STUDENT' defaultChecked {...register('userIdentity')}/> 
+                        <input type='radio' id='student' value='STUDENT' defaultChecked {...register('userType')}/> 
                         <label htmlFor='student'>학생</label>
                     </RadioButton>
 
                     <RadioButton>
-                        <input type='radio' id='prof' value='PROFESSOR' {...register('userIdentity')}/> 
+                        <input type='radio' id='prof' value='PROFESSOR' {...register('userType')}/> 
                         <label htmlFor='prof'>교수</label>
                     </RadioButton>
                 </RadioGroup>
@@ -150,7 +160,7 @@ const SignUp = () => {
                     id='password'
                     type='password'
                     placeholder='********'
-                    {...register('userPassword', {
+                    {...register('password', {
                         required: '비밀번호는 필수 입력입니다.',
                         minLength: {
                             value: 8,
@@ -162,7 +172,7 @@ const SignUp = () => {
                         }
                     })}
                 />
-                {errors.userPassword && <small role='alert'>{errors.userPassword.message}</small>}
+                {errors.password && <small role='alert'>{errors.password.message}</small>}
                 </InputDiv>
                 <label htmlFor='password'>비밀번호 확인</label>
                 <InputDiv>
