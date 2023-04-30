@@ -1,4 +1,5 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
+import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
 
 interface IAuthForm {
@@ -8,12 +9,49 @@ interface IAuthForm {
     userPassword: string;
     passwordConfirm: string;
     userIdentity: string;
-}
+};
 
-const getValue = (id : string) : (string | null) =>{
-    const pw = (document.querySelector(`#${id}`) as HTMLInputElement | null)?.value;
-    return pw || '';
-}
+const Container = styled.div`
+    flex-direction: column;
+    margin : 5rem auto;
+`;
+
+const Form = styled.form`
+    height: 100vh;
+`;
+const Grid = styled.div`
+    display: grid;
+    grid-template-columns: 0.2fr 0.8fr;
+    grid-gap: 0.5rem;
+    justify-content : left;
+    text-align: right;
+
+    width: 35%;
+    margin: 1rem auto 2rem auto;
+    border: 1px solid black;
+    padding: 2rem 2rem;
+`;
+
+const RadioGroup = styled.div`
+    display: felx;
+    flex-direction: row;
+    padding: 0 1rem;
+    align-items: center;
+`;
+const RadioButton = styled.div`
+    &:first-child {
+        margin-right : 2rem;
+    }
+`;
+const InputDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem;
+`;
+const Input = styled.input`
+    width: 100%;
+    height: 1.8rem;
+`;
 
 const SignUp = () => {
 
@@ -24,13 +62,20 @@ const SignUp = () => {
     } = useForm<IAuthForm>({mode : 'onBlur'});
     
     const onSubmit: SubmitHandler<IAuthForm> = data => console.log(data);
-
+    
+    const getValue = (id : string) : (string | null) =>{
+        const pw = (document.querySelector(`#${id}`) as HTMLInputElement | null)?.value;
+        return pw || '';
+    }
     return (
-        <div>
+        <Container>
             <h1>회원가입</h1>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+                <Grid>
+                
                 <label htmlFor='userName'>이름</label>
-                <input 
+                <InputDiv>
+                <Input 
                     id = 'userName'
                     type = 'text'
                     placeholder='이름을 입력해주세요.'
@@ -49,9 +94,11 @@ const SignUp = () => {
                 />
                 {errors.userName && <small role='alert'>{errors.userName.message}</small>}
 
-                <br />
+                </InputDiv>
+                
                 <label htmlFor='userNumber'>학번</label>
-                <input 
+                <InputDiv>
+                <Input 
                     id = 'userNumber'
                     type = 'text'
                     placeholder='학번을 입력해주세요.'
@@ -63,11 +110,13 @@ const SignUp = () => {
                         },
                     })} 
                 />
+                
                 {errors.userNumber && <small role='alert'>{errors.userNumber.message}</small>}
-
-                <br />
+                </InputDiv>
+                
                 <label htmlFor='email'>e-mail</label>
-                <input
+                <InputDiv>
+                <Input
                     id='email'
                     type='text'
                     placeholder='test@email.com'
@@ -80,22 +129,27 @@ const SignUp = () => {
                     })}
                 />
                 {errors.userEmail && <small role='alert'>{errors.userEmail.message}</small>}
-                <br />
+                </InputDiv>
 
-                <div>
-                    <label>신분</label>
-                    <input type='radio' id='student' value='STUDENT' defaultChecked {...register('userIdentity')}/> 
-                    <label htmlFor='student'>학생</label>
+                <label>신분</label>                
+                <RadioGroup>
+                    <RadioButton>
+                        <input type='radio' id='student' value='STUDENT' defaultChecked {...register('userIdentity')}/> 
+                        <label htmlFor='student'>학생</label>
+                    </RadioButton>
 
-                    <input type='radio' id='prof' value='PROFESSOR' {...register('userIdentity')}/> 
-                    <label htmlFor='prof'>교수</label>
-                </div>
+                    <RadioButton>
+                        <input type='radio' id='prof' value='PROFESSOR' {...register('userIdentity')}/> 
+                        <label htmlFor='prof'>교수</label>
+                    </RadioButton>
+                </RadioGroup>
                 
                 <label htmlFor='password'>비밀번호</label>
-                <input
+                <InputDiv>
+                <Input
                     id='password'
                     type='password'
-                    placeholder='*******'
+                    placeholder='********'
                     {...register('userPassword', {
                         required: '비밀번호는 필수 입력입니다.',
                         minLength: {
@@ -109,12 +163,12 @@ const SignUp = () => {
                     })}
                 />
                 {errors.userPassword && <small role='alert'>{errors.userPassword.message}</small>}
-                <br />
-
+                </InputDiv>
                 <label htmlFor='password'>비밀번호 확인</label>
-                <input
+                <InputDiv>
+                <Input
                     type='password'
-                    placeholder='*******'
+                    placeholder='********'
                     {...register('passwordConfirm', {
                         required: '비밀번호는 필수 입력입니다.',
                         minLength: {
@@ -137,10 +191,11 @@ const SignUp = () => {
                 {errors.passwordConfirm && (
                     <small role='alert'>{errors.passwordConfirm.message}</small>
                 )}
-                <br />
-                <SubmitButton name='가입하기' />
-            </form>
-        </div>
+                </InputDiv>
+                </Grid>
+                <SubmitButton name='가입하기' width='15rem' height='3rem'/>
+            </Form>
+        </Container>
     );
 }
 
