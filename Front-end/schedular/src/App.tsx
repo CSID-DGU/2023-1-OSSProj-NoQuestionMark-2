@@ -8,18 +8,20 @@ import Footer from 'Components/Footer';
 const Main = styled.div`
   min-height: 100%;
   position: relative;
-  padding-bottom: 100px;
+  padding-bottom: 2rem;
 `;
 
 function App() {
   return (
-    <Main className="App">
+    <div className="App">        
       <GlobalStyle />
-      <Header></Header>
-      {/* <h1>Dongguk University E-class</h1> */}
-      <AppRouter />
-      <Footer></Footer>
-    </Main>
+      <Header />
+      <Main>
+        {/* <h1>Dongguk University E-class</h1> */}
+        <AppRouter />
+      </Main>
+      <Footer />
+    </div>
   );
 }
 
