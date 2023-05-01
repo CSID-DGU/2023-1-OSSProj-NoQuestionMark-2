@@ -5,7 +5,7 @@ import GlobalStyle from './Styles/GlobalStyles';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 
-const Main = styled.div`
+const AppWarpper = styled.div`
   min-height: 100%;
   position: relative;
   padding-bottom: 100px;
@@ -13,13 +13,12 @@ const Main = styled.div`
 
 function App() {
   return (
-    <Main className="App">
+    <AppWarpper className="App">
       <GlobalStyle />
       <Header></Header>
-      {/* <h1>Dongguk University E-class</h1> */}
       <AppRouter />
       <Footer></Footer>
-    </Main>
+    </AppWarpper>
   );
 }
 
