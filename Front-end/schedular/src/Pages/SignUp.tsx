@@ -65,7 +65,7 @@ const SignUp = () => {
     const join = async ({ name, schoolNumber, email, password, userType}:IAuthForm) => {
 		try {
 			const joinData = { name, schoolNumber, email, password,userType };
-			await Api.post(`/signin`, joinData).then((res) => {
+			await Api.post(`/signup`, joinData).then((res) => {
                 //console.log(res.data.resultCode);
 	            //console.log(res.data.result);
                 console.log(res);
@@ -203,7 +203,7 @@ const SignUp = () => {
                 )}
                 </InputDiv>
                 </Grid>
-                <SubmitButton name='가입하기' width='15rem' height='3rem'/>
+                <SubmitButton name='가입하기' width='15rem' height='3rem' color='#228be6'/>
             </Form>
         </Container>
     );
