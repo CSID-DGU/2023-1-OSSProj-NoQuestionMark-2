@@ -1,7 +1,7 @@
 import {Route, Routes} from 'react-router-dom';
 import Home from './Pages/Home';
 import SignUp from './Pages/SignUp';
-import Calendar from './Pages/FullCalendar';
+import Calendar from './Pages/Calendar';
 import NotFound from './Pages/NotFound';
 import { MemberRoute, NonMemberRoute } from 'Components/RestrictionRoute';
 
