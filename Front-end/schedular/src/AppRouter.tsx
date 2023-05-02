@@ -1,4 +1,4 @@
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 import Home from './Pages/Home';
 import SignUp from './Pages/SignUp';
 import Calendar from './Pages/FullCalendar';
@@ -8,16 +8,14 @@ import { MemberRoute, NonMemberRoute } from 'Components/RestrictionRoute';
 const AppRouter = () =>{
     return (
         <>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Home />}/>
-                    <Route path="/signup" element={<SignUp />} />
-                    {/* <Route path="/signup" element={<NonMemberRoute><SignUp /></NonMemberRoute>}/> */}
-                    <Route path="/calendar" element={<Calendar />}/>
-                    {/* <Route path="/calendar" element={<MemberRoute><Calendar /></MemberRoute>}/> */}
-                    <Route path="/notfound" element={<NotFound />} />
-                </Routes>
-            </BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />}/>
+                <Route path="/signup" element={<SignUp />} />
+                {/* <Route path="/signup" element={<NonMemberRoute><SignUp /></NonMemberRoute>}/> */}
+                <Route path="/calendar" element={<Calendar />}/>
+                {/* <Route path="/calendar" element={<MemberRoute><Calendar /></MemberRoute>}/> */}
+                <Route path="/notfound" element={<NotFound />} />
+            </Routes>
         </>
     )
 }

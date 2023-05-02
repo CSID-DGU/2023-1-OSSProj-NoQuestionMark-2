@@ -17,7 +17,6 @@ function App() {
       <GlobalStyle />
       <Header />
       <Main>
-        {/* <h1>Dongguk University E-class</h1> */}
         <AppRouter />
       </Main>
       <Footer />
