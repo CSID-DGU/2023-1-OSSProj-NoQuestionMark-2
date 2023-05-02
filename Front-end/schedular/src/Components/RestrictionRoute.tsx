@@ -19,7 +19,7 @@ const MemberRoute : React.FC<Props> = ({ children }) => {
 	if (isLogin()) {
 		return children;
 	} else {
-		return <Navigate to="/" />;
+		return <Navigate to="/notfound" />;
 	}
 };
 export { NonMemberRoute, MemberRoute };

@@ -11,8 +11,10 @@ const AppRouter = () =>{
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Home />}/>
-                    <Route path="/signup" element={<NonMemberRoute><SignUp /></NonMemberRoute>}/>
-                    <Route path="/calendar" element={<MemberRoute><Calendar /></MemberRoute>}/>
+                    <Route path="/signup" element={<SignUp />} />
+                    {/* <Route path="/signup" element={<NonMemberRoute><SignUp /></NonMemberRoute>}/> */}
+                    <Route path="/calendar" element={<Calendar />}/>
+                    {/* <Route path="/calendar" element={<MemberRoute><Calendar /></MemberRoute>}/> */}
                     <Route path="/notfound" element={<NotFound />} />
                 </Routes>
             </BrowserRouter>
