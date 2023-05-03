@@ -2,6 +2,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
 import { AiFillCloseCircle } from "react-icons/ai";
+import {Props} from "Pages/Calendar";
 
 const StyledSelect = styled.select`
   width: 225px;
@@ -24,8 +25,30 @@ const StyledTextarea = styled.textarea`
   border-radius: 5px;
   padding: 0 12px;
 `;
-
-const SubjectScheduleAdd = () => {
+const ModalConatiner = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index : 999;
+`;
+const Form = styled.form`
+  position: absolute;
+  width: 300px;
+  height: 500px;
+  padding: 40px;
+  text-align: center;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
+`;
+//props : {handleModalToggle: (str : string) => void}
+const SubjectScheduleAdd: React.FC<Props> = ({ handleModalToggle })  => {
   type InputValue = {
     title: string,
     contents: string,
@@ -45,15 +68,18 @@ const SubjectScheduleAdd = () => {
 
   const onSubmit = (data: InputValue) => {
     console.log(data);
+    // this.state === subjecet, t/f
+    // 제출되면 this.setState(false) 하여 모달 창을 안보이게 한다.
     reset();
   }
   
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <ModalConatiner>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <div>
         <h1>과목 일정 등록</h1>
-        <AiFillCloseCircle/>
+        <AiFillCloseCircle onClick ={()=>handleModalToggle('subject')}/>
         <div>
           <label htmlFor="title">제목</label>
           <StyledInput 
@@ -91,7 +117,8 @@ const SubjectScheduleAdd = () => {
         </div>
         <SubmitButton name='등록하기' width='15rem' height='3rem' color='#228be6'/>
       </div>
-    </form>
+    </Form>
+    </ModalConatiner>
   )
 }
 

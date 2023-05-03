@@ -4,10 +4,12 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
+import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 
 const Container = styled.div`
   width : 80%;
-  margin : 3rem auto;
+  margin : 3rem auto 5rem;
 `;
 const RightAlign = styled.div`
   display :felx;
@@ -31,15 +33,24 @@ const PostBtn = styled.button`
   height : 2rem;
 `; 
 
+interface ModalState {
+  personal: boolean
+  subject: boolean
+}
+export type Props = {
+  handleModalToggle: (value: string) => void;
+}
 export default class Calendar extends React.Component {
-  postSchedule(postType:string){
-    alert(postType);
-  };
 
+  state: ModalState =  {
+    personal: false,
+    subject: false
+  }
 
   render() {
     return (
       <Container>
+        
         <RightAlign>
           <select name='pets' id='pet-select'>
             <option value=''>--전체보기--</option>
@@ -60,11 +71,25 @@ export default class Calendar extends React.Component {
             { title: 'event 2', date: '2023-05-02' }
           ]}
         />
+        { this.state.personal && <PersonalScheduleAdd handleModalToggle={this.handleModalToggle}/> }
+        { this.state.subject && <SubjectScheduleAdd handleModalToggle={this.handleModalToggle}/> }
+        
         <RightAlign>
-          <PostBtn type='button' onClick={e => this.postSchedule('subject')}>과목일정등록하기</PostBtn>
-          <PostBtn type='button' onClick={e => this.postSchedule('personal')}>개인일정등록하기</PostBtn>
+          <PostBtn type='button' onClick={e => this.handleModalToggle('subject')}>과목일정등록하기</PostBtn>
+          <PostBtn type='button' onClick={e => this.handleModalToggle('personal')}>개인일정등록하기</PostBtn>
         </RightAlign>
+        
       </Container>
     )
+  }
+
+  handleModalToggle = (type:string) => {
+    type === 'personal' && this.state.subject === false?
+    this.setState({
+      personal: !this.state.personal
+    })
+    :this.setState({
+      subject : !this.state.subject
+    })
   }
 }
