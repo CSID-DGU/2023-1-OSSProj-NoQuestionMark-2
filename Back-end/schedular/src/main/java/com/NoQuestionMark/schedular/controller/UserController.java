@@ -17,7 +17,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signin")
+    @PostMapping("/signup")
     public Response<UserJoinResponseDto> join(@RequestBody UserJoinRequestDto requestDto){
         return Response.success(userService.join(requestDto));
     }
