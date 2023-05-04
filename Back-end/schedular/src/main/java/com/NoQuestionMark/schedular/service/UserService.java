@@ -55,9 +55,7 @@ public class UserService {
                 .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s is not founded", schoolNumber)));
 
         // 비밀번호 체크
-//        if(!encoder.encode(password).equals(user.getPassword())){
         if(!encoder.matches(password, user.getPassword())){
-            // if(!user.getPassword().equals(password)){ 암호화 하기 이전 password
             throw new ScheduleException(ErrorCode.INVALID_PASSWORD);
         }
 
