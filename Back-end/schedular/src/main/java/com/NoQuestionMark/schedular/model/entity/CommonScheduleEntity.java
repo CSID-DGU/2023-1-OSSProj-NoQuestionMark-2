@@ -2,18 +2,20 @@ package com.NoQuestionMark.schedular.model.entity;
 
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.persistence.criteria.From;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "\"common_schedule\"")
 @NoArgsConstructor
+@Getter
 public class CommonScheduleEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +26,8 @@ public class CommonScheduleEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
     private String contents;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -49,8 +49,6 @@ public class CommonScheduleEntity {
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
-        this.startTime = requestDto.getStartTime();
-        this.endTime = requestDto.getEndTime();
     }
 
     public static CommonScheduleEntity fromCommonScheduleDto(CommonScheduleRequestDto requestDto, UserEntity user){
