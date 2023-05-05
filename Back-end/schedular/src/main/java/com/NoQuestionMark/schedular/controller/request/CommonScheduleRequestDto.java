@@ -1,9 +1,11 @@
 package com.NoQuestionMark.schedular.controller.request;
 
+import com.NoQuestionMark.schedular.model.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @AllArgsConstructor
@@ -11,9 +13,8 @@ import java.time.LocalTime;
 public class CommonScheduleRequestDto {
     private String title;
     private String contents;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private String schoolNumber;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
 }
