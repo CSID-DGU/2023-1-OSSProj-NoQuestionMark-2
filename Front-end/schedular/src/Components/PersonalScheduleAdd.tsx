@@ -2,6 +2,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
 import { AiFillCloseCircle } from "react-icons/ai";
+import {Props} from "Pages/Calendar";
 
 const StyledSelect = styled.select`
   width: 225px;
@@ -28,7 +29,31 @@ const StyledTextarea = styled.textarea`
   padding: 0 12px;
 `;
 
-const PersonalScheduleAdd = () => {
+const ModalConatiner = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index : 999;
+`;
+const Form = styled.form`
+  position: absolute;
+  width: 300px;
+  height: 500px;
+  padding: 40px;
+  text-align: center;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
+`;
+
+
+const PersonalScheduleAdd: React.FC<Props> = ({ handleModalToggle })  => {
   type InputValue = {
     title: string,
     type: string,
@@ -52,10 +77,11 @@ const PersonalScheduleAdd = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <ModalConatiner>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <div>
         <h1>개인 일정 등록</h1>
-        <AiFillCloseCircle/>
+        <AiFillCloseCircle onClick ={()=>handleModalToggle('personal')}/>
         <div>
           <label htmlFor="title">제목</label>
           <StyledInput
@@ -97,7 +123,8 @@ const PersonalScheduleAdd = () => {
         </div>
         <SubmitButton name='등록하기' width='15rem' height='3rem' color='#228be6'/>
       </div>
-    </form>
+    </Form>
+    </ModalConatiner>
   )
 }
 
