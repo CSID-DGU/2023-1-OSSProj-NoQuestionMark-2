@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -28,7 +30,7 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
 
     public User loadUserBySchoolNumber(String schoolNumber){
-        return userRepository.findByName(schoolNumber).map(User::fromEntity)
+        return userRepository.findBySchoolNumber(schoolNumber).map(User::fromEntity)
                 .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s is not found", schoolNumber)));
     }
     public UserJoinResponseDto join(UserJoinRequestDto requestDto) {

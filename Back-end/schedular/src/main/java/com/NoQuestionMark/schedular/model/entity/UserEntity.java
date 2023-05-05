@@ -13,7 +13,7 @@ import java.time.Instant;
 
 @Entity
 @Getter
-@Table(name = "\"user\"")
+@Table(name = "\"users\"")
 @NoArgsConstructor
 @SQLDelete(sql = "update \"user\" set deleted_at = now() where id = ?")
 @Where(clause = "deleted_at is null")
