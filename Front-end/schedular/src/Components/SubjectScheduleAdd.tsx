@@ -2,7 +2,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
 import { AiFillCloseCircle } from "react-icons/ai";
-import {Props} from "Pages/Calendar";
+import {ModalToggle} from "interfaces/CalendarState";
 
 const StyledSelect = styled.select`
   width: 225px;
@@ -48,7 +48,7 @@ const Form = styled.form`
   box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 `;
 //props : {handleModalToggle: (str : string) => void}
-const SubjectScheduleAdd: React.FC<Props> = ({ handleModalToggle })  => {
+const SubjectScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
   type InputValue = {
     title: string,
     contents: string,
