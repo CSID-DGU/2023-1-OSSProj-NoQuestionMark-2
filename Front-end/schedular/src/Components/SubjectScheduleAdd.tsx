@@ -2,7 +2,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
 import { AiFillCloseCircle } from "react-icons/ai";
-import {Props} from "Pages/Calendar";
+import {ModalToggle} from "interfaces/CalendarState";
 import Input from 'react-select/dist/declarations/src/components/Input';
 
 const CloseButton = styled(AiFillCloseCircle)`
@@ -76,7 +76,7 @@ const Form = styled.form`
 `;
 
 //props : {handleModalToggle: (str : string) => void}
-const SubjectScheduleAdd: React.FC<Props> = ({ handleModalToggle })  => {
+const SubjectScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
   type InputValue = {
     title: string,
     contents: string,
@@ -93,7 +93,8 @@ const SubjectScheduleAdd: React.FC<Props> = ({ handleModalToggle })  => {
   } = useForm<InputValue>({mode : 'onBlur'});
 
   const onSubmit = (data: InputValue) => {
-    console.log(data);
+    let datas = {...data,'type':'subject'};
+    console.log(datas);
     // this.state === subjecet, t/f
     // 제출되면 this.setState(false) 하여 모달 창을 안보이게 한다.
     reset();
