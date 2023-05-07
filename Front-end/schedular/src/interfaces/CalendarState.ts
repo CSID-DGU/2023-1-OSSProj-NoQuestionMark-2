@@ -1,17 +1,21 @@
 interface ModalState {
-    personal: boolean
-    subject: boolean
+    personalPost: boolean,
+    subjectPost: boolean,
+    personalRead: boolean,
+    subjectRead: boolean,
 }
 interface ModalToggle{
     handleModalToggle: (value: string) => void;
 }
-interface EventSourceInput{title : string, start: string}
+//scheduleType : task, schedule (개인), 과제,시험,발표 (과목)
+//type : personal, subject
+interface EventSourceInput{title: string, startDate: string, endDate?: string, contents:string, importance?: string, scheduleType: string, type?:string }
+
 interface Events extends Array<EventSourceInput> {};
 
 interface CalendarState extends ModalState {
-    weekendsVisible: boolean
-    events : Events
+    events : Events;
 }
 
 
-export type{ModalState, CalendarState, ModalToggle, Events};
+export type{ModalState, CalendarState, ModalToggle};
