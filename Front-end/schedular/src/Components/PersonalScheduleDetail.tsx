@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { AiFillCloseCircle } from 'react-icons/ai';
+import {ModalToggle} from "interfaces/CalendarState";
 
 const Container = styled.div`
   position: relative;
@@ -117,8 +118,30 @@ const ButtonWapper = styled.div`
   padding-bottom: 0.5rem;
   width: 22rem;
 `;
+const ModalConatiner = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index : 999;
+`;
+const Form = styled.form`
+  position: absolute;
+  width: 25%;
+  min-width: 385px;
+  padding: 30px;
+  text-align: center;
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
+`;
 
-const PersonalScheduleDetail = () => {
+const PersonalScheduleDetail: React.FC<ModalToggle> = ({ handleModalToggle }) => {
   type InputValue = {
     title: string,
     type: string,
@@ -150,10 +173,10 @@ const PersonalScheduleDetail = () => {
   }
 
   return (
-    <Container>
+    <ModalConatiner>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <h1>개인 일정 상세보기</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-        <CloseButton/>
+        <CloseButton onClick={()=>handleModalToggle('personal')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
         <InputDiv>
@@ -209,8 +232,8 @@ const PersonalScheduleDetail = () => {
               <CDButton type='button'>삭제하기</CDButton>
             </ButtonLine>
           </ButtonWapper>)}
-      </form>
-    </Container>
+      </Form>
+    </ModalConatiner>
   )
 }
 

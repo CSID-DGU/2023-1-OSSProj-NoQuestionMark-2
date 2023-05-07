@@ -76,18 +76,29 @@ export default class Calendar extends React.Component {
   }
 
   handleReadModalToggle = (info:any) => {
-    // read 
-    // 모달 열면서 데이터를 함께 넘겨줘야함// 아니면 id로 get요청을 받아와서 해야하나?
-    // type에 따라 필요한 데이터가 달라짐. 데이터폼 설계하기
-    // 중요도, 스케쥴타입 고려할 것
-    
     let {_def,_instance} = info.event;
     let {title} = _def;
     let {content, type} = _def.extendedProps;
     let {startDate, endDate } = _instance.range;
 
+    type === 'personal' ?
+    this.setState({
+      personalRead: !this.state.personalRead
+    })
+    : this.setState({
+      subjectRead: !this.state.subjectRead
+    })
+
+    // read 
+    // 모달 열면서 데이터를 함께 넘겨줘야함// 아니면 id로 get요청을 받아와서 해야하나?
+    // type에 따라 필요한 데이터가 달라짐. 데이터폼 설계하기
+    // 중요도, 스케쥴타입 고려할 것
+    
+
+    /*
     let dataForm = { "title": title, "content": content, "type": type, "startDate": startDate, "endDate": endDate };
     type==='personal' ?  this.setState({personalRead : !this.state.personalRead}) : this.setState({subjectRead : !this.state.subjectRead});
+    */
   }
 
   render() {
@@ -118,7 +129,11 @@ export default class Calendar extends React.Component {
         
         { this.state.personalPost && <PersonalScheduleAdd handleModalToggle={this.handlePostModalToggle}/> }
         { this.state.subjectPost && <SubjectScheduleAdd handleModalToggle={this.handlePostModalToggle}/> }
-        { this.state.personalRead && <PersonalScheduleDetail /> }
+        { this.state.personalRead && 
+          <PersonalScheduleDetail
+          handleModalToggle={()=> this.setState({ personalRead: !this.state.personalRead })}
+          /> 
+        }
         
         <RightAlign>
           <PostBtn type='button' onClick={e => this.handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
