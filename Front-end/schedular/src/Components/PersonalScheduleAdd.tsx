@@ -93,7 +93,8 @@ const PersonalScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
   } = useForm<InputValue>({mode : 'onBlur'})
 
   const onSubmit = (data: InputValue) => {
-    console.log(data);
+    let datas = {...data,'type':'personal'};
+    console.log(datas);
     alert('등록되었습니다.')
     reset();
   }
