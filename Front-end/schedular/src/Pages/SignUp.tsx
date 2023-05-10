@@ -66,10 +66,8 @@ const SignUp = () => {
 		try {
 			const joinData = { name, schoolNumber, email, password,userType };
 			await Api.post(`/signup`, joinData).then((res) => {
-                //console.log(res.data.resultCode);
-	            //console.log(res.data.result);
-                console.log(res);
-				alert(`정상적으로 회원 가입되었습니다.`);
+                let {schoolNumber, name} = res.data.result;
+				alert(`정상적으로 ${schoolNumber}(${name}) 회원가입 되었습니다.`);
 				navigate('/');
 			});
 		} catch (e) {

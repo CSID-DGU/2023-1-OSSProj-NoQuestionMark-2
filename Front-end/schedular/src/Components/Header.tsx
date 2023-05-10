@@ -1,7 +1,7 @@
 import SignIn from './SignIn';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import eclass_logo from '../Assets/Images/eclass_logo.png'
+import { Link } from 'react-router-dom';
 
 const HeaderWapper = styled.div`
   height: 100px;
@@ -17,16 +17,7 @@ const EclassLogo = styled(Link)`
   background-image: url(${eclass_logo});
   background-size: cover;
 `;
-const SignUpButton = styled(Link)`
-  margin 33px 0;
-  text-align: center;
-  color: #fff;
-  padding: 7px 16px;
-  border: none;
-  border-radius: 2px;
-  background-color: #666;
-  font-size: 12px;
-`;
+
 
 const Header = () => {
 
@@ -34,7 +25,6 @@ const Header = () => {
     <HeaderWapper>
       <EclassLogo to='/'></EclassLogo>
       <SignIn></SignIn>
-      <SignUpButton to='/signup'>회원가입</SignUpButton>
     </HeaderWapper>
   )
 }
