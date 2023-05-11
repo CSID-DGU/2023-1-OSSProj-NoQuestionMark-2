@@ -1,8 +1,10 @@
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import {useState} from 'react';
+import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
-import { AiFillCloseCircle } from 'react-icons/ai';
-import {ModalToggle,EventSourceInput} from "interfaces/CalendarState";
+import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
+import * as Api from '../lib/Api';
 
 const ModalConatiner = styled.div`
   position: fixed;
@@ -149,10 +151,17 @@ const PersonalScheduleDetail: React.FC<ModalToggle> = ({ handleModalToggle }) =>
     handleSubmit,
   } = useForm<EventSourceInput>({mode : 'onBlur'})
 
-  const onSubmit = (data: EventSourceInput) => {
-    console.log(data);
-    alert('수정이 완료되었습니다.');
-  }
+  const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
+  const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
+		try {
+			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
+			await Api.put(`/schedule/common/${id}`, putData).then((res) => {
+        alert('정상적으로 일정이 등록되었습니다.');
+			});
+		} catch (e) {
+			alert(e);
+		}
+	};
 
   return (
     <ModalConatiner>
