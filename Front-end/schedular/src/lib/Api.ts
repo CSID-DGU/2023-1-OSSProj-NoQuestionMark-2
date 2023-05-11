@@ -1,8 +1,8 @@
 import axios from 'axios';
 import {IAuthForm} from '../interfaces/IAuthForm'
+import {EventSourceInput} from '../interfaces/CalendarState'
 
-//post : login, sign up
-async function post(endpoint:string, data:IAuthForm){
+async function post(endpoint:string, data:IAuthForm|EventSourceInput){
 	const apiUrl = endpoint;
 	const bodyData = JSON.stringify(data);
 
