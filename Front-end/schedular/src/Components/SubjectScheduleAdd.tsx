@@ -1,9 +1,10 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
-import { AiFillCloseCircle } from "react-icons/ai";
-import {ModalToggle} from "interfaces/CalendarState";
-import Input from 'react-select/dist/declarations/src/components/Input';
+import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
+import * as Api from '../lib/Api';
 
 const CloseButton = styled(AiFillCloseCircle)`
   position: absolute;
@@ -77,29 +78,25 @@ const Form = styled.form`
 
 //props : {handleModalToggle: (str : string) => void}
 const SubjectScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
-  type InputValue = {
-    title: string,
-    contents: string,
-    subject: string,
-    scheduleType: string
-    startDate: string,
-    endDate: string,
-  }
-
+  const navigate= useNavigate();
   const {     
     register,
     handleSubmit,
     reset,
-  } = useForm<InputValue>({mode : 'onBlur'});
+  } = useForm<EventSourceInput>({mode : 'onBlur'});
 
-  const onSubmit = (data: InputValue) => {
-    let datas = {...data,'type':'subject'};
-    console.log(datas);
-    // this.state === subjecet, t/f
-    // 제출되면 this.setState(false) 하여 모달 창을 안보이게 한다.
-    reset();
-  }
-  
+  const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
+  const postSchedule = async ({ title, contents, subject, scheduleType, startDate, endDate }:EventSourceInput) => {
+		try {
+			const postData = {  title, contents, subject, scheduleType, startDate, endDate };
+			await Api.post(`/schedule/subject`, postData).then((res) => {
+        alert('정상적으로 일정이 등록되었습니다.');
+				navigate('/calendar');
+			});
+		} catch (e) {
+			alert(e);
+		}
+	};
 
   return (
     <ModalConatiner>

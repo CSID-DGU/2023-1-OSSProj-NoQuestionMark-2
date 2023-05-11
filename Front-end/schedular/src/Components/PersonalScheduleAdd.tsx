@@ -1,9 +1,10 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
-import { AiFillCloseCircle } from "react-icons/ai";
-import {ModalToggle} from "interfaces/CalendarState";
-import Input from 'react-select/dist/declarations/src/components/Input';
+import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
+import * as Api from '../lib/Api';
 
 const CloseButton = styled(AiFillCloseCircle)`
   position: absolute;
@@ -77,27 +78,26 @@ const Form = styled.form`
 
 
 const PersonalScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
-  type InputValue = {
-    title: string,
-    type: string,
-    contents: string,
-    importance: string,
-    startDate: string,
-    endDate: string,
-  }
-
+  const navigate= useNavigate();
   const {     
     register,
     handleSubmit,
     reset,
-  } = useForm<InputValue>({mode : 'onBlur'})
+  } = useForm<EventSourceInput>({mode : 'onBlur'})
 
-  const onSubmit = (data: InputValue) => {
-    let datas = {...data,'type':'personal'};
-    console.log(datas);
-    alert('등록되었습니다.')
-    reset();
-  }
+    
+  const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
+  const postSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
+		try {
+			const postData = { title, contents,scheduleType, importance, startDate, endDate  };
+			await Api.post(`/schedule/common`, postData).then((res) => {
+        alert('정상적으로 일정이 등록되었습니다.');
+				navigate('/calendar');
+			});
+		} catch (e) {
+			alert(e);
+		}
+	};
 
   return (
     <ModalConatiner>
@@ -115,7 +115,7 @@ const PersonalScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
         </InputDiv>
         <label htmlFor='type'>유형</label>
         <InputDiv>
-          <StyledSelect id='type'  {...register('type', { required: true })}>
+          <StyledSelect id='type'  {...register('scheduleType', { required: true })}>
             <option value='task'>task</option>
             <option value='schedule'>schedule</option>
           </StyledSelect>
