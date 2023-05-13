@@ -1,21 +1,25 @@
 package com.NoQuestionMark.schedular.model.entity;
 
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
+import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
 
 @Entity
-@Table(name = "\"common_schedule\"")
+@Table(name = "\"subject_schedule\"")
 @NoArgsConstructor
 @Getter
-public class CommonScheduleEntity {
+public class SubjectScheduleEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
@@ -25,12 +29,9 @@ public class CommonScheduleEntity {
     private String contents;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    @Enumerated(EnumType.STRING)
-    private Importance importance;
+    private SubjectScheduleType subjectScheduleType;
     private Month startMonth;
     private Month endMonth;
-    private CommonScheduleType commonScheduleType;
-    private boolean complete;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -46,20 +47,19 @@ public class CommonScheduleEntity {
     }
 
     @Builder
-    private CommonScheduleEntity(CommonScheduleRequestDto requestDto, UserEntity user){
+    private SubjectScheduleEntity(SubjectScheduleRequestDto requestDto, UserEntity user){
         this.title = requestDto.getTitle();
         this.user = user;
         this.startMonth = requestDto.getStartDate().getMonth();
         this.endMonth = requestDto.getEndDate().getMonth();
-        this.importance = requestDto.getImportance();
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
-        this.complete = false;
-        this.commonScheduleType = requestDto.getCommonScheduleType();
+        this.subjectScheduleType = requestDto.getSubjectScheduleType();
     }
 
-    public static CommonScheduleEntity fromCommonScheduleDto(CommonScheduleRequestDto requestDto, UserEntity user){
-        return new CommonScheduleEntity(requestDto, user);
+    public static SubjectScheduleEntity fromSubjectScheduleDto(SubjectScheduleRequestDto requestDto, UserEntity user){
+        return new SubjectScheduleEntity(requestDto, user);
     }
 }
+
