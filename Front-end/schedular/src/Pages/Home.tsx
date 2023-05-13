@@ -1,13 +1,21 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import background_image from '../Assets/Images/IMG_4174.jpeg'
+import MyClass from '../Components/MyClass';
+import MySchedule from '../Components/MySchedule';
 
 const BgImage = styled.div`
   min-height: 800px;
   background-size: cover;
 `;
+const MyWapper = styled.div`
+  position: absolute;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin: 4rem 0;
+`;
 const Content = styled.div`
-`
+`;
 
 const Home = () => {
 
@@ -15,9 +23,10 @@ const Home = () => {
     <>
       <Content>
         <BgImage style={{ backgroundImage: `url(${background_image})`}}>
-          <div>
-            <Link to='/calendar'>캘린더로 이동하기</Link>
-          </div>
+        <MyWapper>
+          <MySchedule></MySchedule>
+          <MyClass></MyClass>
+        </MyWapper>
         </BgImage>
       </Content>
     </>

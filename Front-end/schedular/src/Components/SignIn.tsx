@@ -62,7 +62,7 @@ const SignIn = () => {
     handleSubmit, 
     formState:{isSubmitting},
     reset
-  } = useForm<IAuthForm>({ mode: 'onChange' });
+  } = useForm<IAuthForm>({ mode: 'onBlur' });
 
   const onSubmit : SubmitHandler<IAuthForm> = data => login(data);
   const login = async ({ schoolNumber, password}:IAuthForm) => {
