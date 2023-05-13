@@ -1,15 +1,29 @@
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { useNavigate, Link } from 'react-router-dom';
 import { AiFillCloseCircle } from "react-icons/ai";
+import styled from 'styled-components';
+import {ModalToggle} from 'interfaces/CalendarState';
 
-const Container = styled.div`
-  position: relative;
-  margin: 0 auto;
+const ModalConatiner = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index : 999;
+`;
+const Form = styled.form`
+  position: absolute;
+  width: 25%;
+  min-width: 385px;
+  padding: 30px;
+  text-align: center;
   background-color: rgb(255, 255, 255);
-  width: 30%;
-  min-width: 400px;
-  border-radius: 30px;
-  padding: 25px 0;
+  border-radius: 20px;
+  box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 `;
 const CloseButton = styled(AiFillCloseCircle)`
   position: absolute;
@@ -101,21 +115,13 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const SubjectDetailStudent = () => {
-  type InputValue = {
-    title: string,
-    type: string,
-    contents: string,
-    importance: string,
-    startDate: string,
-    endDate: string,
-  }
+const SubjectDetailStudent = ({handleModalToggle}:ModalToggle) => {
 
   return (
-    <Container>
-      <h1>과목 일정 상세보기</h1>
-      <form>
-        <CloseButton/>
+    <ModalConatiner>
+      <Form>
+        <h1>과목 일정 상세보기</h1>
+        <CloseButton onClick={()=>handleModalToggle('subject')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
         <InputDiv>
@@ -138,7 +144,7 @@ const SubjectDetailStudent = () => {
         <label htmlFor='importance'>일정 종류</label>
         <InputDiv>
           <StyledSelect id='importance' disabled>
-            <option value='과제'>과제</option>import SubmitButton from './SubmitButton';
+            <option value='과제'>과제</option>
             <option value='시험'>시험</option>
             <option value='발표'>발표</option>
           </StyledSelect>
@@ -156,8 +162,8 @@ const SubjectDetailStudent = () => {
           <MoveButton to='/'>게시글로 이동하기</MoveButton>
           <CompleteButton type='button'>일정 완료하기</CompleteButton>
         </ButtonWapper>
-      </form>
-    </Container>
+      </Form>
+    </ModalConatiner>
   )
 }
 

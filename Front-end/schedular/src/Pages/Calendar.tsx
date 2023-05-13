@@ -1,14 +1,18 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import styled from 'styled-components';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import koLocale from '@fullcalendar/core/locales/ko';
 import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
 import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
-import {CalendarState} from 'interfaces/CalendarState';
+import SubjectDetailStudent from 'Components/SubjectDetailStudent';
+import SubjectDetailProf from 'Components/SubjectDetailProf';import {getUserType} from 'utils/utils';
+import {Events,EventSourceInput} from 'interfaces/CalendarState';
 import * as Api from 'lib/Api';
+
 
 const Container = styled.div`
   width : 80%;
@@ -35,66 +39,84 @@ const PostBtn = styled.button`
   height : 2rem;
 `; 
 
+const Calendar = () =>{
 
-export default class Calendar extends React.Component {
+  const [postModal, setpostModal] = useState({ personalPost: false, subjectPost: false});
+  const [readModal, setReadModal] = useState({ personalRead: false, subjectRead: false});
+  const [evt, setEvents] = useState<Events>();
+  const [year, setYear] = useState(String(new Date().getFullYear()));
+  const [month, setMonth] = useState(String(new Date().getMonth()+1));
+  const [id, setId] = useState('');
 
-  state: CalendarState =  {
-    personalPost: false,
-    subjectPost: false,
-    personalRead: false,
-    subjectRead: false,
-    events: []
+  useEffect (() => {
+    _getEvents();
+  },[]);
+
+  useEffect (() => {
+    console.log(evt);
+  },[evt]);
+  
+  useEffect (() => {
+    _getEvents();
+  },[month]);
+
+  const monthChange = () =>{
+    let dateEl = document.querySelector('.fc-toolbar-chunk>h2');
+    if( dateEl ){
+      let [y,m] = dateEl.innerHTML.split(' ');
+      y = y.slice(0,4);
+      m = m.slice(0,-1);
+      console.log(m,y);
+      setMonth(m);
+      setYear(y)
+    }
   }
 
-  // 아래의 모든 과정은 componentDidMount에 의해, 컴포넌트가 만들어지고 첫 렌더링을 모두 끝낸 후 실행됨
-  componentDidMount() {
-    this._getEvents();
-  }
-
-  // _axiosEvents이 응답을 받을때까지 기다리고, 응답을 받는다면 setState 메소드를 호출하여 state 값에 events라는 데이터를 넣어줌
-  _getEvents = async () => {
-    const events = await this._axiosEvents();
-    console.log(events);
-    this.setState({events : events});
+  const _getEvents = async () => {
+    const events = await _axiosEvents(year,month);    
+    setEvents(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
   }
 
   // axios의 get 메소드를 통해 Back-End의 url에 정보를 요청하고, 그에 따른 res.data 응답 리턴
-  _axiosEvents = async () => {
-    return [{title:'test0', start : '2023-05-05', end:'2023-05-08', content:'testing', scheduleType : 'task', type: 'personal' ,importance:'중요도1'},
-    {title:'test1', start : '2023-05-07', content:'testing', type: 'subject', scheduleType:'과제'}]
-    //return  await Api.get('/').then(res => res.data);                  
-  }
-  
-  handlePostModalToggle = (type:string) => {
-    type === 'personal' && this.state.subjectPost === false?
-    this.setState({
-      personalPost: !this.state.personalPost
-    })
-    :this.setState({
-      subjectPost : !this.state.subjectPost
-    })
+  const _axiosEvents = async (year :string, month:string) => {
+    return [
+    {title:'test0', startDate : '2023-05-05', endDate:'2023-05-08', contents:'testing', scheduleType : 'task' ,importance:'중요도1',type:'personal'},
+    {title:'test1', startDate : '2023-05-07', endDate:'2023-05-12', contents:'testing', scheduleType : '과제',type:'subject'}];
+    /*
+    return  await Api.get(`/calendar?year=${year}&month=${month}`).then(res => {
+      const {commonSchedule,subjectSchedule} = res.data;
+      commonSchedule.map((s:EventSourceInput) => s['type'] = 'personal');
+      subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
+      return [...commonSchedule, ...subjectSchedule];
+    });
+    */                  
   }
 
-  handleReadModalToggle = (info:any) => {
-    // read 
-    // 모달 열면서 데이터를 함께 넘겨줘야함// 아니면 id로 get요청을 받아와서 해야하나?
-    // type에 따라 필요한 데이터가 달라짐. 데이터폼 설계하기
-    // 중요도, 스케쥴타입 고려할 것
-    
+  // modal
+  const handlePostModalToggle = (type:string) => {
+    type === 'personal' && postModal.subjectPost === false?
+    setpostModal({...postModal, personalPost: !postModal.personalPost})
+    :setpostModal({...postModal, subjectPost : !postModal.subjectPost})
+  }
+
+  const handleReadModalToggle = (info:any) => {
     let {_def,_instance} = info.event;
     let {title} = _def;
-    let {content, type} = _def.extendedProps;
-    let {startDate, endDate } = _instance.range;
+    let {contents, type} = _def.extendedProps;
+    setId(_def.extendedProps.cSheduleId ? _def.extendedProps.cSheduleId : _def.extendedProps.sSheduleId);
+    let {start, end } = _instance.range;
 
-    let dataForm = { "title": title, "content": content, "type": type, "startDate": startDate, "endDate": endDate };
-    type==='personal' ?  this.setState({personalRead : !this.state.personalRead}) : this.setState({subjectRead : !this.state.subjectRead});
+    type === 'personal' ?
+    setReadModal({...readModal, personalRead: !readModal.personalRead})
+    :setReadModal({...readModal, subjectRead : !readModal.subjectRead})
   }
-
-  render() {
-    let events = this.state.events; 
-    return (
+  const handleEvents = async()=>{
+    await monthChange();
+    return evt;
+  }
+  return (
       <Container>
-        { events ? 
+        { evt ? 
         <>
         <RightAlign>
           <select name='pets' id='pet-select'>
@@ -106,27 +128,50 @@ export default class Calendar extends React.Component {
         <FullCalendar
           plugins={[ dayGridPlugin, timeGridPlugin,interactionPlugin ]}
           initialView='dayGridMonth'
+          locale={koLocale}
           headerToolbar= {{
             left: 'prev,next',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
           }}
           weekends={true}
-          events={ events}
-          eventClick = {this.handleReadModalToggle}
+          eventClick = {handleReadModalToggle}
+          events={handleEvents}
         />
         
-        { this.state.personalPost && <PersonalScheduleAdd handleModalToggle={this.handlePostModalToggle}/> }
-        { this.state.subjectPost && <SubjectScheduleAdd handleModalToggle={this.handlePostModalToggle}/> }
-        { this.state.personalRead && <PersonalScheduleDetail /> }
-        
+        { postModal.personalPost && <PersonalScheduleAdd handleModalToggle={handlePostModalToggle}/> }
+        { postModal.subjectPost && 
+          //getUserType() === 'PROFESSOR' && 
+          <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> }
+        { readModal.personalRead && 
+          <PersonalScheduleDetail
+            handleModalToggle={()=> setReadModal({...readModal, personalRead: !readModal.personalRead})}
+            id = {id}
+          /> 
+        }
+        { readModal.subjectRead && 
+          //getUserType() === 'PROFESSOR' &&
+          <SubjectDetailProf
+            handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
+            id = {id}
+          /> 
+        }
+        { readModal.subjectRead && 
+          //getUserType() === 'STUEDENT' &&
+          <SubjectDetailStudent
+            handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
+          /> 
+        }
+        {/* 유저타입이 학생, 교수 구분 */}
         <RightAlign>
-          <PostBtn type='button' onClick={e => this.handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
-          <PostBtn type='button' onClick={e => this.handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
+          <PostBtn type='button' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
+          <PostBtn type='button' onClick={e => handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
         </RightAlign>
         </>
-        : 'loading'}
+        : <h1>Loading</h1>
+      }
       </Container>
     )
-  }
 }
+
+export default Calendar;

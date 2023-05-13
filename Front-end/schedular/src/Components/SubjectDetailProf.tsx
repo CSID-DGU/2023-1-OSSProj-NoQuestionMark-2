@@ -1,7 +1,11 @@
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import styled from 'styled-components';
+import {useState} from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { AiFillCloseCircle } from "react-icons/ai";
+import styled from 'styled-components';
+import SubmitButton from '../Components/SubmitButton';
+import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
+import * as Api from '../lib/Api';
 
 const Container = styled.div`
   position: relative;
@@ -102,16 +106,7 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const SubjectDetailProf = () => {
-  type InputValue = {
-    title: string,
-    type: string,
-    contents: string,
-    importance: string,
-    startDate: string,
-    endDate: string,
-  }
-
+const SubjectDetailProf = ({ handleModalToggle, id }: ModalToggle) => {
   const [edited, setEdited] = useState(false)
 
   const onClickEditButton = () => {
@@ -125,13 +120,19 @@ const SubjectDetailProf = () => {
   const {     
     register,
     handleSubmit,
-  } = useForm<InputValue>({mode : 'onBlur'})
+  } = useForm<EventSourceInput>({mode : 'onBlur'})
 
-  const onSubmit = (data: InputValue) => {
-    console.log(data);
-    alert('수정이 완료되었습니다.');
-    
-  }
+  const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
+  const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
+		try {
+			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
+			//await Api.put(`/schedule/subjectArticleId/${id}`, putData).then((res) => {
+      //  alert('정상적으로 일정이 등록되었습니다.');
+			//});
+		} catch (e) {
+			alert(e);
+		}
+	};
 
   return (
     <Container>
@@ -161,7 +162,7 @@ const SubjectDetailProf = () => {
         <label htmlFor='importance'>일정 종류</label>
         <InputDiv>
           <StyledSelect id='importance'  {...register('importance', { required: true })} disabled={edited ? false : true}>
-            <option value='과제'>과제</option>import SubmitButton from './SubmitButton';
+            <option value='과제'>과제</option>
             <option value='시험'>시험</option>
             <option value='발표'>발표</option>
           </StyledSelect>

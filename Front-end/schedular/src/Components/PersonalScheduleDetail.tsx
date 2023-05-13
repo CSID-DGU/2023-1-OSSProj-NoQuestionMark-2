@@ -1,16 +1,32 @@
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import {useState} from 'react';
+import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
-import { AiFillCloseCircle } from 'react-icons/ai';
+import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
+import * as Api from '../lib/Api';
 
-const Container = styled.div`
-  position: relative;
-  margin: 0 auto;
+const ModalConatiner = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index : 999;
+`;
+const Form = styled.form`
+  position: absolute;
+  width: 25%;
+  min-width: 385px;
+  padding: 30px;
+  text-align: center;
   background-color: rgb(255, 255, 255);
-  width: 30%;
-  min-width: 400px;
-  border-radius: 30px;
-  padding: 25px 0;
+  border-radius: 20px;
+  box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 `;
 const CloseButton = styled(AiFillCloseCircle)`
   position: absolute;
@@ -118,15 +134,7 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const PersonalScheduleDetail = () => {
-  type InputValue = {
-    title: string,
-    type: string,
-    contents: string,
-    importance: string,
-    startDate: string,
-    endDate: string,
-  }
+const PersonalScheduleDetail = ({ handleModalToggle, id }: ModalToggle)  => {
 
   const [edited, setEdited] = useState(false)
 
@@ -141,19 +149,29 @@ const PersonalScheduleDetail = () => {
   const {     
     register,
     handleSubmit,
-  } = useForm<InputValue>({mode : 'onBlur'})
+  } = useForm<EventSourceInput>({mode : 'onBlur'})
 
-  const onSubmit = (data: InputValue) => {
-    console.log(data);
-    alert('수정이 완료되었습니다.');
-    
+  const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
+  const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
+		try {
+			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
+			//await Api.put(`/schedule/subject/${id}`, putData).then((res) => {
+      //  alert('정상적으로 일정이 수정되었습니다.');
+			//});
+		} catch (e) {
+			alert(e);
+		}
+	};
+
+  const delSchedule = async() => {
+    //await Api.delete(`/schedule/subject/${id}`).then(() => {});
   }
 
   return (
-    <Container>
+    <ModalConatiner>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <h1>개인 일정 상세보기</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-        <CloseButton/>
+        <CloseButton onClick={()=>handleModalToggle('personal')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
         <InputDiv>
@@ -166,7 +184,7 @@ const PersonalScheduleDetail = () => {
         </InputDiv>
         <label htmlFor='type'>유형</label>
         <InputDiv>
-          <StyledSelect id='type'  {...register('type', { required: true })} disabled={edited ? false : true}>
+          <StyledSelect id='type'  {...register('scheduleType', { required: true })} disabled={edited ? false : true}>
             <option value='task'>task</option>
             <option value='schedule'>schedule</option>
           </StyledSelect>
@@ -206,11 +224,11 @@ const PersonalScheduleDetail = () => {
             <CompleteButton type='button'>일정 완료하기</CompleteButton>
             <ButtonLine>
               <EditButton type='button' onClick={()=>{onClickEditButton()}}>수정하기</EditButton>
-              <CDButton type='button'>삭제하기</CDButton>
+              <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
             </ButtonLine>
           </ButtonWapper>)}
-      </form>
-    </Container>
+      </Form>
+    </ModalConatiner>
   )
 }
 
