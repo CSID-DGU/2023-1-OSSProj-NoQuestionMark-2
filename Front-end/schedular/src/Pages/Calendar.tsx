@@ -80,14 +80,14 @@ const Calendar = () =>{
   // axios의 get 메소드를 통해 Back-End의 url에 정보를 요청하고, 그에 따른 res.data 응답 리턴
   const _axiosEvents = async (year :string, month:string) => {
     return [
-    {title:'test0', startDate : '2023-05-05', endDate:'2023-05-08', contents:'testing', scheduleType : 'task' ,importance:'중요도1'},
-    {title:'test1', startDate : '2023-05-07', endDate:'2023-05-12', contents:'testing', scheduleType : '과제'}];
+    {title:'test0', startDate : '2023-05-05', endDate:'2023-05-08', contents:'testing', scheduleType : 'task' ,importance:'중요도1',type:'personal'},
+    {title:'test1', startDate : '2023-05-07', endDate:'2023-05-12', contents:'testing', scheduleType : '과제',type:'subject'}];
     /*
     return  await Api.get(`/calendar?year=${year}&month=${month}`).then(res => {
       const {commonSchedule,subjectSchedule} = res.data;
       commonSchedule.map((s:EventSourceInput) => s['type'] = 'personal');
       subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
-      return [...commonSchedule, subjectSchedule];
+      return [...commonSchedule, ...subjectSchedule];
     });
     */                  
   }
@@ -140,20 +140,24 @@ const Calendar = () =>{
         />
         
         { postModal.personalPost && <PersonalScheduleAdd handleModalToggle={handlePostModalToggle}/> }
-        { postModal.subjectPost && getUserType() === 'PROFESSOR' && <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> }
+        { postModal.subjectPost && 
+          //getUserType() === 'PROFESSOR' && 
+          <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> }
         { readModal.personalRead && 
           <PersonalScheduleDetail
             handleModalToggle={()=> setReadModal({...readModal, personalRead: !readModal.personalRead})}
             id = {id}
           /> 
         }
-        { readModal.subjectRead && getUserType() === 'PROFESSOR' &&
+        { readModal.subjectRead && 
+          //getUserType() === 'PROFESSOR' &&
           <SubjectDetailProf
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
             id = {id}
           /> 
         }
-        {readModal.subjectRead && getUserType() === 'STUEDENT' &&
+        { readModal.subjectRead && 
+          //getUserType() === 'STUEDENT' &&
           <SubjectDetailStudent
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
           /> 
