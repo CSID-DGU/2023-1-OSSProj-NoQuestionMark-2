@@ -134,7 +134,7 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const PersonalScheduleDetail: React.FC<ModalToggle> = ({ handleModalToggle }) => {
+const PersonalScheduleDetail = ({ handleModalToggle, id }: ModalToggle)  => {
 
   const [edited, setEdited] = useState(false)
 
@@ -155,13 +155,17 @@ const PersonalScheduleDetail: React.FC<ModalToggle> = ({ handleModalToggle }) =>
   const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
 			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
-			await Api.put(`/schedule/common/${id}`, putData).then((res) => {
-        alert('정상적으로 일정이 등록되었습니다.');
-			});
+			//await Api.put(`/schedule/subject/${id}`, putData).then((res) => {
+      //  alert('정상적으로 일정이 수정되었습니다.');
+			//});
 		} catch (e) {
 			alert(e);
 		}
 	};
+
+  const delSchedule = async() => {
+    //await Api.delete(`/schedule/subject/${id}`).then(() => {});
+  }
 
   return (
     <ModalConatiner>
@@ -220,7 +224,7 @@ const PersonalScheduleDetail: React.FC<ModalToggle> = ({ handleModalToggle }) =>
             <CompleteButton type='button'>일정 완료하기</CompleteButton>
             <ButtonLine>
               <EditButton type='button' onClick={()=>{onClickEditButton()}}>수정하기</EditButton>
-              <CDButton type='button'>삭제하기</CDButton>
+              <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
             </ButtonLine>
           </ButtonWapper>)}
       </Form>

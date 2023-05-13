@@ -1,6 +1,6 @@
+import {useState} from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import {useState} from 'react';
 import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
@@ -106,7 +106,7 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const SubjectDetailProf = () => {
+const SubjectDetailProf = ({ handleModalToggle, id }: ModalToggle) => {
   const [edited, setEdited] = useState(false)
 
   const onClickEditButton = () => {
@@ -126,9 +126,9 @@ const SubjectDetailProf = () => {
   const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
 			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
-			await Api.put(`/schedule/subjectArticleId/${id}`, putData).then((res) => {
-        alert('정상적으로 일정이 등록되었습니다.');
-			});
+			//await Api.put(`/schedule/subjectArticleId/${id}`, putData).then((res) => {
+      //  alert('정상적으로 일정이 등록되었습니다.');
+			//});
 		} catch (e) {
 			alert(e);
 		}

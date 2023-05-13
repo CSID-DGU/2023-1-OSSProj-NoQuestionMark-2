@@ -115,7 +115,7 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const SubjectDetailStudent : React.FC<ModalToggle> = ({ handleModalToggle }) => {
+const SubjectDetailStudent = ({handleModalToggle}:ModalToggle) => {
 
   return (
     <ModalConatiner>
