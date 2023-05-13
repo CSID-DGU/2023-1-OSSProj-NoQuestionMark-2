@@ -1,9 +1,7 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
 import { useNavigate, Link } from 'react-router-dom';
 import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
-import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
-import * as Api from '../lib/Api';
+import {ModalToggle} from 'interfaces/CalendarState';
 
 const ModalConatiner = styled.div`
   position: fixed;
@@ -118,30 +116,12 @@ const ButtonWapper = styled.div`
 `;
 
 const SubjectDetailStudent : React.FC<ModalToggle> = ({ handleModalToggle }) => {
-  const navigate= useNavigate();
-  const {     
-    register,
-    handleSubmit,
-    reset,
-  } = useForm<EventSourceInput>({mode : 'onBlur'});
-
-  const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
-  const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
-		try {
-			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
-			await Api.put(`/schedule/subjectAricleId/${id}`, putData).then((res) => {
-        alert('정상적으로 일정이 등록되었습니다.');
-			});
-		} catch (e) {
-			alert(e);
-		}
-	};
 
   return (
     <ModalConatiner>
-      <Form  onSubmit={handleSubmit(onSubmit)}>
+      <Form>
         <h1>과목 일정 상세보기</h1>
-        <CloseButton onClick={()=>handleModalToggle('personal')}/>
+        <CloseButton onClick={()=>handleModalToggle('subject')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
         <InputDiv>
