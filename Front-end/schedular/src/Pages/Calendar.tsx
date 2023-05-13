@@ -9,8 +9,10 @@ import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
 import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
 import SubjectDetailStudent from 'Components/SubjectDetailStudent';
+import SubjectDetailProf from 'Components/SubjectDetailProf';import {getUserType} from 'utils/utils';
 import {Events,EventSourceInput} from 'interfaces/CalendarState';
 import * as Api from 'lib/Api';
+
 
 const Container = styled.div`
   width : 80%;
@@ -44,6 +46,7 @@ const Calendar = () =>{
   const [evt, setEvents] = useState<Events>();
   const [year, setYear] = useState(String(new Date().getFullYear()));
   const [month, setMonth] = useState(String(new Date().getMonth()+1));
+  const [id, setId] = useState('');
 
   useEffect (() => {
     _getEvents();
@@ -99,7 +102,8 @@ const Calendar = () =>{
   const handleReadModalToggle = (info:any) => {
     let {_def,_instance} = info.event;
     let {title} = _def;
-    let {content, type} = _def.extendedProps;
+    let {contents, type} = _def.extendedProps;
+    setId(_def.extendedProps.cSheduleId ? _def.extendedProps.cSheduleId : _def.extendedProps.sSheduleId);
     let {start, end } = _instance.range;
 
     type === 'personal' ?
@@ -136,13 +140,20 @@ const Calendar = () =>{
         />
         
         { postModal.personalPost && <PersonalScheduleAdd handleModalToggle={handlePostModalToggle}/> }
-        { postModal.subjectPost && <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> }
+        { postModal.subjectPost && getUserType() === 'PROFESSOR' && <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> }
         { readModal.personalRead && 
           <PersonalScheduleDetail
             handleModalToggle={()=> setReadModal({...readModal, personalRead: !readModal.personalRead})}
+            id = {id}
           /> 
         }
-        { readModal.subjectRead && 
+        { readModal.subjectRead && getUserType() === 'PROFESSOR' &&
+          <SubjectDetailProf
+            handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
+            id = {id}
+          /> 
+        }
+        {readModal.subjectRead && getUserType() === 'STUEDENT' &&
           <SubjectDetailStudent
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
           /> 
