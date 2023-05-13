@@ -7,11 +7,12 @@ import {IAuthForm} from '../interfaces/IAuthForm';
 
 const Container = styled.div`
     flex-direction: column;
-    margin : 5rem auto;
+    margin: 5rem auto;
 `;
 const Form = styled.form`
-    height: 100vh;
-    width : 100vw;
+    height: 100%;
+    width: 100%;
+    margin: 3rem auto;
 `;
 const Grid = styled.div`
     display: grid;
@@ -19,32 +20,42 @@ const Grid = styled.div`
     grid-gap: 0.5rem;
     justify-content : left;
     text-align: right;
-
     width: 50%;
-    margin: 1rem auto;
-    border: 1px solid black;
-    padding: 2rem 2rem;
+    margin: 2rem auto;
+    padding: 1rem 0rem 1rem 7rem;
 `;
 const RadioGroup = styled.div`
     display: felx;
     flex-direction: row;
     padding: 0 1rem;
     align-items: center;
+    margin: 0.3rem;
 `;
 const RadioButton = styled.div`
     &:first-child {
-        margin-right : 2rem;
+        margin-right : 6rem;
     }
+    accent-color: red;
 `;
 const InputDiv = styled.div`
     display: flex;
     flex-direction: column;
+    width: 60%;
     padding: 0 1rem;
+    margin: 0.3rem;
 `;
 const Input = styled.input`
-    width: 100%;
-    height: 1.8rem;
+    width: 95%;
+    height: 2.3rem;
+    padding: 3px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ffe8cc;
 `;
+const Label = styled.label`
+    margin: 0.8rem;
+`;
+
 
 const SignUp = () => {
 
@@ -81,7 +92,7 @@ const SignUp = () => {
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Grid>
                 
-                <label htmlFor='name'>이름</label>
+                <Label htmlFor='name'>이름</Label>
                 <InputDiv>
                 <Input 
                     id = 'name'
@@ -104,7 +115,7 @@ const SignUp = () => {
 
                 </InputDiv>
                 
-                <label htmlFor='schoolNumber'>학번</label>
+                <Label htmlFor='schoolNumber'>학번</Label>
                 <InputDiv>
                 <Input 
                     id = 'schoolNumber'
@@ -122,12 +133,12 @@ const SignUp = () => {
                 {errors.schoolNumber && <small role='alert'>{errors.schoolNumber.message}</small>}
                 </InputDiv>
                 
-                <label htmlFor='email'>e-mail</label>
+                <Label htmlFor='email'>e-mail</Label>
                 <InputDiv>
                 <Input
                     id='email'
                     type='text'
-                    placeholder='test@email.com'
+                    placeholder='dongguk@email.com'
                     {...register('email', {
                         required: '이메일을 입력해주세요.',
                         pattern: {
@@ -139,7 +150,7 @@ const SignUp = () => {
                 {errors.email && <small role='alert'>{errors.email.message}</small>}
                 </InputDiv>
 
-                <label>신분</label>                
+                <Label>신분</Label>                
                 <RadioGroup>
                     <RadioButton>
                         <input type='radio' id='student' value='STUDENT' defaultChecked {...register('userType')}/> 
@@ -152,7 +163,7 @@ const SignUp = () => {
                     </RadioButton>
                 </RadioGroup>
                 
-                <label htmlFor='password'>비밀번호</label>
+                <Label htmlFor='password'>비밀번호</Label>
                 <InputDiv>
                 <Input
                     id='password'
@@ -172,7 +183,7 @@ const SignUp = () => {
                 />
                 {errors.password && <small role='alert'>{errors.password.message}</small>}
                 </InputDiv>
-                <label htmlFor='password'>비밀번호 확인</label>
+                <Label htmlFor='password'>비밀번호 확인</Label>
                 <InputDiv>
                 <Input
                     type='password'
@@ -201,7 +212,7 @@ const SignUp = () => {
                 )}
                 </InputDiv>
                 </Grid>
-                <SubmitButton name='가입하기' width='15rem' height='3rem' color='#228be6'/>
+                <SubmitButton name='가입하기' width='15rem' height='3rem' color='#EB9332'/>
             </Form>
         </Container>
     );
