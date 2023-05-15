@@ -32,6 +32,8 @@ public class SubjectScheduleEntity {
     private SubjectScheduleType subjectScheduleType;
     private Month startMonth;
     private Month endMonth;
+    private int startYear;
+    private int endYear;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -55,7 +57,9 @@ public class SubjectScheduleEntity {
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
-        this.subjectScheduleType = requestDto.getSubjectScheduleType();
+        this.subjectScheduleType = SubjectScheduleType.returnType(requestDto.getSubjectScheduleType());
+        this.startYear = requestDto.getStartDate().getYear();
+        this.endYear = requestDto.getEndDate().getYear();
     }
 
     public static SubjectScheduleEntity fromSubjectScheduleDto(SubjectScheduleRequestDto requestDto, UserEntity user){
