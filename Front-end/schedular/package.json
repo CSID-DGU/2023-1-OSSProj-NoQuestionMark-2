@@ -2,7 +2,7 @@
   "name": "schedular",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
+  "proxy": "http://43.200.59.134",
   "dependencies": {
     "@fullcalendar/core": "^6.1.6",
     "@fullcalendar/daygrid": "^6.1.6",

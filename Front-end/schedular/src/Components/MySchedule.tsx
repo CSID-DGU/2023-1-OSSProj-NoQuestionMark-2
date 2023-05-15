@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { isLogin } from '../utils/utils';
 import background_image from '../Assets/Images/logo.png'
-
+import { Subjects } from 'interfaces/homeSchedule';
 const Container = styled.div`
   width: 50%;
 `;
@@ -50,8 +50,19 @@ const MyList = styled.span`
 `;
   
 
-const MySchedule = () => {
+const MySchedule = () => { 
+  /*(props:{schedule:Subjects}) => {
+  const {schedule} = props;
+  const dummySchedule = [...schedule];
 
+  const mySchedule = dummySchedule
+    .map((schedules, index) => 
+    <ListWapper>
+      <MyList key={index}>{schedules.subjectName}</MyList>
+    </ListWapper>)
+    .filter(() => dummySchedule.length > 0 )
+    ;
+  */
   const dummySchedule = ['일정1', '과제1', '일정2', '과제2', '시험2', '과제3']
 
   const mySchedule = dummySchedule
@@ -59,12 +70,11 @@ const MySchedule = () => {
     <ListWapper>
       <MyList key={index}>{schedules}</MyList>
     </ListWapper>)
-    .filter(() => dummySchedule.length > 0 )
-    ;
-
+    .filter(() => dummySchedule.length > 0 );
+  
   return (
     <>
-    { !!isLogin ?
+    { !isLogin ?
     <Container>
       <MyScheduleDiv style={{ backgroundImage: `url(${background_image})`}}>
         <Title>내 할 일 보기</Title>
