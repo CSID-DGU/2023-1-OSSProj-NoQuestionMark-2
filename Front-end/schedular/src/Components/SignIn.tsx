@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {isLogin,logout} from '../utils/utils';
 import {IAuthForm} from '../interfaces/IAuthForm';
@@ -55,6 +55,7 @@ const SignUpButton = styled(Link)`
 `;
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState('');
   const [loginCheck, setLoginCheck] = useState(false);
   const { 
@@ -69,14 +70,15 @@ const SignIn = () => {
 		try {
 			const loginData = { schoolNumber, password} ;
 			await Api.post(`/login`, loginData).then((res) => {
-        //{schoolNumber,name,userType,token}
-				const {token} = res.data.result;
+				const {schoolNumber,userName,userType,token,schedule,subjects} = res.data.result;
         localStorage.setItem('token',token);
-        //localStorage.setItem('userType',userType);
+        localStorage.setItem('userType',userType);
         setLoginCheck(isLogin);
-        //setUserInfo(`${schoolNumber}(${name})님`);
-        //alert(`${userInfo}님 로그인 되었습니다.`);
+        setUserInfo(`${schoolNumber}(${userName})님`);
+        alert(`${schoolNumber}(${userName})님 로그인 되었습니다.`);
+        //navigate('/',{state:{schedule,subjects}});
 			});
+      
       reset();
 		} catch (e) {
 			alert(e);
