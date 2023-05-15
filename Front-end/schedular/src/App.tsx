@@ -4,6 +4,7 @@ import './App.css';
 import GlobalStyle from './Styles/GlobalStyles';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
+import {RecoilRoot} from 'recoil';
 
 const Main = styled.div`
   min-height: 100%;
@@ -14,11 +15,13 @@ function App() {
   return (
     <div className="App">        
       <GlobalStyle />
-      <Main>
-        <Header />
-        <AppRouter />
-      </Main>
-      <Footer />
+      <RecoilRoot> 
+        <Main>
+          <Header />
+          <AppRouter />
+        </Main>
+        <Footer />
+      </RecoilRoot> 
     </div>
   );
 }

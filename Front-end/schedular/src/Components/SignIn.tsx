@@ -1,10 +1,12 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import {isLogin,logout} from '../utils/utils';
+import {logout} from '../utils/utils';
 import {IAuthForm} from '../interfaces/IAuthForm';
 import * as Api from '../lib/Api';
+import { useRecoilState } from 'recoil';
+import { isLoginCheck,userInfoState,UserInfo } from 'recoil/Atom'
 
 const InputForm = styled.form`
   display: flex;
@@ -56,9 +58,15 @@ const SignUpButton = styled(Link)`
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState('');
-  const [loginCheck, setLoginCheck] = useState(false);
-  const { 
+  const [loginCheck, setLoginCheck] = useRecoilState(isLoginCheck);
+  const [userInfo, setUserInfo] = useRecoilState<UserInfo>(userInfoState);
+  const [loginMessage,setLoginMessage] = useState(''); 
+
+  useEffect(()=> {
+    setLoginMessage(`${userInfo.schoolNumber}(${userInfo.userName})`)
+  },[loginCheck])
+
+  const {
     register,
     handleSubmit, 
     formState:{isSubmitting},
@@ -73,21 +81,20 @@ const SignIn = () => {
 				const {schoolNumber,userName,userType,token,schedule,subjects} = res.data.result;
         localStorage.setItem('token',token);
         localStorage.setItem('userType',userType);
-        setLoginCheck(isLogin);
-        setUserInfo(`${schoolNumber}(${userName})님`);
+        setLoginCheck(!loginCheck);
+        setUserInfo({schoolNumber,userName,userType});
         alert(`${schoolNumber}(${userName})님 로그인 되었습니다.`);
-        //navigate('/',{state:{schedule,subjects}});
+        navigate('/');
 			});
-      
-      reset();
 		} catch (e) {
 			alert(e);
 		}
 	};
   const LogoutHandler = () =>{
     logout();
-    setLoginCheck(isLogin);
-    setUserInfo('');
+    setLoginCheck(!loginCheck);
+    setUserInfo({schoolNumber: null,userName : null,userType: null});
+    navigate('/');
   }
   return (
     <>
@@ -111,7 +118,7 @@ const SignIn = () => {
         <SignUpButton to='/signup'>회원가입</SignUpButton>
     </InputForm>
     
-    : <div>{userInfo}<SignInButton onClick={LogoutHandler}>로그아웃</SignInButton></div>
+    : <div>{loginMessage}<SignInButton onClick={LogoutHandler}>로그아웃</SignInButton></div>
     }
     </>
   )
