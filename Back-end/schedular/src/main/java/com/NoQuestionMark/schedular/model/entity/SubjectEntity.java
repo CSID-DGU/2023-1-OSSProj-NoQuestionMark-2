@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
+@Table(name = "\"subject\"")
 @Getter
 public class SubjectEntity {
 
