@@ -9,7 +9,8 @@ import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
 import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
 import SubjectDetailStudent from 'Components/SubjectDetailStudent';
-import SubjectDetailProf from 'Components/SubjectDetailProf';import {getUserType} from 'utils/utils';
+import SubjectDetailProf from 'Components/SubjectDetailProf';
+import {getUserType} from 'utils/utils';
 import {Events,EventSourceInput} from 'interfaces/CalendarState';
 import * as Api from 'lib/Api';
 
@@ -45,7 +46,7 @@ const Calendar = () =>{
   const [readModal, setReadModal] = useState({ personalRead: false, subjectRead: false});
   const [evt, setEvents] = useState<Events>();
   const [year, setYear] = useState(String(new Date().getFullYear()));
-  const [month, setMonth] = useState(String(new Date().getMonth()+1));
+  const [month, setMonth] = useState(String(new Date().getMonth()+1).length === 1 ? `0${String(new Date().getMonth()+1)}`: String(new Date().getMonth()+1));
   const [id, setId] = useState('');
 
   useEffect (() => {
@@ -66,9 +67,10 @@ const Calendar = () =>{
       let [y,m] = dateEl.innerHTML.split(' ');
       y = y.slice(0,4);
       m = m.slice(0,-1);
+      if (m.length === 1){m = `0${m}`}
       console.log(m,y);
       setMonth(m);
-      setYear(y)
+      setYear(y);
     }
   }
 
@@ -79,17 +81,19 @@ const Calendar = () =>{
 
   // axios의 get 메소드를 통해 Back-End의 url에 정보를 요청하고, 그에 따른 res.data 응답 리턴
   const _axiosEvents = async (year :string, month:string) => {
+    /*
     return [
     {title:'test0', startDate : '2023-05-05', endDate:'2023-05-08', contents:'testing', scheduleType : 'task' ,importance:'중요도1',type:'personal'},
     {title:'test1', startDate : '2023-05-07', endDate:'2023-05-12', contents:'testing', scheduleType : '과제',type:'subject'}];
-    /*
-    return  await Api.get(`/calendar?year=${year}&month=${month}`).then(res => {
-      const {commonSchedule,subjectSchedule} = res.data;
+    */
+    
+    return  await Api.get(`/schedule/common?month=${year}-${month}`).then(res => {
+      const {commonSchedule,subjectSchedule} = res.data.result;
+      console.log(res.data.result);
       commonSchedule.map((s:EventSourceInput) => s['type'] = 'personal');
       subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
       return [...commonSchedule, ...subjectSchedule];
-    });
-    */                  
+    });              
   }
 
   // modal
@@ -112,7 +116,6 @@ const Calendar = () =>{
   }
   const handleEvents = async()=>{
     await monthChange();
-    return evt;
   }
   return (
       <Container>
@@ -141,7 +144,7 @@ const Calendar = () =>{
         
         { postModal.personalPost && <PersonalScheduleAdd handleModalToggle={handlePostModalToggle}/> }
         { postModal.subjectPost && 
-          //getUserType() === 'PROFESSOR' && 
+          getUserType() === 'PROFESSOR' && 
           <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> }
         { readModal.personalRead && 
           <PersonalScheduleDetail
@@ -150,21 +153,21 @@ const Calendar = () =>{
           /> 
         }
         { readModal.subjectRead && 
-          //getUserType() === 'PROFESSOR' &&
+          getUserType() === 'PROFESSOR' &&
           <SubjectDetailProf
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
             id = {id}
           /> 
         }
         { readModal.subjectRead && 
-          //getUserType() === 'STUEDENT' &&
+          getUserType() === 'STUEDENT' &&
           <SubjectDetailStudent
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
           /> 
         }
         {/* 유저타입이 학생, 교수 구분 */}
         <RightAlign>
-          <PostBtn type='button' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
+          {getUserType() === 'PROFESSOR'  && <PostBtn type='button' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>}
           <PostBtn type='button' onClick={e => handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
         </RightAlign>
         </>
