@@ -105,4 +105,25 @@ public class UserService {
         userSchedule.sort(Comparator.comparingInt(UserScheduleResponseDto::getDDay));
         return new UserLoginResponseDto(token, user.getName(), user.getSchoolNumber(), user.getUserType().name() ,userSubjects, userSchedule);
     }
+
+    public UserHomeResponseDto getHome(String schoolNumber) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s is not founded", schoolNumber)));
+        List<UserSubjectsResponseDto> userSubjects = new ArrayList<>(userSubjectRepository
+                .findAllByUser(user)
+                .stream()
+                .map(UserSubjectsResponseDto::fromUserSubject).toList());
+        userSubjects.sort(Comparator.comparing(UserSubjectsResponseDto::getSubjectName));
+        List<UserScheduleResponseDto> userSchedule = new ArrayList<>(commonScheduleRepository
+                .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
+                .stream().map(UserScheduleResponseDto::fromCommonSchedule).toList());
+        List<UserScheduleResponseDto> sSchedule = subjectScheduleRepository
+                .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
+                .stream().map(UserScheduleResponseDto::fromSubjectSchedule).toList();
+        userSchedule.addAll(sSchedule);
+        userSchedule.sort(Comparator.comparingInt(UserScheduleResponseDto::getDDay));
+        return new UserHomeResponseDto(user.getName(), user.getSchoolNumber(), user.getUserType().name() ,userSubjects, userSchedule);
+
+    }
 }
