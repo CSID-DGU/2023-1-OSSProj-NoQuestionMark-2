@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import {useState,useEffect,useRef} from 'react';
 import styled from 'styled-components';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -10,10 +10,10 @@ import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
 import SubjectDetailStudent from 'Components/SubjectDetailStudent';
 import SubjectDetailProf from 'Components/SubjectDetailProf';
-import {getUserType} from 'utils/utils';
-import {Events,EventSourceInput} from 'interfaces/CalendarState';
+import { Events,EventSourceInput}  from 'interfaces/CalendarState';
+import { useRecoilValue } from 'recoil';
+import { userInfoState } from 'recoil/Atom'
 import * as Api from 'lib/Api';
-
 
 const Container = styled.div`
   width : 80%;
@@ -40,60 +40,56 @@ const PostBtn = styled.button`
   height : 2rem;
 `; 
 
-const Calendar = () =>{
+const getTodayMonth = () => {
+  const Tmonth = String(new Date().getMonth()+1);
+  if(Tmonth.length === 1 ) { return `0${Tmonth}`}
+  return Tmonth;
+}
+const getTodayYear = () => {
+  return String(new Date().getFullYear());
+}
+const isStudent = (userType:string|null):boolean => {
+  if(userType === "STUDENT") {return true}
+  return false;
+}
 
+const Calendar = () =>{
   const [postModal, setpostModal] = useState({ personalPost: false, subjectPost: false});
   const [readModal, setReadModal] = useState({ personalRead: false, subjectRead: false});
   const [evt, setEvents] = useState<Events>();
-  const [year, setYear] = useState(String(new Date().getFullYear()));
-  const [month, setMonth] = useState(String(new Date().getMonth()+1).length === 1 ? `0${String(new Date().getMonth()+1)}`: String(new Date().getMonth()+1));
   const [id, setId] = useState('');
 
-  useEffect (() => {
-    _getEvents();
-  },[]);
+  const userType = useRecoilValue(userInfoState).userType;
+  const STUDENT = isStudent(userType);
+  const calendarRef = useRef<FullCalendar>(null);
 
   useEffect (() => {
     console.log(evt);
   },[evt]);
-  
-  useEffect (() => {
-    _getEvents();
-  },[month]);
 
-  const monthChange = () =>{
-    let dateEl = document.querySelector('.fc-toolbar-chunk>h2');
-    if( dateEl ){
-      let [y,m] = dateEl.innerHTML.split(' ');
-      y = y.slice(0,4);
-      m = m.slice(0,-1);
-      if (m.length === 1){m = `0${m}`}
-      console.log(m,y);
-      setMonth(m);
-      setYear(y);
-    }
-  }
+  useEffect(() =>{
+    const year = getTodayYear();
+    const month = getTodayMonth();
+    performGetRequest(year,month);
+  },[])
 
-  const _getEvents = async () => {
-    const events = await _axiosEvents(year,month);    
-    setEvents(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
-  }
-
-  // axios의 get 메소드를 통해 Back-End의 url에 정보를 요청하고, 그에 따른 res.data 응답 리턴
-  const _axiosEvents = async (year :string, month:string) => {
-    /*
-    return [
-    {title:'test0', startDate : '2023-05-05', endDate:'2023-05-08', contents:'testing', scheduleType : 'task' ,importance:'중요도1',type:'personal'},
-    {title:'test1', startDate : '2023-05-07', endDate:'2023-05-12', contents:'testing', scheduleType : '과제',type:'subject'}];
-    */
-    
-    return  await Api.get(`/schedule/common?month=${year}-${month}`).then(res => {
-      const {commonSchedule,subjectSchedule} = res.data.result;
-      console.log(res.data.result);
+  const performGetRequest = async (year: string, month: string) => {
+    console.log('getFunction',month,year);
+    try {
+      const response = await Api.get(`/schedule/common?month=${year}-${month}`);
+      console.log(response);
+      const {commonSchedule,subjectSchedule} = response.data.result;
       commonSchedule.map((s:EventSourceInput) => s['type'] = 'personal');
       subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
-      return [...commonSchedule, ...subjectSchedule];
-    });              
+      _getEvents([...commonSchedule, ...subjectSchedule]);
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const _getEvents = async (events: EventSourceInput[]) => {
+    setEvents(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
   }
 
   // modal
@@ -114,10 +110,7 @@ const Calendar = () =>{
     setReadModal({...readModal, personalRead: !readModal.personalRead})
     :setReadModal({...readModal, subjectRead : !readModal.subjectRead})
   }
-  const handleEvents = async()=>{
-    await monthChange();
-    return evt;
-  }
+
   return (
       <Container>
         { evt ? 
@@ -129,24 +122,55 @@ const Calendar = () =>{
             <option value='personal'>개인일정보기</option>
           </select>
         </RightAlign>
+        <div id='calendar'></div>
         <FullCalendar
+          ref={calendarRef}
           plugins={[ dayGridPlugin, timeGridPlugin,interactionPlugin ]}
           initialView='dayGridMonth'
           locale={koLocale}
+          customButtons={{
+            nextButton: {
+              text: '>',
+              click: function () {
+                const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
+                const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
+                const nextMonth = currentMonth + 1;
+                const nextYear = currentYear;
+                calendarRef.current?.getApi().gotoDate(new Date(nextYear, nextMonth));
+                const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth+1}`;
+                performGetRequest(nextYear.toString(), new_M);
+              },
+            },
+            preButton : {
+              text: '<',
+              click: function () {
+                const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
+                const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
+                const preMonth = currentMonth - 1;
+                const preYear = currentYear;
+                calendarRef.current?.getApi().gotoDate(new Date(preYear, preMonth));
+                const new_M= (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
+                performGetRequest(preYear.toString(), new_M);
+              }
+            }
+          }}
           headerToolbar= {{
-            left: 'prev,next',
+            left: 'preButton,nextButton',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
           }}
           weekends={true}
           eventClick = {handleReadModalToggle}
-          events={handleEvents}
+          events={evt}
         />
-        
+        {/* 일정상세보기모달 */}
         { postModal.personalPost && <PersonalScheduleAdd handleModalToggle={handlePostModalToggle}/> }
         { postModal.subjectPost && 
-          getUserType() === 'PROFESSOR' && 
-          <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> }
+          !STUDENT && 
+          <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> 
+        }
+
+        {/* 일정상세보기모달 */}
         { readModal.personalRead && 
           <PersonalScheduleDetail
             handleModalToggle={()=> setReadModal({...readModal, personalRead: !readModal.personalRead})}
@@ -154,21 +178,25 @@ const Calendar = () =>{
           /> 
         }
         { readModal.subjectRead && 
-          getUserType() === 'PROFESSOR' &&
+          !STUDENT &&
           <SubjectDetailProf
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
             id = {id}
           /> 
         }
         { readModal.subjectRead && 
-          getUserType() === 'STUEDENT' &&
+          STUDENT &&
           <SubjectDetailStudent
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
           /> 
         }
-        {/* 유저타입이 학생, 교수 구분 */}
+
+        {/* 일정등록버튼 */}
         <RightAlign>
-          {getUserType() === 'PROFESSOR'  && <PostBtn type='button' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>}
+          {
+            !STUDENT && 
+            <PostBtn type='button' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
+          }
           <PostBtn type='button' onClick={e => handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
         </RightAlign>
         </>
