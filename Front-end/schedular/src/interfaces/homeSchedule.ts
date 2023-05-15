@@ -1,7 +1,10 @@
-interface subject {
-    subjectName? : string;
+interface subjects {
+    subjectName : string;
 }
-interface Subjects extends Array<subject> {};
+interface schedules {
+    title : string;
+}
+interface Subjects extends Array<subjects> {};
+interface Schedules extends Array<schedules> {};
 
-
-export type{Subjects};
+export type{Subjects,Schedules};
