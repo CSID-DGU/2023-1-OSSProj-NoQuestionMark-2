@@ -28,6 +28,12 @@ public class ScheduleController {
         return Response.success();
     }
 
+    @PostMapping("/subject")
+    public Response<Void> registerSubjectSchedule(@RequestBody SubjectScheduleRequestDto requestDto, Authentication authentication){
+        scheduleService.writeSubjectSchedule(requestDto, authentication.getName());
+        return Response.success();
+    }
+
     @GetMapping("/common")
     public Response<ScheduleResponseDto> getSchedule(@RequestParam("month") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth , Authentication authentication){
         Month month = yearMonth.getMonth();
