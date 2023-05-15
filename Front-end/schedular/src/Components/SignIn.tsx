@@ -2,10 +2,10 @@ import {useState, useEffect} from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import {isLogin,logout} from '../utils/utils';
+import {logout} from '../utils/utils';
 import {IAuthForm} from '../interfaces/IAuthForm';
 import * as Api from '../lib/Api';
-import { useRecoilState,useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { isLoginCheck,userInfoState,UserInfo } from 'recoil/Atom'
 
 const InputForm = styled.form`
@@ -58,12 +58,10 @@ const SignUpButton = styled(Link)`
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const [loginCheck, setLoginCheck] = useState(isLogin());
+  const [loginCheck, setLoginCheck] = useRecoilState(isLoginCheck);
   const [userInfo, setUserInfo] = useRecoilState<UserInfo>(userInfoState);
   const [loginMessage,setLoginMessage] = useState(''); 
 
-  useEffect(()=> {
-  })
   useEffect(()=> {
     setLoginMessage(`${userInfo.schoolNumber}(${userInfo.userName})`)
   },[loginCheck])
@@ -83,7 +81,7 @@ const SignIn = () => {
 				const {schoolNumber,userName,userType,token,schedule,subjects} = res.data.result;
         localStorage.setItem('token',token);
         localStorage.setItem('userType',userType);
-        setLoginCheck(isLogin);
+        setLoginCheck(!loginCheck);
         setUserInfo(
           {
             schoolNumber : schoolNumber,
@@ -99,7 +97,7 @@ const SignIn = () => {
 	};
   const LogoutHandler = () =>{
     logout();
-    setLoginCheck(isLogin);
+    setLoginCheck(!loginCheck);
     setUserInfo({schoolNumber: '',userName : ''});
     navigate('/');
   }
