@@ -10,13 +10,12 @@ const Main = styled.div`
   position: relative;
   padding-bottom: 2rem;
 `;
-
 function App() {
   return (
     <div className="App">        
       <GlobalStyle />
-      <Header />
       <Main>
+        <Header />
         <AppRouter />
       </Main>
       <Footer />
