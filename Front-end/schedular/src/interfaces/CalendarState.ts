@@ -11,7 +11,8 @@ interface EventSourceInput{
     endDate?: string, 
     contents:string, 
     importance?: string, 
-    scheduleType: string,
+    scheduleType?: string,
+    commonScheduleType?: string,
     subject?:string,
     type?:string
 }
