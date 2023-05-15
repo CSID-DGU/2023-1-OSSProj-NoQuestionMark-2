@@ -1,6 +1,4 @@
-import {useState} from 'react'
 import styled from 'styled-components';
-import { isLogin } from '../utils/utils';
 import background_image from '../Assets/Images/logo.png'
 import { Subjects } from 'interfaces/homeSchedule';
 
@@ -51,12 +49,7 @@ const ClassButton = styled.button`
   border: none;
 `;
 
-const MyClass = () => {
-/*
-  (props:{subjects:Subjects}) => {
-  const [loginCheck, setLoginCheck] = useState(false);
-  const {subjects} = props;
-  console.log(subjects);
+const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) => {
 
   const myClass = subjects
     .map((classes, index) => 
@@ -65,22 +58,10 @@ const MyClass = () => {
       <ClassButton type='button'>강의실 가기</ClassButton>
     </ListWapper>)
     ;
-  */
-  const dummyClass = [ '데이터베이스', '오픈소스소프트웨어프로젝트', '컴퓨터네트워크', '머신러닝과데이터사이언스', '인공지능기초', '자료구조알고리즘1']
-
-  dummyClass.sort();
-
-  const myClass = dummyClass
-    .map((classes, index) => 
-    <ListWapper>
-      <MyList key={index}>{classes}</MyList>
-      <ClassButton type='button'>강의실 가기</ClassButton>
-    </ListWapper>)
-    ;
 
   return (
     <>
-    { !isLogin ?
+    { (myClass.length < 1 && !loginCkeck)?
     <Container>
       <MyClassDiv style={{ backgroundImage: `url(${background_image})`}}>
         <Title>내 강의실</Title>

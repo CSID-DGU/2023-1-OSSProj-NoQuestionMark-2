@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { isLogin } from '../utils/utils';
 import background_image from '../Assets/Images/logo.png'
-import { Subjects } from 'interfaces/homeSchedule';
+import { Schedules } from 'interfaces/homeSchedule';
 const Container = styled.div`
   width: 50%;
 `;
@@ -50,31 +50,20 @@ const MyList = styled.span`
 `;
   
 
-const MySchedule = () => { 
-  /*(props:{schedule:Subjects}) => {
-  const {schedule} = props;
-  const dummySchedule = [...schedule];
+const MySchedule = //() => { 
+  ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean}) => {
 
-  const mySchedule = dummySchedule
+  const mySchedule = schedule
     .map((schedules, index) => 
     <ListWapper>
-      <MyList key={index}>{schedules.subjectName}</MyList>
+      <MyList key={index}>{schedules.title}</MyList>
     </ListWapper>)
-    .filter(() => dummySchedule.length > 0 )
+    .filter(() => schedule.length > 0 )
     ;
-  */
-  const dummySchedule = ['일정1', '과제1', '일정2', '과제2', '시험2', '과제3']
 
-  const mySchedule = dummySchedule
-    .map((schedules, index) => 
-    <ListWapper>
-      <MyList key={index}>{schedules}</MyList>
-    </ListWapper>)
-    .filter(() => dummySchedule.length > 0 );
-  
   return (
     <>
-    { !isLogin ?
+    { (mySchedule.length < 1 && !loginCkeck) ?
     <Container>
       <MyScheduleDiv style={{ backgroundImage: `url(${background_image})`}}>
         <Title>내 할 일 보기</Title>
