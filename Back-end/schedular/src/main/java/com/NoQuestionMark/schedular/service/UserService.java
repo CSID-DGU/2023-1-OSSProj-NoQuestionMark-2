@@ -1,19 +1,21 @@
 package com.NoQuestionMark.schedular.service;
 
 import com.NoQuestionMark.schedular.controller.request.UserJoinRequestDto;
-import com.NoQuestionMark.schedular.controller.response.UserJoinResponseDto;
+import com.NoQuestionMark.schedular.controller.response.*;
 import com.NoQuestionMark.schedular.exception.ErrorCode;
 import com.NoQuestionMark.schedular.exception.ScheduleException;
 import com.NoQuestionMark.schedular.model.User;
-import com.NoQuestionMark.schedular.model.entity.UserEntity;
-import com.NoQuestionMark.schedular.model.entity.UserType;
-import com.NoQuestionMark.schedular.repository.UserRepository;
+import com.NoQuestionMark.schedular.model.entity.*;
+import com.NoQuestionMark.schedular.repository.*;
 import com.NoQuestionMark.schedular.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Transactional
 @Service
@@ -26,13 +28,18 @@ public class UserService {
     @Value("${jwt.token.expired-time-ms}")
     private Long expiredTimeMs;
     private final UserRepository userRepository;
+    private final UserSubjectRepository userSubjectRepository;
+    private final SubjectRepository subjectRepository;
+    private final CommonScheduleRepository commonScheduleRepository;
+    private final SubjectScheduleRepository subjectScheduleRepository;
 
     private final BCryptPasswordEncoder encoder;
 
-    public User loadUserBySchoolNumber(String schoolNumber){
+    public User loadUserBySchoolNumber(String schoolNumber) {
         return userRepository.findBySchoolNumber(schoolNumber).map(User::fromEntity)
-                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s is not found", schoolNumber)));
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 사람이 없습니다.", schoolNumber)));
     }
+
     public UserJoinResponseDto join(UserJoinRequestDto requestDto) {
         userRepository.findBySchoolNumber(requestDto.getSchoolNumber())
                 .ifPresent(it -> {
@@ -43,13 +50,33 @@ public class UserService {
                 requestDto.getName(),
                 encoder.encode(requestDto.getPassword()),
                 UserType.returnUserType(requestDto.getUserType()),
-                requestDto.getEmail() );
-        return UserJoinResponseDto.toUserJoinResponse(userRepository.save(user));
+                requestDto.getEmail());
+        UserJoinResponseDto result = UserJoinResponseDto.toUserJoinResponse(userRepository.save(user));
+        List<Long> idArray = makeRandom();
+        for (int i = 0; i < 5; i++) {
+            Optional<SubjectEntity> subject = Optional.ofNullable(subjectRepository.findById(idArray.get(i))
+                    .orElseThrow(() -> new ScheduleException(ErrorCode.SUBJECT_NOT_FOUND)));
+            UserSubject userSubject = UserSubject.fromUserSubject(user, subject.get());
+            userSubjectRepository.save(userSubject);
+        }
+        return result;
+    }
+
+
+    public static List<Long> makeRandom() {
+        List<Long> randomArray = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            long num = (long) ((Math.random() * 22) + 1);
+            if (randomArray.contains(num)) {
+                i--;
+            } else randomArray.add(num);
+        }
+        return randomArray;
     }
 
     //ToDo : implement
     // jwt token 사용을 고려
-    public String login(String schoolNumber, String password){
+    public UserLoginResponseDto login(String schoolNumber, String password) {
 
         // 회원가입 여부 체크
         UserEntity user = userRepository
@@ -57,11 +84,25 @@ public class UserService {
                 .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s is not founded", schoolNumber)));
 
         // 비밀번호 체크
-        if(!encoder.matches(password, user.getPassword())){
+        if (!encoder.matches(password, user.getPassword())) {
             throw new ScheduleException(ErrorCode.INVALID_PASSWORD);
         }
 
         // 토큰 생성 과정
-        return JwtTokenUtils.generateToken(schoolNumber, user.getName(), user.getUserType(), secretKey, expiredTimeMs);
+        String token = JwtTokenUtils.generateToken(schoolNumber, user.getName(), user.getUserType(), secretKey, expiredTimeMs);
+        List<UserSubjectsResponseDto> userSubjects = new ArrayList<>(userSubjectRepository
+                .findAllByUser(user)
+                .stream()
+                .map(UserSubjectsResponseDto::fromUserSubject).toList());
+        userSubjects.sort(Comparator.comparing(UserSubjectsResponseDto::getSubjectName));
+        List<UserScheduleResponseDto> userSchedule = new ArrayList<>(commonScheduleRepository
+                .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
+                .stream().map(UserScheduleResponseDto::fromCommonSchedule).toList());
+        List<UserScheduleResponseDto> sSchedule = subjectScheduleRepository
+                .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
+                .stream().map(UserScheduleResponseDto::fromSubjectSchedule).toList();
+        userSchedule.addAll(sSchedule);
+        userSchedule.sort(Comparator.comparingInt(UserScheduleResponseDto::getDDay));
+        return new UserLoginResponseDto(token, user.getName(), user.getSchoolNumber(), user.getUserType().name() ,userSubjects, userSchedule);
     }
 }
