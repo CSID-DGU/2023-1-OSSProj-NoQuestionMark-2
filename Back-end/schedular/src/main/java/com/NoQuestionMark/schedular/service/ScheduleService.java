@@ -71,4 +71,13 @@ public class ScheduleService {
                 .toList();
         return new ScheduleResponseDto(cSchedules, sSchedules);
     }
+
+    public void writeSubjectSchedule(SubjectScheduleRequestDto requestDto, String schoolNumber) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        if(user.getUserType() != UserType.PROFESSOR) throw new ScheduleException(ErrorCode.USER_NOT_AUTHORIZED, "교수만 가능한 작업입니다.");
+        SubjectScheduleEntity subjectSchedule = SubjectScheduleEntity.fromSubjectScheduleDto(requestDto, user);
+        subjectScheduleRepository.save(subjectSchedule);
+    }
 }
