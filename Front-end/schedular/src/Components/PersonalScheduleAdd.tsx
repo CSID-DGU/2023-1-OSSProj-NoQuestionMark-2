@@ -87,12 +87,14 @@ const PersonalScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
 
     
   const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
-  const postSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
+  const postSchedule = async ({ title, contents,commonScheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
-			const postData = { title, contents,scheduleType, importance, startDate, endDate  };
+			const postData = { title, contents,commonScheduleType, importance, startDate, endDate  };
+      console.log(postData);
 			await Api.post(`/schedule/common`, postData).then((res) => {
         alert('정상적으로 일정이 등록되었습니다.');
-				navigate('/calendar');
+        handleModalToggle('personal');
+        navigate('/calendar');
 			});
 		} catch (e) {
 			alert(e);
@@ -115,23 +117,25 @@ const PersonalScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
         </InputDiv>
         <label htmlFor='type'>유형</label>
         <InputDiv>
-          <StyledSelect id='type'  {...register('scheduleType', { required: true })}>
-            <option value='task'>task</option>
-            <option value='schedule'>schedule</option>
+          <StyledSelect id='type'  {...register('commonScheduleType', { required: true })}>
+            <option value='TASK'>TASK</option>
+            <option value='SCHEDULE'>SCHEDULE</option>
           </StyledSelect>
         </InputDiv>
         <label htmlFor='contents'>상세내용</label>
         <InputDiv>
           <StyledTextarea 
             id='contents' 
-            placeholder='상세내용을 입력해주세요.'/>
+            placeholder='상세내용을 입력해주세요.'
+            {...register('contents')}
+            />
         </InputDiv>
         <label htmlFor='importance'>중요도</label>
         <InputDiv>
           <StyledSelect id='importance'  {...register('importance', { required: true })}>
-            <option value='중요도1'>중요도1</option>
-            <option value='중요도2'>중요도2</option>
-            <option value='중요도3'>중요도3</option>
+            <option value='EASYGOING'>EASYGOING</option>
+            <option value='NORMAL'>NORMAL</option>
+            <option value='IMPORTANT'>IMPORTANT</option>
           </StyledSelect>
         </InputDiv>
         <label>시작 날짜</label>
@@ -140,7 +144,7 @@ const PersonalScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
         </InputDiv>
         <label>마감 날짜</label>
         <InputDiv>
-          <input type="datetime-local" ></input>
+          <input type="datetime-local" {...register("endDate", { required: true })} ></input>
         </InputDiv>
         </Grid>
       <SubmitButton name='등록하기' width='15rem' height='3rem' color='#228be6'/>
