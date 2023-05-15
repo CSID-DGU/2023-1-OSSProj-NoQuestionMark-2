@@ -82,12 +82,7 @@ const SignIn = () => {
         localStorage.setItem('token',token);
         localStorage.setItem('userType',userType);
         setLoginCheck(!loginCheck);
-        setUserInfo(
-          {
-            schoolNumber : schoolNumber,
-            userName : userName,
-          }
-        );
+        setUserInfo({schoolNumber,userName,userType});
         alert(`${schoolNumber}(${userName})님 로그인 되었습니다.`);
         navigate('/');
 			});
@@ -98,7 +93,7 @@ const SignIn = () => {
   const LogoutHandler = () =>{
     logout();
     setLoginCheck(!loginCheck);
-    setUserInfo({schoolNumber: '',userName : ''});
+    setUserInfo({schoolNumber: null,userName : null,userType: null});
     navigate('/');
   }
   return (

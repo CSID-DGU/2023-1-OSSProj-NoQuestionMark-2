@@ -14,6 +14,7 @@ export const isLoginCheck = atom({
 export interface UserInfo {
     userName : string|null,
     schoolNumber : string|null,
+    userType: string|null
 }
 
 export const userInfoState = atom<UserInfo>({
@@ -21,6 +22,7 @@ export const userInfoState = atom<UserInfo>({
     default:{
         userName: null,
         schoolNumber: null,
+        userType:null
     },
     effects_UNSTABLE: [persistAtom]
 });
