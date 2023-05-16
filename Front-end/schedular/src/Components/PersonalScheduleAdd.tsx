@@ -77,7 +77,7 @@ const Form = styled.form`
 `;
 
 
-const PersonalScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
+const PersonalScheduleAdd = ({ handleModalToggle}: ModalToggle)  => {
   const navigate= useNavigate();
   const {     
     register,

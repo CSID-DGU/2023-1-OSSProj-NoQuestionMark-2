@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { isLogin } from '../utils/utils';
 import background_image from '../Assets/Images/logo.png'
 import { Schedules } from 'interfaces/homeSchedule';
 const Container = styled.div`
@@ -50,8 +49,7 @@ const MyList = styled.span`
 `;
   
 
-const MySchedule = //() => { 
-  ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean}) => {
+const MySchedule = ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean}) => {
 
   const mySchedule = schedule
     .map((schedules, index) => 
@@ -63,7 +61,7 @@ const MySchedule = //() => {
 
   return (
     <>
-    { (mySchedule.length < 1 && !loginCkeck) ?
+    { (!loginCkeck) ?
     <Container>
       <MyScheduleDiv style={{ backgroundImage: `url(${background_image})`}}>
         <Title>내 할 일 보기</Title>
@@ -75,7 +73,7 @@ const MySchedule = //() => {
       <MyScheduleDiv>
         <Title>내 할 일 보기</Title>
         <CalendarButton to='/calendar'>+</CalendarButton>
-        {mySchedule}
+        {mySchedule.length > 0 ? mySchedule : <p>할 일이 없습니다.</p> }
       </MyScheduleDiv>
     </Container>
     }
