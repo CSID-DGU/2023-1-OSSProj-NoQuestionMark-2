@@ -32,7 +32,7 @@ const RadioGroup = styled.div`
     margin: 0.3rem;
 `;
 const RadioButton = styled.div`
-    &:first-child {
+    &:not(first-child) {
         margin-right : 6rem;
     }
     accent-color: red;
@@ -160,6 +160,11 @@ const SignUp = () => {
                     <RadioButton>
                         <input type='radio' id='prof' value='PROFESSOR' {...register('userType')}/> 
                         <label htmlFor='prof'>교수</label>
+                    </RadioButton>
+                    
+                    <RadioButton>
+                        <input type='radio' id='prof' value='PROFESSOR' {...register('userType')}/> 
+                        <label htmlFor='prof'>교직원</label>
                     </RadioButton>
                 </RadioGroup>
                 
