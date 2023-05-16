@@ -131,7 +131,7 @@ const Calendar = () =>{
     setId(_def.extendedProps.cSheduleId ? _def.extendedProps.cSheduleId : _def.extendedProps.sSheduleId);
     let {start, end } = _instance.range;
 
-    !STUDENT ?
+    type === 'personal' ?
     setReadModal({...readModal, personalRead: !readModal.personalRead})
     :setReadModal({...readModal, subjectRead : !readModal.subjectRead})
   }
@@ -213,6 +213,7 @@ const Calendar = () =>{
           STUDENT &&
           <SubjectDetailStudent
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
+            subjectList={subjectList} 
           /> 
         }
 

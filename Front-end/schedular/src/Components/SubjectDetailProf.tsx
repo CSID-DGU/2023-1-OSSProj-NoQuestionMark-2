@@ -7,14 +7,27 @@ import SubmitButton from '../Components/SubmitButton';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
 import * as Api from '../lib/Api';
 
-const Container = styled.div`
-  position: relative;
-  margin: 0 auto;
+const ModalConatiner = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index : 999;
+`;
+const Form = styled.form`
+  position: absolute;
+  width: 25%;
+  min-width: 385px;
+  padding: 30px;
+  text-align: center;
   background-color: rgb(255, 255, 255);
-  width: 30%;
-  min-width: 400px;
-  border-radius: 30px;
-  padding: 25px 0;
+  border-radius: 20px;
+  box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 `;
 const CloseButton = styled(AiFillCloseCircle)`
   position: absolute;
@@ -106,7 +119,7 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const SubjectDetailProf = ({ handleModalToggle, id }: ModalToggle) => {
+const SubjectDetailProf = ({handleModalToggle,subjectList,id}: ModalToggle) => {
   const [edited, setEdited] = useState(false)
 
   const onClickEditButton = () => {
@@ -129,16 +142,17 @@ const SubjectDetailProf = ({ handleModalToggle, id }: ModalToggle) => {
 			//await Api.put(`/schedule/subjectArticleId/${id}`, putData).then((res) => {
       //  alert('정상적으로 일정이 등록되었습니다.');
 			//});
+      handleModalToggle('subject');
 		} catch (e) {
 			alert(e);
 		}
 	};
 
   return (
-    <Container>
-      <h1>과목 일정 상세보기</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CloseButton/>
+    <ModalConatiner>      
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <h1>과목 일정 상세보기</h1>
+        <CloseButton onClick ={()=>handleModalToggle('subject')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
         <InputDiv>
@@ -158,6 +172,9 @@ const SubjectDetailProf = ({ handleModalToggle, id }: ModalToggle) => {
         </InputDiv>
         <label htmlFor='subject'>과목명</label>
         <InputDiv>
+          <StyledSelect id='subject' {...register('className', { required: true })} disabled={edited ? false : true}>
+            {subjectList?.map((el)=> <option value={el}>{el}</option>)}
+          </StyledSelect>
         </InputDiv>
         <label htmlFor='importance'>일정 종류</label>
         <InputDiv>
@@ -189,8 +206,8 @@ const SubjectDetailProf = ({ handleModalToggle, id }: ModalToggle) => {
               <CDButton type='button'>삭제하기</CDButton>
             </ButtonLine>
           </ButtonWapper>)}
-      </form>
-    </Container>
+      </Form>
+    </ModalConatiner>
   )
 }
 
