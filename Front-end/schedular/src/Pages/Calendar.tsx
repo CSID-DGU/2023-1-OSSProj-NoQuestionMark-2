@@ -11,12 +11,13 @@ import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
 import SubjectDetailStudent from 'Components/SubjectDetailStudent';
 import SubjectDetailProf from 'Components/SubjectDetailProf';
 import { Events,EventSourceInput}  from 'interfaces/CalendarState';
+import {subjects} from 'interfaces/homeSchedule';
 import { useRecoilValue } from 'recoil';
 import { userInfoState } from 'recoil/Atom'
 import * as Api from 'lib/Api';
 
 const Container = styled.div`
-  width : 80%;
+  width : 70%;
   margin : 3rem auto 5rem;
 `;
 const RightAlign = styled.div`
@@ -31,14 +32,25 @@ const RightAlign = styled.div`
       margin-top : 2rem;
   }
 `;
-const PostBtn = styled.button`
+const PostBtn = styled.button<ButtonProps>`
   &:first-child {
       margin-right : 1rem;
   }
 
-  width : 8rem;
-  height : 2rem;
+  width : 9.5rem;
+  height : 2.8rem;
+  background-color : ${props => props.btnName === 'personal'? '#6ED746': 'orange'};
+  border:none;
+  border-radius: 5px;
+  color: white;
+  padding : 0.2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
 `; 
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  btnName: string;
+}
 
 const getTodayMonth = () => {
   const Tmonth = String(new Date().getMonth()+1);
@@ -54,6 +66,7 @@ const isStudent = (userType:string|null):boolean => {
 }
 
 const Calendar = () =>{
+  const [subjectList, setSubjectList] =useState<string[]>([]);
   const [postModal, setpostModal] = useState({ personalPost: false, subjectPost: false});
   const [readModal, setReadModal] = useState({ personalRead: false, subjectRead: false});
   const [evt, setEvents] = useState<Events>();
@@ -68,13 +81,25 @@ const Calendar = () =>{
   },[evt]);
 
   useEffect(() =>{
+    if (!STUDENT){
+      (async () => {
+        try {
+          await Api.get('/home').then((res)=>{
+            const result = res.data.result
+            const {subjects} = result;
+            setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      })();
+    }
     const year = getTodayYear();
     const month = getTodayMonth();
     performGetRequest(year,month);
   },[])
 
   const performGetRequest = async (year: string, month: string) => {
-    console.log('getFunction',month,year);
     try {
       const response = await Api.get(`/schedule/common?month=${year}-${month}`);
       console.log(response);
@@ -94,7 +119,7 @@ const Calendar = () =>{
 
   // modal
   const handlePostModalToggle = (type:string) => {
-    type === 'personal' && postModal.subjectPost === false?
+    type==='personal' ?
     setpostModal({...postModal, personalPost: !postModal.personalPost})
     :setpostModal({...postModal, subjectPost : !postModal.subjectPost})
   }
@@ -106,7 +131,7 @@ const Calendar = () =>{
     setId(_def.extendedProps.cSheduleId ? _def.extendedProps.cSheduleId : _def.extendedProps.sSheduleId);
     let {start, end } = _instance.range;
 
-    type === 'personal' ?
+    !STUDENT ?
     setReadModal({...readModal, personalRead: !readModal.personalRead})
     :setReadModal({...readModal, subjectRead : !readModal.subjectRead})
   }
@@ -167,7 +192,7 @@ const Calendar = () =>{
         { postModal.personalPost && <PersonalScheduleAdd handleModalToggle={handlePostModalToggle}/> }
         { postModal.subjectPost && 
           !STUDENT && 
-          <SubjectScheduleAdd handleModalToggle={handlePostModalToggle}/> 
+          <SubjectScheduleAdd subjectList={subjectList} handleModalToggle={handlePostModalToggle}/>
         }
 
         {/* 일정상세보기모달 */}
@@ -195,9 +220,9 @@ const Calendar = () =>{
         <RightAlign>
           {
             !STUDENT && 
-            <PostBtn type='button' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
+            <PostBtn type='button' btnName='subject' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
           }
-          <PostBtn type='button' onClick={e => handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
+          <PostBtn type='button' btnName='personal' onClick={e => handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
         </RightAlign>
         </>
         : <h1>Loading</h1>

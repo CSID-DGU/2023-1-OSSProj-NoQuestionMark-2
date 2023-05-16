@@ -1,7 +1,7 @@
-
 interface ModalToggle{
     handleModalToggle: (value: string) => void;
     id? : string;
+    subjectList?: string[];
 }
 //scheduleType : task, schedule (개인), 과제,시험,발표 (과목)
 //type : personal(개인), subject(과목)
@@ -13,7 +13,8 @@ interface EventSourceInput{
     importance?: string, 
     scheduleType?: string,
     commonScheduleType?: string,
-    subject?:string,
+    subjectScheduleType?:string,
+    className?:string,
     type?:string
 }
 

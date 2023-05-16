@@ -1,6 +1,6 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle } from 'react-icons/ai';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
@@ -76,8 +76,7 @@ const Form = styled.form`
   box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 `;
 
-//props : {handleModalToggle: (str : string) => void}
-const SubjectScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
+const SubjectScheduleAdd = ({handleModalToggle,subjectList}: ModalToggle) => {
   const navigate= useNavigate();
   const {     
     register,
@@ -86,25 +85,28 @@ const SubjectScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
   } = useForm<EventSourceInput>({mode : 'onBlur'});
 
   const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
-  const postSchedule = async ({ title, contents, subject, scheduleType, startDate, endDate }:EventSourceInput) => {
+  const postSchedule = async ({ title, contents, className, subjectScheduleType, startDate, endDate }:EventSourceInput) => {
 		try {
-			const postData = {  title, contents, subject, scheduleType, startDate, endDate };
+			const postData = {  title, contents, className, subjectScheduleType, startDate, endDate };
+      console.log(postData);
 			await Api.post(`/schedule/subject`, postData).then((res) => {
+        console.log(res);
         alert('정상적으로 일정이 등록되었습니다.');
+        handleModalToggle('subject');
 				navigate('/calendar');
 			});
 		} catch (e) {
 			alert(e);
 		}
 	};
-
+  
   return (
     <ModalConatiner>
     <Form onSubmit={handleSubmit(onSubmit)}>
         <h1>과목 일정 등록</h1>
         <CloseButton onClick ={()=>handleModalToggle('subject')}/>
         <Grid>
-        <label htmlFor="title">제목</label>
+        <label htmlFor='title'>제목</label>
         <InputDiv>
           <StyledInput 
             id='title'
@@ -116,26 +118,31 @@ const SubjectScheduleAdd: React.FC<ModalToggle> = ({ handleModalToggle })  => {
         <InputDiv>
           <StyledTextarea 
             id='contents' 
-            placeholder='상세내용을 입력해주세요.'/>
+            placeholder='상세내용을 입력해주세요.'
+            {...register('contents', { required: true })}
+          />
         </InputDiv>
         <label htmlFor='subject'>과목명</label>
         <InputDiv>
+          <StyledSelect id='subject' {...register('className', { required: true })}>
+            {subjectList?.map((el)=> <option value={el}>{el}</option>)}
+          </StyledSelect>
         </InputDiv>
         <label htmlFor='scheduleType'>일정 종류</label>
         <InputDiv>
-          <StyledSelect id='scheduleType' {...register('scheduleType', { required: true })}>
-            <option value='과제'>과제</option>
-            <option value='시험'>시험</option>
-            <option value='발표'>발표</option>
+          <StyledSelect id='scheduleType' {...register('subjectScheduleType', { required: true })}>
+            <option value='ASSIGNMENT'>ASSIGNMENT</option>
+            <option value='TEST'>TEST</option>
+            <option value='PRESENTATION'>PRESENTATION</option>
           </StyledSelect>
         </InputDiv>
-        <label htmlFor="startDate">시작 날짜</label>
+        <label htmlFor='startDate'>시작 날짜</label>
         <InputDiv>
-          <input type="datetime-local" {...register("startDate", { required: true })}></input>
+          <input type='datetime-local' {...register('startDate', { required: true })}></input>
         </InputDiv>
-        <label htmlFor="endDate">마감 날짜</label>
+        <label htmlFor='endDate'>마감 날짜</label>
         <InputDiv>
-          <input type="datetime-local"></input>
+          <input type='datetime-local' {...register('endDate', { required: true })}></input>
         </InputDiv>
         </Grid>
         <SubmitButton name='등록하기' width='15rem' height='3rem' color='#228be6'/>
