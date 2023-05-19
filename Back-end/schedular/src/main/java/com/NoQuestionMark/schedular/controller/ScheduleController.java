@@ -5,7 +5,6 @@ import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.response.Response;
 import com.NoQuestionMark.schedular.controller.response.ScheduleResponseDto;
-import com.NoQuestionMark.schedular.controller.response.UserScheduleResponseDto;
 import com.NoQuestionMark.schedular.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Month;
 import java.time.YearMonth;
-import java.util.List;
 
 @RestController
 @RequestMapping("/schedule")
@@ -39,5 +37,11 @@ public class ScheduleController {
         Month month = yearMonth.getMonth();
         int year = yearMonth.getYear();
         return Response.success(scheduleService.getAllSchedule(month, year, authentication.getName()));
+    }
+
+    @DeleteMapping("/common/{scheduleId}")
+    public Response<Void> deleteSchedule(@PathVariable Long scheduleId, Authentication authentication){
+        scheduleService.deleteSchedule(scheduleId, authentication.getName());
+        return Response.success();
     }
 }

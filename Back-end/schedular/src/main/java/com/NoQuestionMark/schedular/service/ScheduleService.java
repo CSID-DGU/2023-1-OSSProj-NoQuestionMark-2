@@ -12,9 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.security.auth.Subject;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,4 +86,15 @@ public class ScheduleService {
         SubjectScheduleEntity subjectSchedule = SubjectScheduleEntity.fromSubjectScheduleDto(requestDto, user, subject);
         subjectScheduleRepository.save(subjectSchedule);
     }
+
+    public void deleteSchedule(Long scheduleId, String schoolNumber) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        CommonScheduleEntity commonSchedule = commonScheduleRepository
+                .findByIdAndUser(scheduleId, user)
+                .orElseThrow(()-> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND, String.format("%s 유저가 작성한 %d 일정을 찾을 수 없습니다.", schoolNumber, scheduleId)));
+        commonScheduleRepository.delete(commonSchedule);
+    }
+
 }
