@@ -15,6 +15,7 @@ public class UserScheduleResponseDto {
     private LocalDateTime scheduleTime;
     private String schedule;
     private String scheduleType;
+    private String className;
 
     private int dDay;
 
@@ -25,7 +26,9 @@ public class UserScheduleResponseDto {
                 schedule.getStartDate(),
                 "Common",
                 schedule.getCommonScheduleType().name(),
-                schedule.getStartDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth());
+                "",
+                schedule.getStartDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth()
+                );
     }
 
     public static UserScheduleResponseDto fromSubjectSchedule(SubjectScheduleEntity schedule){
@@ -35,6 +38,7 @@ public class UserScheduleResponseDto {
                 schedule.getStartDate(),
                 "Subject",
                 schedule.getSubjectScheduleType().name(),
+                schedule.getSubject().getSubjectName(),
                 schedule.getStartDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth());
     }
 }

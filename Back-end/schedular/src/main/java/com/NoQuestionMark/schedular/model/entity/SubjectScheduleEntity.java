@@ -29,6 +29,9 @@ public class SubjectScheduleEntity {
     private String contents;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id")
+    private SubjectEntity subject;
     private SubjectScheduleType subjectScheduleType;
     private Month startMonth;
     private Month endMonth;
@@ -49,11 +52,12 @@ public class SubjectScheduleEntity {
     }
 
     @Builder
-    private SubjectScheduleEntity(SubjectScheduleRequestDto requestDto, UserEntity user){
+    private SubjectScheduleEntity(SubjectScheduleRequestDto requestDto, UserEntity user, SubjectEntity subject){
         this.title = requestDto.getTitle();
         this.user = user;
         this.startMonth = requestDto.getStartDate().getMonth();
         this.endMonth = requestDto.getEndDate().getMonth();
+        this.subject = subject;
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
@@ -62,8 +66,8 @@ public class SubjectScheduleEntity {
         this.endYear = requestDto.getEndDate().getYear();
     }
 
-    public static SubjectScheduleEntity fromSubjectScheduleDto(SubjectScheduleRequestDto requestDto, UserEntity user){
-        return new SubjectScheduleEntity(requestDto, user);
+    public static SubjectScheduleEntity fromSubjectScheduleDto(SubjectScheduleRequestDto requestDto, UserEntity user, SubjectEntity subject){
+        return new SubjectScheduleEntity(requestDto, user, subject);
     }
 }
 
