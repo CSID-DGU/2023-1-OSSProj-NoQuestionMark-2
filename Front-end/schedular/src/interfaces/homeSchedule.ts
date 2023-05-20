@@ -3,6 +3,7 @@ interface subjects {
 }
 interface schedules {
     title : string;
+    dday : string;
 }
 interface Subjects extends Array<subjects> {};
 interface Schedules extends Array<schedules> {};
