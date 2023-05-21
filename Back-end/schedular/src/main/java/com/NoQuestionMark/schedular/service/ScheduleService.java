@@ -1,5 +1,6 @@
 package com.NoQuestionMark.schedular.service;
 
+import com.NoQuestionMark.schedular.controller.request.CommonScheduleFixRequestDto;
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.response.*;
@@ -97,4 +98,13 @@ public class ScheduleService {
         commonScheduleRepository.delete(commonSchedule);
     }
 
+    public void modifySchedule(Long scheduleId, String schoolNumber, CommonScheduleFixRequestDto requestDto) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        CommonScheduleEntity commonSchedule = commonScheduleRepository
+                .findByIdAndUser(scheduleId, user)
+                .orElseThrow(()-> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND, String.format("%s 유저가 작성한 %d 일정을 찾을 수 없습니다.", schoolNumber, scheduleId)));
+        commonSchedule.fixSchedule(requestDto);
+    }
 }
