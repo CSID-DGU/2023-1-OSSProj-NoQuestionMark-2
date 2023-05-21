@@ -1,5 +1,4 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
@@ -76,12 +75,10 @@ const Form = styled.form`
   box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 `;
 
-const SubjectScheduleAdd = ({handleModalToggle,subjectList}: ModalToggle) => {
-  const navigate= useNavigate();
+const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: ModalToggle) => {
   const {     
     register,
     handleSubmit,
-    reset,
   } = useForm<EventSourceInput>({mode : 'onBlur'});
 
   const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
@@ -93,7 +90,10 @@ const SubjectScheduleAdd = ({handleModalToggle,subjectList}: ModalToggle) => {
         console.log(res);
         alert('정상적으로 일정이 등록되었습니다.');
         handleModalToggle('subject');
-				navigate('/calendar');
+				if (date) {
+          const [month, year] = date;
+          getApi?.(year, month);
+        }
 			});
 		} catch (e) {
 			alert(e);
