@@ -4,9 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {logout} from '../utils/utils';
 import {IAuthForm} from '../interfaces/IAuthForm';
+import {UserInfo} from '../interfaces/GlobalState';
 import * as Api from '../lib/Api';
 import { useRecoilState } from 'recoil';
-import { isLoginCheck,userInfoState,UserInfo } from 'recoil/Atom'
+import { isLoginCheck,userInfoState } from 'recoil/Atom'
+import axios from 'axios';
 
 const InputForm = styled.form`
   display: flex;
@@ -87,7 +89,9 @@ const SignIn = () => {
         navigate('/');
 			});
 		} catch (e) {
-			alert(e);
+			if(axios.isAxiosError(e)){
+        alert(e.response?.data);
+      }
 		}
 	};
   const LogoutHandler = () =>{
