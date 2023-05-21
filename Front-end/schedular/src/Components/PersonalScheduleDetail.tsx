@@ -1,6 +1,5 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import {useState} from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
@@ -134,8 +133,7 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const PersonalScheduleDetail = ({ handleModalToggle, id }: ModalToggle)  => {
-
+const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date}: ModalToggle)  => {
   const [edited, setEdited] = useState(false)
 
   const onClickEditButton = () => {
@@ -155,16 +153,25 @@ const PersonalScheduleDetail = ({ handleModalToggle, id }: ModalToggle)  => {
   const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
 			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
-			//await Api.put(`/schedule/subject/${id}`, putData).then((res) => {
-      //  alert('정상적으로 일정이 수정되었습니다.');
-			//});
+      // console.log(putData);
+			await Api.put(`/schedule/common/${id}`, putData).then((res) => {
+        // console.log(res);
+        alert('정상적으로 일정이 수정되었습니다.');
+			});
 		} catch (e) {
 			alert(e);
 		}
 	};
 
   const delSchedule = async() => {
-    //await Api.delete(`/schedule/subject/${id}`).then(() => {});
+    await Api.delete(`/schedule/common/${id}`).then((res) => {
+      window.confirm('삭제하시겠습니까?');
+      handleModalToggle('personal');
+      if (date) {
+        const [month, year] = date;
+        getApi?.(year, month);
+      }
+    });
   }
 
   return (
@@ -199,9 +206,9 @@ const PersonalScheduleDetail = ({ handleModalToggle, id }: ModalToggle)  => {
         <label htmlFor='importance'>중요도</label>
         <InputDiv>
           <StyledSelect id='importance'  {...register('importance', { required: true })} disabled={edited ? false : true}>
-            <option value='중요도1'>중요도1</option>import SubmitButton from './SubmitButton';
-            <option value='중요도2'>중요도2</option>
-            <option value='중요도3'>중요도3</option>
+            <option value='EASYGOING'>EASYGOING</option>
+            <option value='NORMAL'>NORMAL</option>
+            <option value='IMPORTANT'>IMPORTANT</option>
           </StyledSelect>
         </InputDiv>
         <label>시작 날짜</label>
