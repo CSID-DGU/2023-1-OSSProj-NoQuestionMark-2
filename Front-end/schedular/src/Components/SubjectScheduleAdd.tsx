@@ -123,9 +123,9 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
             {...register('contents', { required: true })}
           />
         </InputDiv>
-        <label htmlFor='subject'>과목명</label>
+        <label htmlFor='className'>과목명</label>
         <InputDiv>
-          <StyledSelect id='subject' {...register('className', { required: true })}>
+          <StyledSelect id='className' {...register('className', { required: true })}>
             {subjectList?.map((el)=> <option value={el}>{el}</option>)}
           </StyledSelect>
         </InputDiv>
