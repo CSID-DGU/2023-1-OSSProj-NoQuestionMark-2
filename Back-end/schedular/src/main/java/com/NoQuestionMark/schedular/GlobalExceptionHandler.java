@@ -7,13 +7,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ScheduleException.class)
     public ResponseEntity<String> handleMyException(ScheduleException ex) {
-        String errorMessage = ex.getMessage();
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String errorMessage = ex.getErrorCode().getMessage();
+        HttpStatus status = ex.getErrorCode().getStatus();
         return new ResponseEntity<>(errorMessage, status);
     }
 }
