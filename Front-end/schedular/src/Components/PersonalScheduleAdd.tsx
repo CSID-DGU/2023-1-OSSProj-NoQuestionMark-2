@@ -1,5 +1,4 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
@@ -77,12 +76,10 @@ const Form = styled.form`
 `;
 
 
-const PersonalScheduleAdd = ({ handleModalToggle}: ModalToggle)  => {
-  const navigate= useNavigate();
+const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => {
   const {     
     register,
     handleSubmit,
-    reset,
   } = useForm<EventSourceInput>({mode : 'onBlur'})
 
     
@@ -94,7 +91,10 @@ const PersonalScheduleAdd = ({ handleModalToggle}: ModalToggle)  => {
 			await Api.post(`/schedule/common`, postData).then((res) => {
         alert('정상적으로 일정이 등록되었습니다.');
         handleModalToggle('personal');
-        navigate('/calendar');
+        if (date) {
+          const [month, year] = date;
+          getApi?.(year, month);
+        }
 			});
 		} catch (e) {
 			alert(e);

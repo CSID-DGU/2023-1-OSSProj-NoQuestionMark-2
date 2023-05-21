@@ -2,6 +2,9 @@ interface ModalToggle{
     handleModalToggle: (value: string) => void;
     id? : string;
     subjectList?: string[];
+    event?:Events;
+    getApi?: (year: string, month: string) => void;
+    date?:string[]|undefined;
 }
 //scheduleType : task, schedule (개인), 과제,시험,발표 (과목)
 //type : personal(개인), subject(과목)

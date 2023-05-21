@@ -1,7 +1,8 @@
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 import {isLogin} from 'utils/utils';
-
+import {UserInfo} from 'interfaces/GlobalState';
+import {Events} from 'interfaces/CalendarState';
 const { persistAtom } = recoilPersist();
 
 // 전역상태를 만든고, export 해준다.
@@ -11,12 +12,6 @@ export const isLoginCheck = atom({
     effects_UNSTABLE: [persistAtom]
 });
 
-export interface UserInfo {
-    userName : string|null,
-    schoolNumber : string|null,
-    userType: string|null
-}
-
 export const userInfoState = atom<UserInfo>({
     key: 'userInfoState',
     default:{
@@ -24,5 +19,11 @@ export const userInfoState = atom<UserInfo>({
         schoolNumber: null,
         userType:null
     },
+    effects_UNSTABLE: [persistAtom]
+});
+
+export const EventState = atom<Events>({
+    key: 'evtState',
+    default:[],
     effects_UNSTABLE: [persistAtom]
 });

@@ -12,8 +12,8 @@ import SubjectDetailStudent from 'Components/SubjectDetailStudent';
 import SubjectDetailProf from 'Components/SubjectDetailProf';
 import { Events,EventSourceInput}  from 'interfaces/CalendarState';
 import {subjects} from 'interfaces/homeSchedule';
-import { useRecoilValue } from 'recoil';
-import { userInfoState } from 'recoil/Atom'
+import { useRecoilValue,useRecoilState } from 'recoil';
+import { userInfoState,EventState } from 'recoil/Atom'
 import * as Api from 'lib/Api';
 
 const Container = styled.div`
@@ -71,7 +71,10 @@ const Calendar = () =>{
   const [readModal, setReadModal] = useState({ personalRead: false, subjectRead: false});
   const [evt, setEvents] = useState<Events>();
   const [id, setId] = useState('');
+  const [month, setMonth] = useState(getTodayMonth);
+  const [year, setYear] = useState(getTodayYear);
 
+  const [evtState,setEvtState]= useRecoilState(EventState);
   const userType = useRecoilValue(userInfoState).userType;
   const STUDENT = isStudent(userType);
   const calendarRef = useRef<FullCalendar>(null);
@@ -94,8 +97,6 @@ const Calendar = () =>{
         }
       })();
     }
-    const year = getTodayYear();
-    const month = getTodayMonth();
     performGetRequest(year,month);
   },[])
 
@@ -106,7 +107,9 @@ const Calendar = () =>{
       const {commonSchedule,subjectSchedule} = response.data.result;
       commonSchedule.map((s:EventSourceInput) => s['type'] = 'personal');
       subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
-      _getEvents([...commonSchedule, ...subjectSchedule]);
+      const new_Event_List = [...commonSchedule, ...subjectSchedule];
+      _getEvents(new_Event_List );
+      setEvtState(new_Event_List);
 
     } catch (error) {
       console.error('Error:', error);
@@ -128,7 +131,7 @@ const Calendar = () =>{
     let {_def,_instance} = info.event;
     let {title} = _def;
     let {contents, type} = _def.extendedProps;
-    setId(_def.extendedProps.cSheduleId ? _def.extendedProps.cSheduleId : _def.extendedProps.sSheduleId);
+    setId(_def.extendedProps.scheduleId);
     let {start, end } = _instance.range;
 
     type === 'personal' ?
@@ -163,6 +166,8 @@ const Calendar = () =>{
                 const nextYear = currentYear;
                 calendarRef.current?.getApi().gotoDate(new Date(nextYear, nextMonth));
                 const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth+1}`;
+                setMonth(new_M);
+                setYear(nextYear.toString());
                 performGetRequest(nextYear.toString(), new_M);
               },
             },
@@ -175,6 +180,8 @@ const Calendar = () =>{
                 const preYear = currentYear;
                 calendarRef.current?.getApi().gotoDate(new Date(preYear, preMonth));
                 const new_M= (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
+                setMonth(new_M);
+                setYear(preYear.toString());
                 performGetRequest(preYear.toString(), new_M);
               }
             }
@@ -188,8 +195,13 @@ const Calendar = () =>{
           eventClick = {handleReadModalToggle}
           events={evt}
         />
-        {/* 일정상세보기모달 */}
-        { postModal.personalPost && <PersonalScheduleAdd handleModalToggle={handlePostModalToggle}/> }
+        {/* 일정등록모달 */}
+        { postModal.personalPost && 
+          <PersonalScheduleAdd 
+            handleModalToggle={handlePostModalToggle}
+            getApi={performGetRequest}
+            date={[month,year]}
+          /> }
         { postModal.subjectPost && 
           !STUDENT && 
           <SubjectScheduleAdd subjectList={subjectList} handleModalToggle={handlePostModalToggle}/>
@@ -199,7 +211,9 @@ const Calendar = () =>{
         { readModal.personalRead && 
           <PersonalScheduleDetail
             handleModalToggle={()=> setReadModal({...readModal, personalRead: !readModal.personalRead})}
+            getApi ={performGetRequest}
             id = {id}
+            date = {[month,year]}
           /> 
         }
         { readModal.subjectRead && 

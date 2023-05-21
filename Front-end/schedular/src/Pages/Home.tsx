@@ -5,7 +5,7 @@ import background_image from '../Assets/Images/IMG_4174.jpeg'
 import MyClass from '../Components/MyClass';
 import MySchedule from '../Components/MySchedule';
 import { useRecoilValue } from 'recoil';
-import { isLoginCheck } from 'recoil/Atom'
+import { isLoginCheck, EventState} from 'recoil/Atom'
 import * as Api from "lib/Api";
 
 const BgImage = styled.div`
@@ -25,6 +25,7 @@ const Content = styled.div`
 const Home = () => {
   const [schedule,setSchedule] = useState<Schedules>([]);
   const [subjects,setSubjects] = useState<Subjects>([]);
+  const allEvent = useRecoilValue(EventState);
   const loginCheck = useRecoilValue(isLoginCheck);
 
   useEffect(() =>{
@@ -34,6 +35,7 @@ const Home = () => {
       (async () =>{
         await Api.get('/home').then( (res) => {
           const {schedule,subjects} = res.data.result;
+          
           setSchedule([...schedule]);
           setSubjects([...subjects]);
         });
@@ -43,7 +45,7 @@ const Home = () => {
       setSchedule([]);
       setSubjects([]);
     }
-  },[loginCheck])
+  },[loginCheck,allEvent])
 
   return (
     <>
