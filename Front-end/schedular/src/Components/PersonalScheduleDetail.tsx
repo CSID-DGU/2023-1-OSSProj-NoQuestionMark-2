@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler,Controller } from 'react-hook-form';
 import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
@@ -133,7 +133,9 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date}: ModalToggle)  => {
+const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalToggle)  => {
+  const formData = {...event}
+
   const [edited, setEdited] = useState(false)
 
   const onClickEditButton = () => {
@@ -142,11 +144,14 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date}: ModalToggle)
 
   const onClickReadButton = () => {
     setEdited(false);
+    reset({...formData});
   };
 
   const {     
     register,
     handleSubmit,
+    reset,
+    control
   } = useForm<EventSourceInput>({mode : 'onBlur'})
 
   const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
@@ -182,43 +187,114 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date}: ModalToggle)
         <Grid>
         <label htmlFor='title'>제목</label>
         <InputDiv>
-          <StyledInput
-            id='title'
-            type='text'
-            placeholder='제목을 입력해주세요.'
-            {...register('title', { required: true })} 
-            readOnly={edited ? false : true}/>
+          <Controller
+            control={control}
+            name='title'
+            defaultValue={formData.title}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <StyledInput 
+                id='title' 
+                type='text'
+                value={field.value}
+                placeholder='제목을 입력해주세요.'
+                {...register('title', { required: true })} 
+                readOnly={!edited }
+              />
+            )}
+          />
         </InputDiv>
         <label htmlFor='type'>유형</label>
-        <InputDiv>
-          <StyledSelect id='type'  {...register('scheduleType', { required: true })} disabled={edited ? false : true}>
-            <option value='task'>task</option>
-            <option value='schedule'>schedule</option>
-          </StyledSelect>
+          <InputDiv>
+            <Controller
+              control={control}
+              name='scheduleType'
+              defaultValue={formData.scheduleType}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <StyledSelect 
+                  id='type' 
+                  value={field.value}
+                  placeholder='제목을 입력해주세요.'
+                  {...register('scheduleType', { required: true })}
+                  disabled={!edited }
+                >
+                <option value='TASK'>TASK</option>
+                <option value='SCHEDULE'>SCHEDULE</option>
+              </StyledSelect>
+              )}
+            />
         </InputDiv>
         <label htmlFor='contents'>상세내용</label>
         <InputDiv>
-          <StyledTextarea 
-            id='contents' 
-            placeholder='상세내용을 입력해주세요.'
-            readOnly={edited ? false : true}/>
+          <Controller
+            control={control}
+            name='contents'
+            defaultValue={formData.contents}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <StyledTextarea 
+              id='contents' 
+              placeholder='상세내용을 입력해주세요.'
+              value={field.value}
+              readOnly={!edited }
+              {...register('contents', { required: true })} 
+              />
+            )}
+          />
         </InputDiv>
         <label htmlFor='importance'>중요도</label>
         <InputDiv>
-          <StyledSelect id='importance'  {...register('importance', { required: true })} disabled={edited ? false : true}>
-            <option value='EASYGOING'>EASYGOING</option>
-            <option value='NORMAL'>NORMAL</option>
-            <option value='IMPORTANT'>IMPORTANT</option>
-          </StyledSelect>
+          <Controller
+            control={control}
+            name='importance'
+            defaultValue={formData.importance}
+            rules={{ required: true }}
+            render={({ field }) => (
+                <StyledSelect id='importance' value={field.value} {...register('importance', { required: true })} disabled={!edited}>
+                  <option value='EASYGOING'>EASYGOING</option>
+                  <option value='NORMAL'>NORMAL</option>
+                  <option value='IMPORTANT'>IMPORTANT</option>
+                </StyledSelect>
+            )}
+          />
         </InputDiv>
         <label>시작 날짜</label>
-        <InputDiv>
-          <input type='datetime-local' {...register('startDate', { required: true })} readOnly={edited ? false : true}></input>
-        </InputDiv>
+        <Controller
+            control={control}
+            name='startDate'
+            defaultValue={formData.startDate}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <InputDiv>
+              <input
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                value={field.value}
+                type='datetime-local'
+                readOnly={!edited}
+              />
+              </InputDiv>
+            )}
+          />
         <label>마감 날짜</label>
-        <InputDiv>
-          <input type='datetime-local' readOnly={edited ? false : true}></input>
-        </InputDiv>
+        <Controller
+            control={control}
+            name='startDate'
+            defaultValue={formData.endDate}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <InputDiv>
+              <input
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                value={field.value}
+                type='datetime-local'
+                readOnly={!edited}
+              />
+              </InputDiv>
+            )}
+          />
         </Grid>
         {edited ? ( 
           <ButtonWapper>

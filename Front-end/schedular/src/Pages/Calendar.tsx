@@ -10,8 +10,8 @@ import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
 import SubjectDetailStudent from 'Components/SubjectDetailStudent';
 import SubjectDetailProf from 'Components/SubjectDetailProf';
-import { Events,EventSourceInput}  from 'interfaces/CalendarState';
-import {subjects} from 'interfaces/homeSchedule';
+import { EventSourceInput}  from 'interfaces/CalendarState';
+import { subjects } from 'interfaces/homeSchedule';
 import { useRecoilValue,useRecoilState } from 'recoil';
 import { userInfoState,EventState } from 'recoil/Atom'
 import * as Api from 'lib/Api';
@@ -69,7 +69,7 @@ const Calendar = () =>{
   const [subjectList, setSubjectList] =useState<string[]>([]);
   const [postModal, setpostModal] = useState({ personalPost: false, subjectPost: false});
   const [readModal, setReadModal] = useState({ personalRead: false, subjectRead: false});
-  const [evt, setEvents] = useState<Events>();
+  const [evt, setEvents] = useState<EventSourceInput>();
   const [id, setId] = useState('');
   const [month, setMonth] = useState(getTodayMonth);
   const [year, setYear] = useState(getTodayYear);
@@ -78,10 +78,6 @@ const Calendar = () =>{
   const userType = useRecoilValue(userInfoState).userType;
   const STUDENT = isStudent(userType);
   const calendarRef = useRef<FullCalendar>(null);
-
-  useEffect (() => {
-    console.log(evt);
-  },[evt]);
 
   useEffect(() =>{
     if (!STUDENT){
@@ -109,7 +105,6 @@ const Calendar = () =>{
       subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
       const new_Event_List = [...commonSchedule, ...subjectSchedule];
       _getEvents(new_Event_List );
-      setEvtState(new_Event_List);
 
     } catch (error) {
       console.error('Error:', error);
@@ -117,7 +112,7 @@ const Calendar = () =>{
   };
 
   const _getEvents = async (events: EventSourceInput[]) => {
-    setEvents(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
+    setEvtState(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
   }
 
   // modal
@@ -128,20 +123,25 @@ const Calendar = () =>{
   }
 
   const handleReadModalToggle = (info:any) => {
-    let {_def,_instance} = info.event;
+    let {_def} = info.event;
     let {title} = _def;
-    let {contents, type} = _def.extendedProps;
-    setId(_def.extendedProps.scheduleId);
-    let {start, end } = _instance.range;
+    let className = _def.ui.classNames[0];
+    let {contents,startDate, endDate, type, scheduleId, importance,scheduleType} = _def.extendedProps;
 
-    type === 'personal' ?
-    setReadModal({...readModal, personalRead: !readModal.personalRead})
-    :setReadModal({...readModal, subjectRead : !readModal.subjectRead})
+    setId(scheduleId);
+    if(type === 'personal'){
+      setEvents({title,contents,startDate, endDate, importance, scheduleType});
+      setReadModal({...readModal, personalRead: !readModal.personalRead})
+    }
+    else {
+      setEvents({title,contents,startDate, endDate, importance, className, scheduleType});
+      setReadModal({...readModal, subjectRead : !readModal.subjectRead})
+    }
   }
 
   return (
       <Container>
-        { evt ? 
+        { evtState ? 
         <>
         <RightAlign>
           <select name='pets' id='pet-select'>
@@ -193,7 +193,7 @@ const Calendar = () =>{
           }}
           weekends={true}
           eventClick = {handleReadModalToggle}
-          events={evt}
+          events={evtState}
         />
         {/* 일정등록모달 */}
         { postModal.personalPost && 
@@ -214,13 +214,16 @@ const Calendar = () =>{
             getApi ={performGetRequest}
             id = {id}
             date = {[month,year]}
+            event = {evt}
           /> 
         }
         { readModal.subjectRead && 
           !STUDENT &&
           <SubjectDetailProf
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
+            event = {evt}
             id = {id}
+            subjectList={subjectList}
           /> 
         }
         { readModal.subjectRead && 

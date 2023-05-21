@@ -88,6 +88,7 @@ const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => 
 		try {
 			const postData = { title, contents,commonScheduleType, importance, startDate, endDate  };
       console.log(postData);
+      startDate < endDate! ?
 			await Api.post(`/schedule/common`, postData).then((res) => {
         alert('정상적으로 일정이 등록되었습니다.');
         handleModalToggle('personal');
@@ -95,7 +96,7 @@ const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => 
           const [month, year] = date;
           getApi?.(year, month);
         }
-			});
+			}) : alert('마감날짜를 다시 설정해주세요.');
 		} catch (e) {
 			alert(e);
 		}
