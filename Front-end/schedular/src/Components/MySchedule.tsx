@@ -47,6 +47,29 @@ const MyList = styled.span`
   margin: 7px 35px;
   font-size: 15px;
 `;
+const DdayList = styled.span`
+  position: absolute;
+  right: 10px;
+  margin: 7px 35px;
+  padding: 2px 8px;
+  font-size: 15px;
+  background-color: #12314f;
+  color: #fff;
+  border-radius: 5px;
+`;
+const ScheduleBox = styled.div`
+  overflow-y: scroll;
+  height: 190px;
+  width: 490px;
+  &::-webkit-scrollbar{
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-thumb{
+    background-color: hsla(0, 0%, 42%, 0.49);
+    border-radius: 6px;
+  }
+`;
   
 
 const MySchedule = ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean}) => {
@@ -55,8 +78,8 @@ const MySchedule = ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean
     .map((schedules, index) => 
     <ListWapper>
       <MyList key={index}>{schedules.title}</MyList>
+      <DdayList key={index}>D-{schedules.dday}</DdayList>
     </ListWapper>)
-    .filter(() => schedule.length > 0 )
     ;
 
   return (
@@ -73,7 +96,9 @@ const MySchedule = ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean
       <MyScheduleDiv>
         <Title>내 할 일 보기</Title>
         <CalendarButton to='/calendar'>+</CalendarButton>
-        {mySchedule.length > 0 ? mySchedule : <p>할 일이 없습니다.</p> }
+        <ScheduleBox>
+          {mySchedule.length > 0 ? mySchedule : <p>할 일이 없습니다.</p> }
+        </ScheduleBox>
       </MyScheduleDiv>
     </Container>
     }
