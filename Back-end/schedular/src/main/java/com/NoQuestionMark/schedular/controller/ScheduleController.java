@@ -1,6 +1,7 @@
 package com.NoQuestionMark.schedular.controller;
 
 
+import com.NoQuestionMark.schedular.controller.request.CommonScheduleFixRequestDto;
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.response.Response;
@@ -42,6 +43,12 @@ public class ScheduleController {
     @DeleteMapping("/common/{scheduleId}")
     public Response<Void> deleteSchedule(@PathVariable Long scheduleId, Authentication authentication){
         scheduleService.deleteSchedule(scheduleId, authentication.getName());
+        return Response.success();
+    }
+
+    @PutMapping("/common/{scheduleId}")
+    public Response<Void> modifySchedule(@PathVariable Long scheduleId, Authentication authentication, @RequestBody CommonScheduleFixRequestDto requestDto){
+        scheduleService.modifySchedule(scheduleId, authentication.getName(), requestDto);
         return Response.success();
     }
 }
