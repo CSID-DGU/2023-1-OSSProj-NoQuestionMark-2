@@ -13,7 +13,7 @@ import java.time.Month;
 public class CommonScheduleRequestDto {
     private String title;
     private String contents;
-    private Importance importance;
+    private String importance;
     private String commonScheduleType;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
