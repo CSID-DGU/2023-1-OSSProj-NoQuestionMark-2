@@ -86,6 +86,7 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
 		try {
 			const postData = {  title, contents, className, subjectScheduleType, startDate, endDate };
       console.log(postData);
+      startDate < endDate! ?
 			await Api.post(`/schedule/subject`, postData).then((res) => {
         console.log(res);
         alert('정상적으로 일정이 등록되었습니다.');
@@ -94,7 +95,7 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
           const [month, year] = date;
           getApi?.(year, month);
         }
-			});
+			}): alert('마감날짜를 다시 설정해주세요.');
 		} catch (e) {
 			alert(e);
 		}
