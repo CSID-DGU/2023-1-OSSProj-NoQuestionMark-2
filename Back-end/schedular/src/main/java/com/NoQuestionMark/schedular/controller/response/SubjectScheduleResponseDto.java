@@ -1,10 +1,14 @@
 package com.NoQuestionMark.schedular.controller.response;
 
+import com.NoQuestionMark.schedular.model.entity.SubjectEntity;
 import com.NoQuestionMark.schedular.model.entity.SubjectScheduleEntity;
 import com.NoQuestionMark.schedular.model.entity.UserSubject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,6 +16,7 @@ import java.time.LocalDateTime;
 public class SubjectScheduleResponseDto {
     private Long scheduleId;
     private String title;
+    private String className;
     private String contents;
     private String schedule;
     private String scheduleType;
@@ -22,6 +27,7 @@ public class SubjectScheduleResponseDto {
         return new SubjectScheduleResponseDto(
                 subjectSchedule.getId(),
                 subjectSchedule.getTitle(),
+                subjectSchedule.getSubject().getSubjectName(),
                 subjectSchedule.getContents(),
                 "SUBJECT",
                 subjectSchedule.getSubjectScheduleType().name(),

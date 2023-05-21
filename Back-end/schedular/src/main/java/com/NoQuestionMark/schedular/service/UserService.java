@@ -98,9 +98,14 @@ public class UserService {
         List<UserScheduleResponseDto> userSchedule = new ArrayList<>(commonScheduleRepository
                 .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
                 .stream().map(UserScheduleResponseDto::fromCommonSchedule).toList());
-        List<UserScheduleResponseDto> sSchedule = subjectScheduleRepository
-                .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
-                .stream().map(UserScheduleResponseDto::fromSubjectSchedule).toList();
+        List<UserScheduleResponseDto> sSchedule = new ArrayList<>();
+        for (UserSubjectsResponseDto userSubject : userSubjects) {
+            SubjectEntity subject = subjectRepository.findBySubjectName(userSubject.getSubjectName())
+                    .orElseThrow(() -> new ScheduleException(ErrorCode.SUBJECT_NOT_FOUND, String.format("%s에 해당하는 과목이 존재하지 않습니다.", userSubject.getSubjectName())));
+            sSchedule.addAll(subjectScheduleRepository
+                    .findAllBySubjectAndStartDateGreaterThanOrderByStartDateAsc(subject, LocalDateTime.now())
+                    .stream().map(UserScheduleResponseDto::fromSubjectSchedule).toList());
+        }
         userSchedule.addAll(sSchedule);
         userSchedule.sort(Comparator.comparingInt(UserScheduleResponseDto::getDDay));
         return new UserLoginResponseDto(token, user.getName(), user.getSchoolNumber(), user.getUserType().name() ,userSubjects, userSchedule);
@@ -118,9 +123,14 @@ public class UserService {
         List<UserScheduleResponseDto> userSchedule = new ArrayList<>(commonScheduleRepository
                 .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
                 .stream().map(UserScheduleResponseDto::fromCommonSchedule).toList());
-        List<UserScheduleResponseDto> sSchedule = subjectScheduleRepository
-                .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
-                .stream().map(UserScheduleResponseDto::fromSubjectSchedule).toList();
+        List<UserScheduleResponseDto> sSchedule = new ArrayList<>();
+        for (UserSubjectsResponseDto userSubject : userSubjects) {
+            SubjectEntity subject = subjectRepository.findBySubjectName(userSubject.getSubjectName())
+                    .orElseThrow(() -> new ScheduleException(ErrorCode.SUBJECT_NOT_FOUND, String.format("%s에 해당하는 과목이 존재하지 않습니다.", userSubject.getSubjectName())));
+            sSchedule.addAll(subjectScheduleRepository
+                    .findAllBySubjectAndStartDateGreaterThanOrderByStartDateAsc(subject, LocalDateTime.now())
+                    .stream().map(UserScheduleResponseDto::fromSubjectSchedule).toList());
+        }
         userSchedule.addAll(sSchedule);
         userSchedule.sort(Comparator.comparingInt(UserScheduleResponseDto::getDDay));
         return new UserHomeResponseDto(user.getName(), user.getSchoolNumber(), user.getUserType().name() ,userSubjects, userSchedule);
