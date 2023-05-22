@@ -7,9 +7,9 @@ import Footer from 'Components/Footer';
 import {RecoilRoot} from 'recoil';
 
 const Main = styled.div`
+  height: auto;
   min-height: 100%;
-  position: relative;
-  padding-bottom: 2rem;
+  padding-bottom: 1000px;
 `;
 function App() {
   return (
