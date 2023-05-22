@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import background_image from '../Assets/Images/logo.png'
 import { Subjects } from 'interfaces/homeSchedule';
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
   width: 50%
@@ -37,7 +38,8 @@ const MyList = styled.span`
   margin: 7px 40px;
   font-size: 15px;
 `;
-const ClassButton = styled.button`
+
+const ClassButton = styled(Link)`
   position: absolute;
   right: 25px;
   margin: 7px 20px;
@@ -55,7 +57,7 @@ const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) =
     .map((classes, index) => 
     <ListWapper>
       <MyList key={index}>{classes.subjectName}</MyList>
-      <ClassButton type='button'>강의실 가기</ClassButton>
+      <ClassButton to="/eclass">강의실 가기</ClassButton>
     </ListWapper>)
     ;
 
