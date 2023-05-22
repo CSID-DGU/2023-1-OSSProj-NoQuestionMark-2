@@ -4,6 +4,7 @@ import SignUp from './Pages/SignUp';
 import Calendar from './Pages/Calendar';
 import NotFound from './Pages/NotFound';
 import { MemberRoute, NonMemberRoute } from 'Components/RestrictionRoute';
+import EclassSubject from 'Pages/EclassSubject';
 
 const AppRouter = () =>{
     return (
@@ -15,6 +16,7 @@ const AppRouter = () =>{
                 {/* <Route path="/calendar" element={<MemberRoute><Calendar /></MemberRoute>}/> */}
                 <Route path="/calendar" element={<Calendar />}/>
                 <Route path="/notfound" element={<NotFound />} />
+                <Route path="/eclass" element={<EclassSubject />} />
             </Routes>
         </>
     )
