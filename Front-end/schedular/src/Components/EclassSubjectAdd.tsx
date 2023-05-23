@@ -1,3 +1,6 @@
+import { useForm, SubmitHandler } from 'react-hook-form';
+import * as Api from '../lib/Api';
+import {EventSourceInput} from 'interfaces/CalendarState';
 import styled from 'styled-components';
 
 
@@ -14,17 +17,15 @@ const Form = styled.form`
   width: 100%;
 `;
 const TitleWapper = styled.div`
-  width: 1050px;
+  width: 1052px;
   height: 40px;
-  margin-left: 419px;
+  margin-left: 418px;
   background-color: #e6e6e6;
   border: 1.5px solid #cdcdcd;
 `;
-const SubjectTitle = styled.div`
-  display:flex;
-  align-items: center;
+const SubjectTitle = styled.input`
   height: 33px;
-  width: 698px;
+  width: 700px;
   padding-left: 10px;
   margin-top: 3px;
   margin-right: 335px;
@@ -70,32 +71,39 @@ const ContentTitle = styled.div`
 const Content = styled.div`
   flex-direction: column;
   height: 323px;
-  font-size: 13px;
   border: 1px solid #cdcdcd;
 `;
-const SubjectType = styled.div`
-  display: flex;
-  align-items: center;
-  height: 34px;
-  width: 920px;
+const SubjectType = styled.select`
+  height: 35px;
+  width: 100%;
   padding-left: 10px;
   border: 0.5px solid #cdcdcd;
 `;
 const DateWapper = styled.div`
-  display:flex;
-  align-items: center;
-  height: 35px;
-  padding-left: 10px;
+  display: flex;
+  height: 36px;
   background-color: #fff;
   border: 0.5px solid #cdcdcd;
+`;
+const StartDate = styled.input`
+  height: 36px;
+  width: 400px;
+  margin-left: 8px;
+  padding: 0 10px;
+  border: none;
 `;
 const StyledP = styled.p`
   height: 20px;
   margin: 6px 36px;
 `;
-const StyledDetail = styled.div`
-  text-align: left;
-  height: 240px;
+const EndDate = styled.input`
+  height: 36px;
+  width: 400px;
+  padding-left: 10px;
+  border: none;
+`;
+const StyledDetail = styled.textarea`
+  height: 238px;
   width: 920px;
   padding-left: 10px;
   padding-top: 10px;
@@ -114,15 +122,22 @@ const SubmitButton = styled.button`
   cursor: pointer;
 `;
 
-const EclassDetailStudent = () => {
+const EclassSubjectAdd = () => {
 
+  const {     
+    register,
+    handleSubmit,
+  } = useForm({mode : 'onBlur'});
+  const onSubmit = () => {
+    console.log();
+  };
 
   return (
     <Container>
-      <StyledH3>과목 일정 상세보기</StyledH3>
-      <Form>
+      <StyledH3>과목 일정 등록</StyledH3>
+      <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleWapper>
-            <SubjectTitle>제목</SubjectTitle>
+            <SubjectTitle id='title' type='text' placeholder='제목을 입력해주세요.' {...register('title', { required: true })}/>
           </TitleWapper>
           <ContentWapper>
             <SubTitleWapper>
@@ -131,15 +146,23 @@ const EclassDetailStudent = () => {
               <ContentTitle>상세 내용</ContentTitle>
             </SubTitleWapper>
             <Content>
-              <SubjectType>일정종류</SubjectType>
-              <DateWapper>시작날짜<StyledP>~</StyledP>마감날짜</DateWapper>
-              <StyledDetail>상세내용</StyledDetail>
+              <SubjectType id='subjectType'  {...register('subjectScheduleType', { required: true })}>
+                <option value='ASSIGNMENT'>ASSIGNMENT</option>
+                <option value='TEST'>TEST</option>
+                <option value='PRESENTATION'>PRESENTATION</option>
+              </SubjectType>
+              <DateWapper>
+                <StartDate id='startDate' type='datetime-local' {...register('startDate', { required: true })}/>
+                <StyledP>~</StyledP>
+                <EndDate id='endDate' type='datetime-local' {...register('endDate', { required: true })}/>
+              </DateWapper>
+              <StyledDetail id='contents' placeholder='상세내용을 입력해주세요.' {...register('contents', { required: true })}/>
             </Content>
           </ContentWapper>
-          <SubmitButton type='button'>제출하기</SubmitButton>
+          <SubmitButton type='submit'>등록하기</SubmitButton>
       </Form>
     </Container>
   )
 }
 
-export default EclassDetailStudent
+export default EclassSubjectAdd;
