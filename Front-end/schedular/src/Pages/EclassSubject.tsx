@@ -1,11 +1,12 @@
 import EclassMenu from './../Components/EclassMenu';
+import EclassClassName from 'Components/EclassClassName';
 
 const EclassSubject = () =>{
 
     return (
         <>
             <EclassMenu />
-            <p>이클래스</p>
+            <EclassClassName/>
         </>
     )
 
