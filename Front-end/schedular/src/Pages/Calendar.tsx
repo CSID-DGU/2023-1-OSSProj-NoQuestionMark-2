@@ -79,6 +79,11 @@ const CompleteList = styled.div`
 const Subheading = styled.h3`
   display: block;
 `
+const Dday = styled.div`
+  background-color: #12314f;
+  color: #fff;
+  border-radius: 5px;
+`
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   btnName: string;
 }
@@ -115,7 +120,6 @@ const Calendar = () =>{
       try {
         await Api.get('/home').then((res)=>{
           const result = res.data.result
-          console.log(result);
           const {subjects} = result;
           setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
         });
@@ -129,7 +133,7 @@ const Calendar = () =>{
   const performGetRequest = async (year: string, month: string) => {
     try {
       const response = await Api.get(`/schedule/common?month=${year}-${month}`);
-      console.log(response);
+      // console.log(response);
       const {commonSchedule,subjectSchedule} = response.data.result;
       commonSchedule.map((s:EventSourceInput) => s['type'] = 'personal');
       subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
@@ -140,9 +144,9 @@ const Calendar = () =>{
       console.error('Error:', error);
     }
   };
-  useEffect(() =>{
-    console.log(evtState);
-  },[evtState])
+  // useEffect(() =>{
+  //   console.log(evtState);
+  // },[evtState])
 
   const _getEvents = async (events: EventSourceInput[]) => {
     setEvtState(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
@@ -235,10 +239,11 @@ const Calendar = () =>{
             <TodoList>
               <Subheading>해야할 일</Subheading>
               {
-                evtState.map((el) => { 
+                evtState.map((el) => {  
                   if( el.scheduleType === 'TASK') {
-                    const {title, dday} = el;
-                    return <TodoTask><span>{title}</span><span>D{dday}</span></TodoTask>
+                    const {title, dday, endDate} = el;                    
+                    if(new Date().toISOString()< endDate ) {
+                      return <TodoTask><span>{title}</span><Dday>D{dday}</Dday></TodoTask>}
                   }
                 })
               }
