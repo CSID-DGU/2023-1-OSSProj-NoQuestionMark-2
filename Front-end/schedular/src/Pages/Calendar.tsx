@@ -1,4 +1,4 @@
-import {useState,useEffect,useRef} from 'react';
+import React,{useState,useEffect,useRef} from 'react';
 import styled from 'styled-components';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -43,11 +43,34 @@ const PostBtn = styled.button<ButtonProps>`
   border:none;
   border-radius: 5px;
   color: white;
-  padding : 0.2rem;
+  padding: 0.2rem;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
 `; 
+const CalendarDiv = styled.div`
+  display: felx;
+  flex-direction: row;
+`;
+const CalendarBody = styled.div`
+  width: 70%; 
+`
+const TaskBody = styled.div`
+  width: 27%;
+  margin-left: 3%;
+  border: 2px solid orange;
+  border-radius: 5px;
+`
+const TodoTask = styled.div`
+  height: 60%;
+  text-align: left;
+  padding-left: 5%;
+`;
+const CompleteTask = styled.div`
+  border-top: 2px solid orange;
+  text-align: left;
+  padding-left: 5%;
+`
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   btnName: string;
 }
@@ -140,9 +163,10 @@ const Calendar = () =>{
   }
 
   return (
+    <>
+      { evtState ? 
       <Container>
-        { evtState ? 
-        <>
+
         <RightAlign>
           <select name='pets' id='pet-select'>
             <option value=''>--전체보기--</option>
@@ -150,51 +174,68 @@ const Calendar = () =>{
             <option value='personal'>개인일정보기</option>
           </select>
         </RightAlign>
-        <div id='calendar'></div>
-        <FullCalendar
-          ref={calendarRef}
-          plugins={[ dayGridPlugin, timeGridPlugin,interactionPlugin ]}
-          initialView='dayGridMonth'
-          locale={koLocale}
-          customButtons={{
-            nextButton: {
-              text: '>',
-              click: function () {
-                const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
-                const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
-                const nextMonth = currentMonth + 1;
-                const nextYear = currentYear;
-                calendarRef.current?.getApi().gotoDate(new Date(nextYear, nextMonth));
-                const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth+1}`;
-                setMonth(new_M);
-                setYear(nextYear.toString());
-                performGetRequest(nextYear.toString(), new_M);
-              },
-            },
-            preButton : {
-              text: '<',
-              click: function () {
-                const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
-                const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
-                const preMonth = currentMonth - 1;
-                const preYear = currentYear;
-                calendarRef.current?.getApi().gotoDate(new Date(preYear, preMonth));
-                const new_M= (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
-                setMonth(new_M);
-                setYear(preYear.toString());
-                performGetRequest(preYear.toString(), new_M);
-              }
-            }
-          }}
-          headerToolbar= {{
-            left: 'preButton,nextButton',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-          }}
-          weekends={true}
-          eventClick = {handleReadModalToggle}
-          events={evtState}
-        />
+    
+        <CalendarDiv>
+          <CalendarBody>
+            <FullCalendar
+              ref={calendarRef}
+              plugins={[ dayGridPlugin, timeGridPlugin,interactionPlugin ]}
+              initialView='dayGridMonth'
+              locale={koLocale}
+              customButtons={{
+                nextButton: {
+                  text: '>',
+                  click: function () {
+                    const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
+                    const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
+                    const nextMonth = currentMonth + 1;
+                    const nextYear = currentYear;
+                    calendarRef.current?.getApi().gotoDate(new Date(nextYear, nextMonth));
+                    const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth+1}`;
+                    setMonth(new_M);
+                    setYear(nextYear.toString());
+                    performGetRequest(nextYear.toString(), new_M);
+                  },
+                },
+                preButton : {
+                  text: '<',
+                  click: function () {
+                    const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
+                    const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
+                    const preMonth = currentMonth - 1;
+                    const preYear = currentYear;
+                    calendarRef.current?.getApi().gotoDate(new Date(preYear, preMonth));
+                    const new_M= (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
+                    setMonth(new_M);
+                    setYear(preYear.toString());
+                    performGetRequest(preYear.toString(), new_M);
+                  }
+                }
+              }}
+              headerToolbar= {{
+                left: 'preButton,nextButton',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              }}
+              weekends={true}
+              eventClick = {handleReadModalToggle}
+              events={evtState}
+            />
+          </CalendarBody>
+          <TaskBody>
+            <TodoTask>
+              <h3>해야할 일</h3>
+            </TodoTask>
+
+            <CompleteTask>
+              <h3>완료한 일</h3>
+            </CompleteTask>
+          </TaskBody>
+
+        </CalendarDiv>
+
+
+
         {/* 일정등록모달 */}
         { postModal.personalPost && 
           <PersonalScheduleAdd 
@@ -242,10 +283,12 @@ const Calendar = () =>{
           }
           <PostBtn type='button' btnName='personal' onClick={e => handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
         </RightAlign>
-        </>
+
+        </Container>
+
         : <h1>Loading</h1>
       }
-      </Container>
+      </>
     )
 }
 
