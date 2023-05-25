@@ -19,7 +19,8 @@ interface EventSourceInput{
     commonScheduleType?: string,
     subjectScheduleType?:string,
     className?:string,
-    type?:string
+    type?:string,
+    dday?:string
 }
 
 interface Events extends Array<EventSourceInput> {};

@@ -61,15 +61,23 @@ const TaskBody = styled.div`
   border: 2px solid orange;
   border-radius: 5px;
 `
-const TodoTask = styled.div`
+const TodoList = styled.div`
   height: 60%;
   text-align: left;
-  padding-left: 5%;
+  padding-left: 1.0rem;
 `;
-const CompleteTask = styled.div`
+const TodoTask = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin : 0.2rem 1.2rem 0.2rem 0.2rem;
+`;
+const CompleteList = styled.div`
   border-top: 2px solid orange;
   text-align: left;
-  padding-left: 5%;
+  padding-left: 1rem;
+`
+const Subheading = styled.h3`
+  display: block;
 `
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   btnName: string;
@@ -132,6 +140,9 @@ const Calendar = () =>{
       console.error('Error:', error);
     }
   };
+  useEffect(() =>{
+    console.log(evtState);
+  },[evtState])
 
   const _getEvents = async (events: EventSourceInput[]) => {
     setEvtState(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
@@ -221,13 +232,21 @@ const Calendar = () =>{
             />
           </CalendarBody>
           <TaskBody>
-            <TodoTask>
-              <h3>해야할 일</h3>
-            </TodoTask>
+            <TodoList>
+              <Subheading>해야할 일</Subheading>
+              {
+                evtState.map((el) => { 
+                  if( el.scheduleType === 'TASK') {
+                    const {title, dday} = el;
+                    return <TodoTask><span>{title}</span><span>D{dday}</span></TodoTask>
+                  }
+                })
+              }
+            </TodoList>
 
-            <CompleteTask>
-              <h3>완료한 일</h3>
-            </CompleteTask>
+            <CompleteList>
+              <Subheading>완료한 일</Subheading>
+            </CompleteList>
           </TaskBody>
         </CalendarDiv>
 
