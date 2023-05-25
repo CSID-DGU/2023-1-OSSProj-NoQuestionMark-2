@@ -103,19 +103,18 @@ const Calendar = () =>{
   const calendarRef = useRef<FullCalendar>(null);
 
   useEffect(() =>{
-    if (!STUDENT){
-      (async () => {
-        try {
-          await Api.get('/home').then((res)=>{
-            const result = res.data.result
-            const {subjects} = result;
-            setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      })();
-    }
+    (async () => {
+      try {
+        await Api.get('/home').then((res)=>{
+          const result = res.data.result
+          console.log(result);
+          const {subjects} = result;
+          setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    })();
     performGetRequest(year,month);
   },[])
 
@@ -166,7 +165,6 @@ const Calendar = () =>{
     <>
       { evtState ? 
       <Container>
-
         <RightAlign>
           <select name='pets' id='pet-select'>
             <option value=''>--전체보기--</option>
@@ -231,10 +229,7 @@ const Calendar = () =>{
               <h3>완료한 일</h3>
             </CompleteTask>
           </TaskBody>
-
         </CalendarDiv>
-
-
 
         {/* 일정등록모달 */}
         { postModal.personalPost && 
@@ -244,8 +239,11 @@ const Calendar = () =>{
             date={[month,year]}
           /> }
         { postModal.subjectPost && 
-          !STUDENT && 
-          <SubjectScheduleAdd subjectList={subjectList} handleModalToggle={handlePostModalToggle}/>
+          <SubjectScheduleAdd 
+            handleModalToggle={handlePostModalToggle}
+            getApi={performGetRequest}
+            date={[month,year]}
+            subjectList={subjectList} />
         }
 
         {/* 일정상세보기모달 */}
@@ -277,15 +275,10 @@ const Calendar = () =>{
 
         {/* 일정등록버튼 */}
         <RightAlign>
-          {
-            !STUDENT && 
-            <PostBtn type='button' btnName='subject' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
-          }
+          <PostBtn type='button' btnName='subject' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
           <PostBtn type='button' btnName='personal' onClick={e => handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
         </RightAlign>
-
         </Container>
-
         : <h1>Loading</h1>
       }
       </>
