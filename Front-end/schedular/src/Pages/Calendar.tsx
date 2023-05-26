@@ -8,16 +8,17 @@ import koLocale from '@fullcalendar/core/locales/ko';
 import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
 import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
-import SubjectDetailStudent from 'Components/SubjectDetailStudent';
 import SubjectDetailProf from 'Components/SubjectDetailProf';
 import { EventSourceInput}  from 'interfaces/CalendarState';
 import { subjects } from 'interfaces/homeSchedule';
+import Icon from 'Assets/Images/check.png';
 import { useRecoilValue,useRecoilState } from 'recoil';
 import { userInfoState,EventState } from 'recoil/Atom'
+import { v4 as uuidv4 } from 'uuid';
 import * as Api from 'lib/Api';
 
 const Container = styled.div`
-  width : 70%;
+  width : 80%;
   margin : 3rem auto 5rem;
 `;
 const RightAlign = styled.div`
@@ -53,18 +54,18 @@ const CalendarDiv = styled.div`
   flex-direction: row;
 `;
 const CalendarBody = styled.div`
-  width: 70%; 
+  width: 75%; 
 `
 const TaskBody = styled.div`
-  width: 27%;
+  width: 22%;
   margin-left: 3%;
-  border: 2px solid orange;
-  border-radius: 5px;
 `
 const TodoList = styled.div`
   height: 60%;
   text-align: left;
   padding-left: 1.0rem;
+  border: 2px solid orange;
+  border-radius: 5px;
 `;
 const TodoTask = styled.div`
   display: flex;
@@ -72,12 +73,16 @@ const TodoTask = styled.div`
   margin : 0.2rem 1.2rem 0.2rem 0.2rem;
 `;
 const CompleteList = styled.div`
-  border-top: 2px solid orange;
   text-align: left;
+  margin-top: 1rem;
   padding-left: 1rem;
+  border: 2px solid orange;
+  border-radius: 5px;
+  height : 37%;
 `
 const Subheading = styled.h3`
   display: block;
+  margin-bottom: 2rem;
 `
 const Dday = styled.div`
   background-color: #12314f;
@@ -87,6 +92,8 @@ const Dday = styled.div`
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   btnName: string;
 }
+const IMPORTANCE = ['EASYGOING','NORMAL','IMPORTANT'];
+const ALPHA = [0.3, 0.6, 0.9];
 
 const getTodayMonth = () => {
   const Tmonth = String(new Date().getMonth()+1);
@@ -96,10 +103,7 @@ const getTodayMonth = () => {
 const getTodayYear = () => {
   return String(new Date().getFullYear());
 }
-const isStudent = (userType:string|null):boolean => {
-  if(userType === "STUDENT") {return true}
-  return false;
-}
+
 
 const Calendar = () =>{
   const [subjectList, setSubjectList] =useState<string[]>([]);
@@ -111,8 +115,6 @@ const Calendar = () =>{
   const [year, setYear] = useState(getTodayYear);
 
   const [evtState,setEvtState]= useRecoilState(EventState);
-  const userType = useRecoilValue(userInfoState).userType;
-  const STUDENT = isStudent(userType);
   const calendarRef = useRef<FullCalendar>(null);
 
   useEffect(() =>{
@@ -135,18 +137,26 @@ const Calendar = () =>{
       const response = await Api.get(`/schedule/common?month=${year}-${month}`);
       // console.log(response);
       const {commonSchedule,subjectSchedule} = response.data.result;
-      commonSchedule.map((s:EventSourceInput) => s['type'] = 'personal');
-      subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
-      const new_Event_List = [...commonSchedule, ...subjectSchedule];
-      _getEvents(new_Event_List );
 
-    } catch (error) {
+      commonSchedule.map((s:EventSourceInput) => {
+        const idx = IMPORTANCE.indexOf(s.importance);
+        s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+        s.scheduleType === 'TASK' ? s['imageurl'] = Icon : s['imageurl']='';
+      });
+
+      subjectSchedule.map((s:EventSourceInput) =>{
+        const idx = IMPORTANCE.indexOf(s.importance);
+        s.scheduleType === 'TASK' ? s['imageurl'] = Icon : s['imageurl']='';
+        s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+      });
+
+      const new_Event_List = [...commonSchedule, ...subjectSchedule];      
+      _getEvents(new_Event_List);
+    } 
+    catch (error) {
       console.error('Error:', error);
     }
   };
-  // useEffect(() =>{
-  //   console.log(evtState);
-  // },[evtState])
 
   const _getEvents = async (events: EventSourceInput[]) => {
     setEvtState(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
@@ -163,10 +173,10 @@ const Calendar = () =>{
     let {_def} = info.event;
     let {title} = _def;
     let className = _def.ui.classNames[0];
-    let {contents,startDate, endDate, type, scheduleId, importance,scheduleType} = _def.extendedProps;
+    let {contents,startDate, endDate, scheduleId, importance, schedule, scheduleType} = _def.extendedProps;
 
     setId(scheduleId);
-    if(type === 'personal'){
+    if(schedule === 'COMMON'){
       setEvents({title,contents,startDate, endDate, importance, scheduleType});
       setReadModal({...readModal, personalRead: !readModal.personalRead})
     }
@@ -175,6 +185,15 @@ const Calendar = () =>{
       setReadModal({...readModal, subjectRead : !readModal.subjectRead})
     }
   }
+
+  const eventContent = (arg:any) => {
+    return (
+      <div className="event" style={{color:arg.event.extendedProps.color}}>
+        { arg.event.extendedProps.imageurl && <img className="event-icon" src={arg.event.extendedProps.imageurl} alt="이벤트 아이콘" />}
+        <span className="event-title">{arg.event.title}</span>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -195,6 +214,7 @@ const Calendar = () =>{
               plugins={[ dayGridPlugin, timeGridPlugin,interactionPlugin ]}
               initialView='dayGridMonth'
               locale={koLocale}
+              eventContent={eventContent}
               customButtons={{
                 nextButton: {
                   text: '>',
@@ -243,7 +263,7 @@ const Calendar = () =>{
                   if( el.scheduleType === 'TASK') {
                     const {title, dday, endDate} = el;                    
                     if(new Date().toISOString()< endDate ) {
-                      return <TodoTask><span>{title}</span><Dday>D{dday}</Dday></TodoTask>}
+                      return <TodoTask key={uuidv4()}><span>{title}</span><Dday>D{dday}</Dday></TodoTask>}
                   }
                 })
               }
@@ -281,19 +301,12 @@ const Calendar = () =>{
           /> 
         }
         { readModal.subjectRead && 
-          !STUDENT &&
           <SubjectDetailProf
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
-            event = {evt}
             id = {id}
+            date = {[month,year]}
+            event = {evt}
             subjectList={subjectList}
-          /> 
-        }
-        { readModal.subjectRead && 
-          STUDENT &&
-          <SubjectDetailStudent
-            handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
-            subjectList={subjectList} 
           /> 
         }
 

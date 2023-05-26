@@ -12,15 +12,18 @@ interface ModalToggle{
 interface EventSourceInput{
     title: string, 
     startDate: string, 
-    endDate?: string, 
+    endDate: string, 
     contents:string, 
-    importance?: string, 
+    importance: string, 
     scheduleType?: string,
     commonScheduleType?: string,
     subjectScheduleType?:string,
     className?:string,
     type?:string,
-    dday?:string
+    dday?:string,
+    color?:string,
+    complete?:string,
+    imageurl?:string|HTMLImageElement|File,
 }
 
 interface Events extends Array<EventSourceInput> {};
