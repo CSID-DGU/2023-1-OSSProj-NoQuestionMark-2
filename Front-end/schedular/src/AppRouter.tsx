@@ -4,7 +4,7 @@ import SignUp from './Pages/SignUp';
 import Calendar from './Pages/Calendar';
 import NotFound from './Pages/NotFound';
 import { MemberRoute, NonMemberRoute } from 'Components/RestrictionRoute';
-import EclassSubject from 'Pages/EclassSubject';
+import EclassSubject from './Pages/EclassSubject';
 
 const AppRouter = () =>{
     return (
