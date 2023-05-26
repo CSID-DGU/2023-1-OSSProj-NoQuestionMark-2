@@ -6,20 +6,26 @@ import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 import {RecoilRoot} from 'recoil';
 
-const Main = styled.div`
-  height: auto;
-  min-height: 100%;
-  padding-bottom: 1000px;
+const AppWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 `;
+const ContentWrapper = styled.div`
+  flex-grow: 1;
+`;
+
 function App() {
   return (
     <div className="App">        
       <GlobalStyle />
       <RecoilRoot> 
-        <Main>
-          <Header />
-          <AppRouter />
-        </Main>
+        <AppWrapper>
+          <ContentWrapper>
+            <Header />
+            <AppRouter />
+          </ContentWrapper>
+        </AppWrapper>
         <Footer />
       </RecoilRoot> 
     </div>
