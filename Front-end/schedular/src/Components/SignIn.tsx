@@ -44,8 +44,9 @@ const SignInButton = styled.button`
   color: #fff;
   padding: 7px 16px;
   border: none;
-  border-radius: 2px;
+  border-radius: 3px;
   background-color: #e72f4b;
+  cursor: pointer;
 `;
 const SignUpButton = styled(Link)`
   margin 33px 0;
@@ -56,6 +57,23 @@ const SignUpButton = styled(Link)`
   border-radius: 2px;
   background-color: #666;
   font-size: 12px;
+  cursor: pointer;
+`;
+const LogoutWapper = styled.div`
+  display:flex;
+  align-items: center;
+`;
+const LogoutButton = styled.button`
+  margin: 0 20px;
+  height: 34px;
+  width: 80px;
+  text-align: center;
+  color: #fff;
+  padding: 7px 5px;
+  border: none;
+  border-radius: 3px;
+  background-color: #286090;
+  cursor: pointer;
 `;
 
 const SignIn = () => {
@@ -122,7 +140,7 @@ const SignIn = () => {
         <SignUpButton to='/signup'>회원가입</SignUpButton>
     </InputForm>
     
-    : <div>{loginMessage}<SignInButton onClick={LogoutHandler}>로그아웃</SignInButton></div>
+    : <LogoutWapper>{loginMessage}님<LogoutButton onClick={LogoutHandler}>로그아웃</LogoutButton></LogoutWapper>
     }
     </>
   )

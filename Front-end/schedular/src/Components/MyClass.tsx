@@ -43,7 +43,8 @@ const ClassButton = styled(Link)`
   position: absolute;
   right: 25px;
   margin: 7px 20px;
-  height: 25px;
+  padding: 6px 5px 0 5px;
+  height: 20px;
   font-size: 10px;
   background-color: #12314f;
   color: #fff;
