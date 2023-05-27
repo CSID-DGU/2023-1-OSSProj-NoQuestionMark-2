@@ -151,4 +151,5 @@ public class ScheduleService {
                 .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND, String.format("%d 일정을 확인할 수 없습니다.", scheduleId)));
         schedule.ScheduleFix(requestDto);
     }
+
 }
