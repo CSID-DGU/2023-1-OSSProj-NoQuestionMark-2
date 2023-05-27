@@ -23,7 +23,7 @@ interface EventSourceInput{
     dday?:string,
     color?:string,
     complete?:string,
-    imageurl?:string|HTMLImageElement|File,
+    imageurl?:string,
 }
 
 interface Events extends Array<EventSourceInput> {};
