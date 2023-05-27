@@ -10,6 +10,7 @@ interface ModalToggle{
 //subjectScheduleType : 과제,시험,발표 (과목)
 //type : personal(개인), subject(과목)
 interface EventSourceInput{
+    scheduleId?: string,
     title: string, 
     startDate: string, 
     endDate: string, 
