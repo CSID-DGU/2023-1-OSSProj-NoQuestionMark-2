@@ -33,7 +33,7 @@ public class CommonScheduleEntity {
     private int startYear;
     private int endYear;
     @Enumerated(EnumType.STRING)
-    private CommonScheduleType commonScheduleType;
+    private ScheduleType scheduleType;
     private boolean complete;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -60,7 +60,7 @@ public class CommonScheduleEntity {
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
         this.complete = false;
-        this.commonScheduleType = CommonScheduleType.returnType(requestDto.getCommonScheduleType());
+        this.scheduleType = ScheduleType.returnType(requestDto.getCommonScheduleType());
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
     }
@@ -77,7 +77,7 @@ public class CommonScheduleEntity {
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
-        this.commonScheduleType = CommonScheduleType.returnType(requestDto.getCommonScheduleType());
+        this.scheduleType = ScheduleType.returnType(requestDto.getCommonScheduleType());
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
     }
