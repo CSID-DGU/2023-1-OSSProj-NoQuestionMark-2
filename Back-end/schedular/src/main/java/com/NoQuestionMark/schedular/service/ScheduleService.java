@@ -30,6 +30,7 @@ public class ScheduleService {
     private final SubjectRepository subjectRepository;
     private final UserSubjectRepository userSubjectRepository;
     private final OfficialSubjectRepository officialSubjectRepository;
+    private final UserOfficialScheduleRepository userOfficialScheduleRepository;
 
     public void writeCommonSchedule(CommonScheduleRequestDto requestDto, String schoolNumber) {
         UserEntity user = userRepository
@@ -117,8 +118,21 @@ public class ScheduleService {
         SubjectEntity subject = subjectRepository
                 .findBySubjectName(requestDto.getClassName())
                 .orElseThrow(() -> new ScheduleException(ErrorCode.SUBJECT_NOT_FOUND, String.format("%s 과목이 존재하지 않습니다.", requestDto.getClassName())));
+        userSubjectRepository
+                .findByUserAndSubject(user, subject)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_AUTHORIZED, String.format("%s 과목에 대해 일정을 작성할 권한이 없습니다.", requestDto.getClassName())));
         OfficialSubjectScheduleEntity subjectSchedule = OfficialSubjectScheduleEntity.fromOfficialScheduleDto(requestDto, subject);
         officialSubjectRepository.save(subjectSchedule);
+        if (subjectSchedule.getSubjectScheduleType() == SubjectScheduleType.ASSIGNMENT){
+            List<UserEntity> users = userSubjectRepository
+                    .findAllBySubject(subject)
+                    .stream()
+                    .map(UserSubject::getUser)
+                    .toList();
+            for(UserEntity listener : users){
+                userOfficialScheduleRepository.save(UserOfficialScheduleEntity.assignNew(listener, subject));
+            }
+        }
     }
 
 }
