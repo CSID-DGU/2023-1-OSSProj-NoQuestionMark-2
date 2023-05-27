@@ -52,6 +52,17 @@ public class OfficialSubjectScheduleEntity {
         return new OfficialSubjectScheduleEntity(requestDto, subject);
     }
 
+    public void ScheduleFix(OfficialScheduleRequestDto requestDto){
+        this.title = requestDto.getTitle();
+        this.contents = requestDto.getContents();
+        this.startDate = requestDto.getStartDate();
+        this.endDate = requestDto.getEndDate();
+        this.startMonth = requestDto.getStartDate().getMonth();
+        this.endMonth = requestDto.getEndDate().getMonth();
+        this.startYear = requestDto.getStartDate().getYear();
+        this.endYear = requestDto.getEndDate().getYear();
+        this.subjectScheduleType = SubjectScheduleType.returnType(requestDto.getSubjectScheduleType());
+    }
 
     @PrePersist
     void registeredAt(){
