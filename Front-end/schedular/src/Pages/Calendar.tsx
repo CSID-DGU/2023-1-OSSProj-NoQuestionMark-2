@@ -1,4 +1,4 @@
-import React,{useState,useEffect,useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -9,11 +9,11 @@ import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
 import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
 import SubjectDetailProf from 'Components/SubjectDetailProf';
-import { EventSourceInput}  from 'interfaces/CalendarState';
+import { EventSourceInput } from 'interfaces/CalendarState';
 import { subjects } from 'interfaces/homeSchedule';
 import Icon from 'Assets/Images/check.png';
-import { useRecoilValue,useRecoilState } from 'recoil';
-import { userInfoState,EventState } from 'recoil/Atom'
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { userInfoState, EventState } from 'recoil/Atom';
 import { v4 as uuidv4 } from 'uuid';
 import * as Api from 'lib/Api';
 
@@ -92,6 +92,7 @@ const Dday = styled.div`
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   btnName: string;
 }
+
 const IMPORTANCE = ['EASYGOING','NORMAL','IMPORTANT'];
 const ALPHA = [0.3, 0.6, 0.9];
 
@@ -113,7 +114,6 @@ const Calendar = () =>{
   const [id, setId] = useState('');
   const [month, setMonth] = useState(getTodayMonth);
   const [year, setYear] = useState(getTodayYear);
-
   const [evtState,setEvtState]= useRecoilState(EventState);
   const calendarRef = useRef<FullCalendar>(null);
 
@@ -135,18 +135,17 @@ const Calendar = () =>{
   const performGetRequest = async (year: string, month: string) => {
     try {
       const response = await Api.get(`/schedule/common?month=${year}-${month}`);
-      // console.log(response);
       const {commonSchedule,subjectSchedule} = response.data.result;
 
-      commonSchedule.map((s:EventSourceInput) => {
+      commonSchedule.forEach((s: EventSourceInput) => {
         const idx = IMPORTANCE.indexOf(s.importance);
         s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
-        s.scheduleType === 'TASK' ? s['imageurl'] = Icon : s['imageurl']='';
+        s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
       });
 
-      subjectSchedule.map((s:EventSourceInput) =>{
+      subjectSchedule.forEach((s: EventSourceInput) => {
         const idx = IMPORTANCE.indexOf(s.importance);
-        s.scheduleType === 'TASK' ? s['imageurl'] = Icon : s['imageurl']='';
+        s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
         s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
       });
 
@@ -171,7 +170,7 @@ const Calendar = () =>{
 
   const handleReadModalToggle = (info:any) => {
     let {_def} = info.event;
-    let {title} = _def;
+    let title = _def.title;
     let className = _def.ui.classNames[0];
     let {contents,startDate, endDate, scheduleId, importance, schedule, scheduleType} = _def.extendedProps;
 
@@ -187,10 +186,12 @@ const Calendar = () =>{
   }
 
   const eventContent = (arg:any) => {
+    const {title} = arg.event;
+    const {color, imageurl} = arg.event.extendedProps;
     return (
-      <div className="event" style={{color:arg.event.extendedProps.color}}>
-        { arg.event.extendedProps.imageurl && <img className="event-icon" src={arg.event.extendedProps.imageurl} alt="이벤트 아이콘" />}
-        <span className="event-title">{arg.event.title}</span>
+      <div className="event" style={color}>
+        { imageurl && <img className="event-icon" src={imageurl} alt="이벤트 아이콘" />}
+        <span className="event-title">{title}</span>
       </div>
     );
   };
@@ -219,29 +220,67 @@ const Calendar = () =>{
                 nextButton: {
                   text: '>',
                   click: function () {
-                    const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
-                    const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
+                    const calendarApi = calendarRef.current?.getApi();
+                    const currentDate = calendarApi?.getDate();
+                    const currentMonth = currentDate?.getMonth() ?? 0;
+                    const currentYear = currentDate?.getFullYear() ?? 0;
+                    const nextDate = currentDate || new Date();
                     const nextMonth = currentMonth + 1;
-                    const nextYear = currentYear;
-                    calendarRef.current?.getApi().gotoDate(new Date(nextYear, nextMonth));
-                    const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth+1}`;
-                    setMonth(new_M);
-                    setYear(nextYear.toString());
-                    performGetRequest(nextYear.toString(), new_M);
+                    const nextYear = currentYear; 
+                    
+                    const currentView = calendarApi?.view;
+                    if (currentView?.type === 'dayGridMonth') {
+                      calendarApi?.gotoDate(new Date(nextYear, nextMonth));
+                    }
+                    else if (currentView?.type === 'timeGridWeek') {                      
+                      nextDate.setDate(nextDate.getDate() + 7);
+                      calendarApi?.gotoDate(nextDate);
+                    }
+                    else{
+                      nextDate.setDate(nextDate.getDate() + 1);
+                      calendarApi?.gotoDate(nextDate);
+                    }
+
+                    if(nextDate.getMonth() !== currentMonth){
+                      let nextMonth = nextDate.getMonth();
+                      const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth-1}`;
+                      setMonth(new_M);
+                      setYear(nextYear.toString());
+                      performGetRequest(nextYear.toString(), new_M);
+                    }
                   },
                 },
                 preButton : {
                   text: '<',
                   click: function () {
-                    const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
-                    const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
+                    const calendarApi = calendarRef.current?.getApi();
+                    const currentDate = calendarApi?.getDate();
+                    const currentMonth = currentDate?.getMonth() ?? 0;
+                    const currentYear = currentDate?.getFullYear() ?? 0;
+                    const preDate = currentDate || new Date();
                     const preMonth = currentMonth - 1;
                     const preYear = currentYear;
-                    calendarRef.current?.getApi().gotoDate(new Date(preYear, preMonth));
-                    const new_M= (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
-                    setMonth(new_M);
-                    setYear(preYear.toString());
-                    performGetRequest(preYear.toString(), new_M);
+
+                    const currentView = calendarApi?.view;
+                    if (currentView?.type === 'dayGridMonth') {
+                      calendarApi?.gotoDate(new Date(preYear, preMonth));
+                    }
+                    else if (currentView?.type === 'timeGridWeek') {   
+                      preDate.setDate(preDate.getDate() - 7);
+                      calendarApi?.gotoDate(preDate);
+                    }
+                    else{
+                      preDate.setDate(preDate.getDate() - 1);
+                      calendarApi?.gotoDate(preDate);
+                    }
+
+                    if(preDate.getMonth() !== currentMonth) { 
+                      let preMonth = preDate.getMonth();
+                      const new_Month = (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
+                      setMonth(new_Month);
+                      setYear(preYear.toString());
+                      performGetRequest(preYear.toString(), new_Month);
+                    }
                   }
                 }
               }}
