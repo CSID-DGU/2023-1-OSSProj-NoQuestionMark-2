@@ -2,6 +2,7 @@ package com.NoQuestionMark.schedular.service;
 
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleFixRequestDto;
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
+import com.NoQuestionMark.schedular.controller.request.OfficialScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.response.*;
 import com.NoQuestionMark.schedular.exception.ErrorCode;
@@ -28,6 +29,7 @@ public class ScheduleService {
     private final EntityManager em;
     private final SubjectRepository subjectRepository;
     private final UserSubjectRepository userSubjectRepository;
+    private final OfficialSubjectRepository officialSubjectRepository;
 
     public void writeCommonSchedule(CommonScheduleRequestDto requestDto, String schoolNumber) {
         UserEntity user = userRepository
@@ -80,7 +82,6 @@ public class ScheduleService {
         UserEntity user = userRepository
                 .findBySchoolNumber(schoolNumber)
                 .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
-        if(user.getUserType() != UserType.PROFESSOR) throw new ScheduleException(ErrorCode.USER_NOT_AUTHORIZED, "교수만 가능한 작업입니다.");
         SubjectEntity subject = subjectRepository
                 .findBySubjectName(requestDto.getClassName())
                 .orElseThrow(() -> new ScheduleException(ErrorCode.SUBJECT_NOT_FOUND, String.format("%s 과목이 존재하지 않습니다.", requestDto.getClassName())));
@@ -106,5 +107,17 @@ public class ScheduleService {
                 .findByIdAndUser(scheduleId, user)
                 .orElseThrow(()-> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND, String.format("%s 유저가 작성한 %d 일정을 찾을 수 없습니다.", schoolNumber, scheduleId)));
         commonSchedule.fixSchedule(requestDto);
+    }
+
+    public void writeOfficialSchedule(OfficialScheduleRequestDto requestDto, String schoolNumber) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        if(user.getUserType() != UserType.PROFESSOR) throw new ScheduleException(ErrorCode.USER_NOT_AUTHORIZED, "교수만 가능한 작업입니다.");
+        SubjectEntity subject = subjectRepository
+                .findBySubjectName(requestDto.getClassName())
+                .orElseThrow(() -> new ScheduleException(ErrorCode.SUBJECT_NOT_FOUND, String.format("%s 과목이 존재하지 않습니다.", requestDto.getClassName())));
+        OfficialSubjectScheduleEntity subjectSchedule = OfficialSubjectScheduleEntity.fromOfficialScheduleDto(requestDto, subject);
+        officialSubjectRepository.save(subjectSchedule);
     }
 }
