@@ -211,6 +211,10 @@ const SubmitButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
 `;
+const StyledH2 = styled.h2`
+  text-align: left;
+  padding-left: 300px;
+`;
 
 const EclassDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -226,6 +230,7 @@ const EclassDetail = () => {
 
   return (
     <>
+      <StyledH2>학습 활동</StyledH2>
       {isEditing ? (<>
         <Container>
           <StyledH3>과목 일정 수정</StyledH3>
@@ -282,7 +287,6 @@ const EclassDetail = () => {
                 <SubmitButton type='button' onClick={()=>{setIsEditing(true)}}>수정하기</SubmitButton>
                 <SubmitButton type='button'>삭제하기</SubmitButton>
               </BtnWapper>
-              
           </Form>
         </Container></>)}
     </>

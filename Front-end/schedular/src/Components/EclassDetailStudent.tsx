@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import {useState} from 'react';
 
 const Container = styled.div`
   flex-direction: column;
@@ -14,6 +14,8 @@ const Form = styled.form`
   width: 100%;
 `;
 const TitleWapper = styled.div`
+  display: flex;
+  align-items: center;
   width: 1050px;
   height: 40px;
   margin-left: 419px;
@@ -26,10 +28,33 @@ const SubjectTitle = styled.div`
   height: 33px;
   width: 698px;
   padding-left: 10px;
-  margin-top: 3px;
   margin-right: 335px;
   background-color: #e6e6e6;
   border: none;
+`;
+const SubmitState = styled.div`
+  display:flex;
+  align-items: center;
+  width: 60px;
+  height: 25px;
+  margin: 0 10px;
+  padding-left: 13px;
+  font-size: 13px;
+  color: #fff;
+  background-color: #e03131;
+  border-radius: 3px;
+`;
+const SubmitStateComplete = styled.div`
+  display:flex;
+  align-items: center;
+  width: 70px;
+  height: 25px;
+  margin: 0 10px;
+  padding-left: 9px;
+  font-size: 13px;
+  color: #fff;
+  background-color: #1c7ed6;
+  border-radius: 3px;
 `;
 const ContentWapper = styled.div`
   display: inline-flex;
@@ -113,16 +138,22 @@ const SubmitButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
 `;
+const StyledH2 = styled.h2`
+  text-align: left;
+  padding-left: 300px;
+`;
 
 const EclassDetailStudent = () => {
-
+  const [submit, setSubmit] = useState(false);
 
   return (
     <Container>
+      <StyledH2>학습 활동</StyledH2>
       <StyledH3>과목 일정 상세보기</StyledH3>
       <Form>
           <TitleWapper>
             <SubjectTitle>제목</SubjectTitle>
+            { submit ? <SubmitStateComplete>제출완료</SubmitStateComplete> : <SubmitState>미제출</SubmitState>}
           </TitleWapper>
           <ContentWapper>
             <SubTitleWapper>
@@ -136,7 +167,7 @@ const EclassDetailStudent = () => {
               <StyledDetail>상세내용</StyledDetail>
             </Content>
           </ContentWapper>
-          <SubmitButton type='button'>제출하기</SubmitButton>
+          <SubmitButton type='button' onClick={()=>{setSubmit(true)}}>제출하기</SubmitButton>
       </Form>
     </Container>
   )

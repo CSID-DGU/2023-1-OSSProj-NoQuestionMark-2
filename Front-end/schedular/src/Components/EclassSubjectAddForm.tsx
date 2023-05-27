@@ -122,7 +122,7 @@ const SubmitButton = styled.button`
   cursor: pointer;
 `;
 
-const EclassSubjectAdd = () => {
+const EclassSubjectAddForm = () => {
 
   const {     
     register,
@@ -165,4 +165,4 @@ const EclassSubjectAdd = () => {
   )
 }
 
-export default EclassSubjectAdd;
+export default EclassSubjectAddForm;
