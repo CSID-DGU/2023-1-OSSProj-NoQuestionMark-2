@@ -157,8 +157,18 @@ const Calendar = () =>{
     }
   };
 
-  const _getEvents = async (events: EventSourceInput[]) => {
-    setEvtState(events.map(el => {return { ...el, 'start': el.startDate, 'end': el.endDate}}));
+  const _getEvents = async (newEvents: EventSourceInput[]) => {
+    setEvtState(prevState => {
+      const filteredEvents = newEvents.filter(newEvent =>
+        prevState.every(prevEvent => prevEvent.scheduleId !== newEvent.scheduleId)
+      );
+      const updatedEvents = [...prevState, ...filteredEvents];
+      return updatedEvents.map(event => ({
+        ...event,
+        'start': event.startDate,
+        'end': event.endDate
+      }));
+    });
   }
 
   // modal
@@ -227,7 +237,7 @@ const Calendar = () =>{
                     const nextDate = currentDate || new Date();
                     const nextMonth = currentMonth + 1;
                     const nextYear = currentYear; 
-                    
+
                     const currentView = calendarApi?.view;
                     if (currentView?.type === 'dayGridMonth') {
                       calendarApi?.gotoDate(new Date(nextYear, nextMonth));
@@ -240,13 +250,13 @@ const Calendar = () =>{
                       nextDate.setDate(nextDate.getDate() + 1);
                       calendarApi?.gotoDate(nextDate);
                     }
-
-                    if(nextDate.getMonth() !== currentMonth){
-                      let nextMonth = nextDate.getMonth();
-                      const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth-1}`;
+                    if(nextDate.getMonth() !== nextMonth){
+                      let new_M = (nextMonth+1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth+1}`;
+                      const new_Y = Number(new_M)>12 ? (nextYear+1).toString(): nextYear.toString();
+                      if(nextMonth >= 12)  new_M = '01';
                       setMonth(new_M);
-                      setYear(nextYear.toString());
-                      performGetRequest(nextYear.toString(), new_M);
+                      setYear(new_Y);
+                      performGetRequest(new_Y.toString(), new_M);
                     }
                   },
                 },
@@ -274,12 +284,15 @@ const Calendar = () =>{
                       calendarApi?.gotoDate(preDate);
                     }
 
-                    if(preDate.getMonth() !== currentMonth) { 
-                      let preMonth = preDate.getMonth();
-                      const new_Month = (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
+                    if(preDate.getMonth() !== preMonth) {
+                      console.log("preMonth",preMonth+1);
+                      let new_Month = (preMonth+1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth+1}`;
+                      console.log(new_Month);
+                      const new_Y = Number(new_Month) < 1 ? (preYear-1).toString(): preYear.toString();
+                      if(preMonth < 0 )  new_Month = '12';
                       setMonth(new_Month);
-                      setYear(preYear.toString());
-                      performGetRequest(preYear.toString(), new_Month);
+                      setYear(new_Y.toString());
+                      performGetRequest(new_Y.toString(), new_Month);
                     }
                   }
                 }
