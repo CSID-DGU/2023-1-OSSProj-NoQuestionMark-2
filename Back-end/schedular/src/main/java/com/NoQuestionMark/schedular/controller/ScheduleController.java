@@ -46,6 +46,12 @@ public class ScheduleController {
         return Response.success();
     }
 
+    @DeleteMapping("/official/{scheduleId}")
+    public Response<Void> deleteOfficialSchedule(@PathVariable Long scheduleId, Authentication authentication){
+        scheduleService.deleteOfficialSchedule(scheduleId, authentication.getName());
+        return Response.success();
+    }
+
     @GetMapping("/common")
     public Response<ScheduleResponseDto> getSchedule(@RequestParam("month") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth , Authentication authentication){
         Month month = yearMonth.getMonth();
