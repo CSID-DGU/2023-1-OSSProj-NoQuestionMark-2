@@ -15,10 +15,6 @@ const SubjectName = styled(Link)`
   -webkit-text-stroke-width: 2px;
   -webkit-text-stroke-color: #000;
 `;
-const StyledH2 = styled.h2`
-  text-align: left;
-  padding-left: 300px;
-`;
 
 
 const EclassClassName = () => {
@@ -27,7 +23,6 @@ const EclassClassName = () => {
     <BgImage style={{ backgroundImage: `url(${background_image})`}}>
       <SubjectName to='#'>과목명</SubjectName>
     </BgImage>
-    <StyledH2>학습 활동</StyledH2>
     </>
   )
 }
