@@ -40,6 +40,12 @@ public class ScheduleController {
         return Response.success();
     }
 
+    @PutMapping("/official/{scheduleId}")
+    public Response<Void> modifyOfficialSchedule(@RequestBody OfficialScheduleRequestDto requestDto, @PathVariable Long scheduleId, Authentication authentication){
+        scheduleService.fixOfficialSchedule(requestDto, scheduleId, authentication.getName());
+        return Response.success();
+    }
+
     @GetMapping("/common")
     public Response<ScheduleResponseDto> getSchedule(@RequestParam("month") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth , Authentication authentication){
         Month month = yearMonth.getMonth();
