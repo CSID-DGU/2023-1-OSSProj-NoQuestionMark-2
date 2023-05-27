@@ -120,4 +120,5 @@ public class ScheduleService {
         OfficialSubjectScheduleEntity subjectSchedule = OfficialSubjectScheduleEntity.fromOfficialScheduleDto(requestDto, subject);
         officialSubjectRepository.save(subjectSchedule);
     }
+
 }
