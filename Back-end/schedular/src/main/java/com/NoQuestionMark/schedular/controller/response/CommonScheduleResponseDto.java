@@ -26,7 +26,7 @@ public class CommonScheduleResponseDto {
                 schedule.getContents(),
                 schedule.getImportance().name(),
                 "COMMON",
-                schedule.getCommonScheduleType().name(),
+                schedule.getScheduleType().name(),
                 schedule.getStartDate(),
                 schedule.getEndDate(),
                 schedule.getStartDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth());

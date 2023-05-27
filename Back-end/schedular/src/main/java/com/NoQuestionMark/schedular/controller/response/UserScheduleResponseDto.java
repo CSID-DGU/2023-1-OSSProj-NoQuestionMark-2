@@ -25,7 +25,7 @@ public class UserScheduleResponseDto {
                 schedule.getTitle(),
                 schedule.getStartDate(),
                 "Common",
-                schedule.getCommonScheduleType().name(),
+                schedule.getScheduleType().name(),
                 "",
                 schedule.getStartDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth()
                 );
