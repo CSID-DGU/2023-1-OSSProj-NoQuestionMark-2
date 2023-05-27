@@ -5,6 +5,8 @@ import Calendar from './Pages/Calendar';
 import NotFound from './Pages/NotFound';
 import { MemberRoute, NonMemberRoute } from 'Components/RestrictionRoute';
 import EclassSubject from 'Pages/EclassSubject';
+import EclassSubjectDetail from 'Pages/EclassSubjectDetail';
+import EclassSubjectAdd from 'Pages/EclassSubjectAdd';
 
 const AppRouter = () =>{
     return (
@@ -17,6 +19,8 @@ const AppRouter = () =>{
                 <Route path="/calendar" element={<Calendar />}/>
                 <Route path="/notfound" element={<NotFound />} />
                 <Route path="/eclass" element={<EclassSubject />} />
+                <Route path="/eclass/detail" element={<EclassSubjectDetail />} />
+                <Route path="/eclass/add" element={<EclassSubjectAdd />} />
             </Routes>
         </>
     )
