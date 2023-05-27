@@ -21,7 +21,6 @@ public class SubjectScheduleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String title;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -32,6 +31,7 @@ public class SubjectScheduleEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
+    private ScheduleType scheduleType;
     private SubjectScheduleType subjectScheduleType;
     private Month startMonth;
     private Month endMonth;
@@ -61,6 +61,7 @@ public class SubjectScheduleEntity {
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
+        this.scheduleType = ScheduleType.returnType(requestDto.getScheduleType());
         this.subjectScheduleType = SubjectScheduleType.returnType(requestDto.getSubjectScheduleType());
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
