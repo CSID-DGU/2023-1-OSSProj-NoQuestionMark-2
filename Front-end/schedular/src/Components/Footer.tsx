@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
 const FooterWapper = styled.div`
-    width: 100%;
-    position: absolute;
+    flex-shrink: 0;
     background: orange;
     height: 7rem;
+    margin-top: 2.1rem; 
 `;
 
 const Footer = () => {

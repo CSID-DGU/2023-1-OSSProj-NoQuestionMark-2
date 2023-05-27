@@ -115,6 +115,13 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
             placeholder='제목을 입력해주세요.'
             {...register('title', { required: true })}/>
         </InputDiv>
+        <label htmlFor='type'>유형</label>
+        <InputDiv>
+          <StyledSelect id='type'  {...register('commonScheduleType', { required: true })}>
+            <option value='TASK'>TASK</option>
+            <option value='SCHEDULE'>SCHEDULE</option>
+          </StyledSelect>
+        </InputDiv>
         <label htmlFor='contents'>상세내용</label>
         <InputDiv>
           <StyledTextarea 
@@ -135,6 +142,14 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
             <option value='ASSIGNMENT'>ASSIGNMENT</option>
             <option value='TEST'>TEST</option>
             <option value='PRESENTATION'>PRESENTATION</option>
+          </StyledSelect>
+        </InputDiv>
+        <label htmlFor='importance'>중요도</label>
+        <InputDiv>
+          <StyledSelect id='importance'  {...register('importance', { required: true })}>
+            <option value='EASYGOING'>EASYGOING</option>
+            <option value='NORMAL'>NORMAL</option>
+            <option value='IMPORTANT'>IMPORTANT</option>
           </StyledSelect>
         </InputDiv>
         <label htmlFor='startDate'>시작 날짜</label>

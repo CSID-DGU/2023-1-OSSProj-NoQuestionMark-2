@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import { useForm, SubmitHandler,Controller } from 'react-hook-form';
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle } from 'react-icons/ai';
 import styled from 'styled-components';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
 import * as Api from '../lib/Api';
@@ -304,7 +304,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
             </ButtonLine>
           </ButtonWapper> ) : ( 
           <ButtonWapper> 
-            <CompleteButton type='button'>일정 완료하기</CompleteButton>
+            {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
             <ButtonLine>
               <EditButton type='button' onClick={()=>{onClickEditButton()}}>수정하기</EditButton>
               <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>

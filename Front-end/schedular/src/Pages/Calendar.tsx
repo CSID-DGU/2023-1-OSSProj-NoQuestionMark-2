@@ -1,4 +1,4 @@
-import {useState,useEffect,useRef} from 'react';
+import React,{useState,useEffect,useRef} from 'react';
 import styled from 'styled-components';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -8,16 +8,17 @@ import koLocale from '@fullcalendar/core/locales/ko';
 import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
 import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
-import SubjectDetailStudent from 'Components/SubjectDetailStudent';
 import SubjectDetailProf from 'Components/SubjectDetailProf';
 import { EventSourceInput}  from 'interfaces/CalendarState';
 import { subjects } from 'interfaces/homeSchedule';
+import Icon from 'Assets/Images/check.png';
 import { useRecoilValue,useRecoilState } from 'recoil';
 import { userInfoState,EventState } from 'recoil/Atom'
+import { v4 as uuidv4 } from 'uuid';
 import * as Api from 'lib/Api';
 
 const Container = styled.div`
-  width : 70%;
+  width : 80%;
   margin : 3rem auto 5rem;
 `;
 const RightAlign = styled.div`
@@ -43,14 +44,56 @@ const PostBtn = styled.button<ButtonProps>`
   border:none;
   border-radius: 5px;
   color: white;
-  padding : 0.2rem;
+  padding: 0.2rem;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
 `; 
+const CalendarDiv = styled.div`
+  display: felx;
+  flex-direction: row;
+`;
+const CalendarBody = styled.div`
+  width: 75%; 
+`
+const TaskBody = styled.div`
+  width: 22%;
+  margin-left: 3%;
+`
+const TodoList = styled.div`
+  height: 60%;
+  text-align: left;
+  padding-left: 1.0rem;
+  border: 2px solid orange;
+  border-radius: 5px;
+`;
+const TodoTask = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin : 0.2rem 1.2rem 0.2rem 0.2rem;
+`;
+const CompleteList = styled.div`
+  text-align: left;
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border: 2px solid orange;
+  border-radius: 5px;
+  height : 37%;
+`
+const Subheading = styled.h3`
+  display: block;
+  margin-bottom: 2rem;
+`
+const Dday = styled.div`
+  background-color: #12314f;
+  color: #fff;
+  border-radius: 5px;
+`
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   btnName: string;
 }
+const IMPORTANCE = ['EASYGOING','NORMAL','IMPORTANT'];
+const ALPHA = [0.3, 0.6, 0.9];
 
 const getTodayMonth = () => {
   const Tmonth = String(new Date().getMonth()+1);
@@ -60,10 +103,7 @@ const getTodayMonth = () => {
 const getTodayYear = () => {
   return String(new Date().getFullYear());
 }
-const isStudent = (userType:string|null):boolean => {
-  if(userType === "STUDENT") {return true}
-  return false;
-}
+
 
 const Calendar = () =>{
   const [subjectList, setSubjectList] =useState<string[]>([]);
@@ -75,38 +115,45 @@ const Calendar = () =>{
   const [year, setYear] = useState(getTodayYear);
 
   const [evtState,setEvtState]= useRecoilState(EventState);
-  const userType = useRecoilValue(userInfoState).userType;
-  const STUDENT = isStudent(userType);
   const calendarRef = useRef<FullCalendar>(null);
 
   useEffect(() =>{
-    if (!STUDENT){
-      (async () => {
-        try {
-          await Api.get('/home').then((res)=>{
-            const result = res.data.result
-            const {subjects} = result;
-            setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      })();
-    }
+    (async () => {
+      try {
+        await Api.get('/home').then((res)=>{
+          const result = res.data.result
+          const {subjects} = result;
+          setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    })();
     performGetRequest(year,month);
   },[])
 
   const performGetRequest = async (year: string, month: string) => {
     try {
       const response = await Api.get(`/schedule/common?month=${year}-${month}`);
-      console.log(response);
+      // console.log(response);
       const {commonSchedule,subjectSchedule} = response.data.result;
-      commonSchedule.map((s:EventSourceInput) => s['type'] = 'personal');
-      subjectSchedule.map((s:EventSourceInput) => s['type'] = 'subject');
-      const new_Event_List = [...commonSchedule, ...subjectSchedule];
-      _getEvents(new_Event_List );
 
-    } catch (error) {
+      commonSchedule.map((s:EventSourceInput) => {
+        const idx = IMPORTANCE.indexOf(s.importance);
+        s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+        s.scheduleType === 'TASK' ? s['imageurl'] = Icon : s['imageurl']='';
+      });
+
+      subjectSchedule.map((s:EventSourceInput) =>{
+        const idx = IMPORTANCE.indexOf(s.importance);
+        s.scheduleType === 'TASK' ? s['imageurl'] = Icon : s['imageurl']='';
+        s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+      });
+
+      const new_Event_List = [...commonSchedule, ...subjectSchedule];      
+      _getEvents(new_Event_List);
+    } 
+    catch (error) {
       console.error('Error:', error);
     }
   };
@@ -126,10 +173,10 @@ const Calendar = () =>{
     let {_def} = info.event;
     let {title} = _def;
     let className = _def.ui.classNames[0];
-    let {contents,startDate, endDate, type, scheduleId, importance,scheduleType} = _def.extendedProps;
+    let {contents,startDate, endDate, scheduleId, importance, schedule, scheduleType} = _def.extendedProps;
 
     setId(scheduleId);
-    if(type === 'personal'){
+    if(schedule === 'COMMON'){
       setEvents({title,contents,startDate, endDate, importance, scheduleType});
       setReadModal({...readModal, personalRead: !readModal.personalRead})
     }
@@ -139,10 +186,19 @@ const Calendar = () =>{
     }
   }
 
+  const eventContent = (arg:any) => {
+    return (
+      <div className="event" style={{color:arg.event.extendedProps.color}}>
+        { arg.event.extendedProps.imageurl && <img className="event-icon" src={arg.event.extendedProps.imageurl} alt="이벤트 아이콘" />}
+        <span className="event-title">{arg.event.title}</span>
+      </div>
+    );
+  };
+
   return (
+    <>
+      { evtState ? 
       <Container>
-        { evtState ? 
-        <>
         <RightAlign>
           <select name='pets' id='pet-select'>
             <option value=''>--전체보기--</option>
@@ -150,51 +206,75 @@ const Calendar = () =>{
             <option value='personal'>개인일정보기</option>
           </select>
         </RightAlign>
-        <div id='calendar'></div>
-        <FullCalendar
-          ref={calendarRef}
-          plugins={[ dayGridPlugin, timeGridPlugin,interactionPlugin ]}
-          initialView='dayGridMonth'
-          locale={koLocale}
-          customButtons={{
-            nextButton: {
-              text: '>',
-              click: function () {
-                const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
-                const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
-                const nextMonth = currentMonth + 1;
-                const nextYear = currentYear;
-                calendarRef.current?.getApi().gotoDate(new Date(nextYear, nextMonth));
-                const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth+1}`;
-                setMonth(new_M);
-                setYear(nextYear.toString());
-                performGetRequest(nextYear.toString(), new_M);
-              },
-            },
-            preButton : {
-              text: '<',
-              click: function () {
-                const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
-                const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
-                const preMonth = currentMonth - 1;
-                const preYear = currentYear;
-                calendarRef.current?.getApi().gotoDate(new Date(preYear, preMonth));
-                const new_M= (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
-                setMonth(new_M);
-                setYear(preYear.toString());
-                performGetRequest(preYear.toString(), new_M);
+    
+        <CalendarDiv>
+          <CalendarBody>
+            <FullCalendar
+              ref={calendarRef}
+              plugins={[ dayGridPlugin, timeGridPlugin,interactionPlugin ]}
+              initialView='dayGridMonth'
+              locale={koLocale}
+              eventContent={eventContent}
+              customButtons={{
+                nextButton: {
+                  text: '>',
+                  click: function () {
+                    const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
+                    const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
+                    const nextMonth = currentMonth + 1;
+                    const nextYear = currentYear;
+                    calendarRef.current?.getApi().gotoDate(new Date(nextYear, nextMonth));
+                    const new_M= (nextMonth + 1).toString().length === 1 ? `0${nextMonth+1}` : `${nextMonth+1}`;
+                    setMonth(new_M);
+                    setYear(nextYear.toString());
+                    performGetRequest(nextYear.toString(), new_M);
+                  },
+                },
+                preButton : {
+                  text: '<',
+                  click: function () {
+                    const currentMonth = calendarRef.current?.getApi().getDate()?.getMonth() ?? 0;
+                    const currentYear = calendarRef.current?.getApi().getDate()?.getFullYear() ?? 0;
+                    const preMonth = currentMonth - 1;
+                    const preYear = currentYear;
+                    calendarRef.current?.getApi().gotoDate(new Date(preYear, preMonth));
+                    const new_M= (preMonth + 1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth-1}`;
+                    setMonth(new_M);
+                    setYear(preYear.toString());
+                    performGetRequest(preYear.toString(), new_M);
+                  }
+                }
+              }}
+              headerToolbar= {{
+                left: 'preButton,nextButton',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              }}
+              weekends={true}
+              eventClick = {handleReadModalToggle}
+              events={evtState}
+            />
+          </CalendarBody>
+          <TaskBody>
+            <TodoList>
+              <Subheading>해야할 일</Subheading>
+              {
+                evtState.map((el) => {  
+                  if( el.scheduleType === 'TASK') {
+                    const {title, dday, endDate} = el;                    
+                    if(new Date().toISOString()< endDate ) {
+                      return <TodoTask key={uuidv4()}><span>{title}</span><Dday>D{dday}</Dday></TodoTask>}
+                  }
+                })
               }
-            }
-          }}
-          headerToolbar= {{
-            left: 'preButton,nextButton',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-          }}
-          weekends={true}
-          eventClick = {handleReadModalToggle}
-          events={evtState}
-        />
+            </TodoList>
+
+            <CompleteList>
+              <Subheading>완료한 일</Subheading>
+            </CompleteList>
+          </TaskBody>
+        </CalendarDiv>
+
         {/* 일정등록모달 */}
         { postModal.personalPost && 
           <PersonalScheduleAdd 
@@ -203,8 +283,11 @@ const Calendar = () =>{
             date={[month,year]}
           /> }
         { postModal.subjectPost && 
-          !STUDENT && 
-          <SubjectScheduleAdd subjectList={subjectList} handleModalToggle={handlePostModalToggle}/>
+          <SubjectScheduleAdd 
+            handleModalToggle={handlePostModalToggle}
+            getApi={performGetRequest}
+            date={[month,year]}
+            subjectList={subjectList} />
         }
 
         {/* 일정상세보기모달 */}
@@ -218,34 +301,24 @@ const Calendar = () =>{
           /> 
         }
         { readModal.subjectRead && 
-          !STUDENT &&
           <SubjectDetailProf
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
-            event = {evt}
             id = {id}
+            date = {[month,year]}
+            event = {evt}
             subjectList={subjectList}
-          /> 
-        }
-        { readModal.subjectRead && 
-          STUDENT &&
-          <SubjectDetailStudent
-            handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
-            subjectList={subjectList} 
           /> 
         }
 
         {/* 일정등록버튼 */}
         <RightAlign>
-          {
-            !STUDENT && 
-            <PostBtn type='button' btnName='subject' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
-          }
+          <PostBtn type='button' btnName='subject' onClick={e => handlePostModalToggle('subject')}>과목일정등록하기</PostBtn>
           <PostBtn type='button' btnName='personal' onClick={e => handlePostModalToggle('personal')}>개인일정등록하기</PostBtn>
         </RightAlign>
-        </>
+        </Container>
         : <h1>Loading</h1>
       }
-      </Container>
+      </>
     )
 }
 
