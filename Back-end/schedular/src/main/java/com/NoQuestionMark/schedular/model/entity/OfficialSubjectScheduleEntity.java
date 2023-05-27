@@ -26,6 +26,9 @@ public class OfficialSubjectScheduleEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
     private SubjectScheduleType subjectScheduleType;
     private Month startMonth;
     private Month endMonth;
@@ -36,8 +39,24 @@ public class OfficialSubjectScheduleEntity {
     private Timestamp deletedAt;
 
     @Builder
-    private OfficialSubjectScheduleEntity (OfficialScheduleRequestDto requestDto, SubjectEntity subject){
+    private OfficialSubjectScheduleEntity (OfficialScheduleRequestDto requestDto, SubjectEntity subject, UserEntity user){
         this.subject = subject;
+        this.title = requestDto.getTitle();
+        this.contents = requestDto.getContents();
+        this.startDate = requestDto.getStartDate();
+        this.endDate = requestDto.getEndDate();
+        this.startMonth = requestDto.getStartDate().getMonth();
+        this.user = user;
+        this.endMonth = requestDto.getEndDate().getMonth();
+        this.startYear = requestDto.getStartDate().getYear();
+        this.endYear = requestDto.getEndDate().getYear();
+        this.subjectScheduleType = SubjectScheduleType.returnType(requestDto.getSubjectScheduleType());
+    }
+    public static OfficialSubjectScheduleEntity fromOfficialScheduleDto(OfficialScheduleRequestDto requestDto, SubjectEntity subject, UserEntity user) {
+        return new OfficialSubjectScheduleEntity(requestDto, subject, user);
+    }
+
+    public void ScheduleFix(OfficialScheduleRequestDto requestDto){
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
@@ -48,10 +67,6 @@ public class OfficialSubjectScheduleEntity {
         this.endYear = requestDto.getEndDate().getYear();
         this.subjectScheduleType = SubjectScheduleType.returnType(requestDto.getSubjectScheduleType());
     }
-    public static OfficialSubjectScheduleEntity fromOfficialScheduleDto(OfficialScheduleRequestDto requestDto, SubjectEntity subject) {
-        return new OfficialSubjectScheduleEntity(requestDto, subject);
-    }
-
 
     @PrePersist
     void registeredAt(){
