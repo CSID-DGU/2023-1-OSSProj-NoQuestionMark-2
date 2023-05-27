@@ -3,6 +3,7 @@ package com.NoQuestionMark.schedular.controller;
 
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleFixRequestDto;
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
+import com.NoQuestionMark.schedular.controller.request.OfficialScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.response.Response;
 import com.NoQuestionMark.schedular.controller.response.ScheduleResponseDto;
@@ -30,6 +31,12 @@ public class ScheduleController {
     @PostMapping("/subject")
     public Response<Void> registerSubjectSchedule(@RequestBody SubjectScheduleRequestDto requestDto, Authentication authentication){
         scheduleService.writeSubjectSchedule(requestDto, authentication.getName());
+        return Response.success();
+    }
+
+    @PostMapping("/official")
+    public Response<Void> registerOfficialSchedule(@RequestBody OfficialScheduleRequestDto requestDto, Authentication authentication){
+        scheduleService.writeOfficialSchedule(requestDto, authentication.getName());
         return Response.success();
     }
 
