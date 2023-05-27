@@ -1,10 +1,10 @@
 package com.NoQuestionMark.schedular.model.entity;
 
-public enum CommonScheduleType {
+public enum ScheduleType {
     TASK, SCHEDULE;
 
-    public static CommonScheduleType returnType(String type){
-        if(type.equals("TASK")) return CommonScheduleType.TASK;
+    public static ScheduleType returnType(String type){
+        if(type.equals("TASK")) return ScheduleType.TASK;
         return SCHEDULE;
     }
 }

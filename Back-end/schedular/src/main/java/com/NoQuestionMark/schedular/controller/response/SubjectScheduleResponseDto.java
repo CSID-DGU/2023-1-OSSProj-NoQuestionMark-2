@@ -1,14 +1,8 @@
 package com.NoQuestionMark.schedular.controller.response;
 
-import com.NoQuestionMark.schedular.model.entity.SubjectEntity;
 import com.NoQuestionMark.schedular.model.entity.SubjectScheduleEntity;
-import com.NoQuestionMark.schedular.model.entity.UserSubject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Getter
