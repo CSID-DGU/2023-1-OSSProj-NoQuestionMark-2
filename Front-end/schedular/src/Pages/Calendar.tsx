@@ -16,7 +16,6 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { userInfoState, EventState } from 'recoil/Atom';
 import { v4 as uuidv4 } from 'uuid';
 import * as Api from 'lib/Api';
-import { co } from '@fullcalendar/core/internal-common';
 
 const Container = styled.div`
   width : 80%;
@@ -127,7 +126,7 @@ const Calendar = () =>{
           const {subjects} = result;
           setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
         });
-        await performGetRequest(year,month);
+        await performGetRequest(year,month,false);
       } catch (error) {
         console.error(error);
       }
@@ -135,7 +134,7 @@ const Calendar = () =>{
   },[])
 
   useEffect(() =>{
-    performGetRequest(year,month);
+    performGetRequest(year,month,false);
   },[month,year]);
 
   const filterDuplicateEvents = (newEventList: EventSourceInput[]) => {
@@ -145,10 +144,10 @@ const Calendar = () =>{
     return filteredEvents;
   };
 
-  const performGetRequest = async (year: string, month: string) => {
+  const performGetRequest = async (year: string, month: string, post?:boolean) => {
     try {
       const visitedMonth = `${year}-${month}`;
-      if (!visitedMonths.includes(visitedMonth)) {
+      if (!visitedMonths.includes(visitedMonth) || post) {
         const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
         const {commonSchedule,subjectSchedule} = response.data.result;
 

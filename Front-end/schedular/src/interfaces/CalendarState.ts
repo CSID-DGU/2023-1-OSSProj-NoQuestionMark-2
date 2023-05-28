@@ -3,7 +3,7 @@ interface ModalToggle{
     id? : string;
     subjectList?: string[];
     event?:EventSourceInput;
-    getApi?: (year: string, month: string) => void;
+    getApi?: (year: string, month: string, post?:boolean) => void;
     date?:string[]|undefined;
 }
 //commonScheduleType : task, schedule (개인), 
