@@ -16,6 +16,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { userInfoState, EventState } from 'recoil/Atom';
 import { v4 as uuidv4 } from 'uuid';
 import * as Api from 'lib/Api';
+import { co } from '@fullcalendar/core/internal-common';
 
 const Container = styled.div`
   width : 80%;
@@ -115,6 +116,7 @@ const Calendar = () =>{
   const [month, setMonth] = useState(getTodayMonth);
   const [year, setYear] = useState(getTodayYear);
   const [evtState,setEvtState]= useRecoilState(EventState);
+  const [visitedMonths, setVisitedMonths] = useState<string[]>([]);
   const calendarRef = useRef<FullCalendar>(null);
 
   useEffect(() =>{
@@ -125,51 +127,57 @@ const Calendar = () =>{
           const {subjects} = result;
           setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
         });
+        await performGetRequest(year,month);
       } catch (error) {
         console.error(error);
       }
     })();
-    performGetRequest(year,month);
   },[])
+
+  useEffect(() =>{
+    performGetRequest(year,month);
+  },[month,year]);
+
+  const filterDuplicateEvents = (newEventList: EventSourceInput[]) => {
+    const filteredEvents = newEventList.filter((newEvent) =>
+      evtState.every((prevEvent) => prevEvent.scheduleId !== newEvent.scheduleId)
+    );  
+    return filteredEvents;
+  };
 
   const performGetRequest = async (year: string, month: string) => {
     try {
-      const response = await Api.get(`/schedule/common?month=${year}-${month}`);
-      const {commonSchedule,subjectSchedule} = response.data.result;
+      const visitedMonth = `${year}-${month}`;
+      if (!visitedMonths.includes(visitedMonth)) {
+        const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
+        const {commonSchedule,subjectSchedule} = response.data.result;
 
-      commonSchedule.forEach((s: EventSourceInput) => {
-        const idx = IMPORTANCE.indexOf(s.importance);
-        s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
-        s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-      });
+        commonSchedule.forEach((s: EventSourceInput) => {
+          const idx = IMPORTANCE.indexOf(s.importance);
+          s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+          s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+        });
 
-      subjectSchedule.forEach((s: EventSourceInput) => {
-        const idx = IMPORTANCE.indexOf(s.importance);
-        s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-        s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
-      });
+        subjectSchedule.forEach((s: EventSourceInput) => {
+          const idx = IMPORTANCE.indexOf(s.importance);
+          s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+          s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+        });
 
-      const new_Event_List = [...commonSchedule, ...subjectSchedule];      
-      _getEvents(new_Event_List);
+        const newEventList = [...commonSchedule, ...subjectSchedule];  
+        const filteredEvents = filterDuplicateEvents(newEventList)
+        setEvtState([...evtState, ...filteredEvents.map(event => ({
+          ...event,
+          'start': event.startDate,
+          'end': event.endDate
+        }))]);
+        setVisitedMonths(prevVisitedMonths => [...prevVisitedMonths, visitedMonth]);
+      }
     } 
     catch (error) {
       console.error('Error:', error);
     }
   };
-
-  const _getEvents = async (newEvents: EventSourceInput[]) => {
-    setEvtState(prevState => {
-      const filteredEvents = newEvents.filter(newEvent =>
-        prevState.every(prevEvent => prevEvent.scheduleId !== newEvent.scheduleId)
-      );
-      const updatedEvents = [...prevState, ...filteredEvents];
-      return updatedEvents.map(event => ({
-        ...event,
-        'start': event.startDate,
-        'end': event.endDate
-      }));
-    });
-  }
 
   // modal
   const handlePostModalToggle = (type:string) => {
@@ -256,7 +264,6 @@ const Calendar = () =>{
                       if(nextMonth >= 12)  new_M = '01';
                       setMonth(new_M);
                       setYear(new_Y);
-                      performGetRequest(new_Y.toString(), new_M);
                     }
                   },
                 },
@@ -285,14 +292,11 @@ const Calendar = () =>{
                     }
 
                     if(preDate.getMonth() !== preMonth) {
-                      console.log("preMonth",preMonth+1);
                       let new_Month = (preMonth+1).toString().length === 1 ? `0${preMonth+1}` : `${preMonth+1}`;
-                      console.log(new_Month);
                       const new_Y = Number(new_Month) < 1 ? (preYear-1).toString(): preYear.toString();
                       if(preMonth < 0 )  new_Month = '12';
                       setMonth(new_Month);
                       setYear(new_Y.toString());
-                      performGetRequest(new_Y.toString(), new_Month);
                     }
                   }
                 }
