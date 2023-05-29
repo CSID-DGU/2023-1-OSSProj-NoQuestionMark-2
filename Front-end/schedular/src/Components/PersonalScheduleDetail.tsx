@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, MouseEvent} from 'react';
 import { useForm, SubmitHandler,Controller } from 'react-hook-form';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import styled from 'styled-components';
@@ -138,9 +138,11 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
 
   const [edited, setEdited] = useState(false)
 
-  const onClickEditButton = () => {
+  const onClickEditButton = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     setEdited(true);
   };
+
 
   const onClickReadButton = () => {
     setEdited(false);
@@ -157,12 +159,18 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
   const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
   const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
-			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
-      // console.log(putData);
-			await Api.put(`/schedule/common/${id}`, putData).then((res) => {
-        // console.log(res);
+      const commonScheduleType = scheduleType;
+			const putData = { title, contents,commonScheduleType, importance, startDate, endDate  };
+      console.log('putData',putData);
+      startDate < endDate ?
+				await Api.put(`/schedule/common/${id}`, putData).then((res) => {
         alert('정상적으로 일정이 수정되었습니다.');
-			});
+				if (date) {
+          const [month, year] = date;
+          getApi?.(year, month);
+        }        
+			}): alert('마감날짜를 다시 설정해주세요.');
+      handleModalToggle('personal');
 		} catch (e) {
 			alert(e);
 		}
@@ -204,7 +212,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
             )}
           />
         </InputDiv>
-        <label htmlFor='type'>유형</label>
+        <label htmlFor='scheduleType'>유형</label>
           <InputDiv>
             <Controller
               control={control}
@@ -213,7 +221,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
               rules={{ required: true }}
               render={({ field }) => (
                 <StyledSelect 
-                  id='type' 
+                  id='scheduleType' 
                   value={field.value}
                   placeholder='제목을 입력해주세요.'
                   {...register('scheduleType', { required: true })}
@@ -280,7 +288,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
         <label>마감 날짜</label>
         <Controller
             control={control}
-            name='startDate'
+            name='endDate'
             defaultValue={formData.endDate}
             rules={{ required: true }}
             render={({ field }) => (
@@ -300,13 +308,13 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
           <ButtonWapper>
             <ButtonLine>
               <EditButton type='submit'>수정완료</EditButton>
-              <CDButton type='button' onClick={()=>{onClickReadButton()}}>취소하기</CDButton>
+              <CDButton type='button' onClick={onClickReadButton}>취소하기</CDButton>
             </ButtonLine>
           </ButtonWapper> ) : ( 
           <ButtonWapper> 
             {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
             <ButtonLine>
-              <EditButton type='button' onClick={()=>{onClickEditButton()}}>수정하기</EditButton>
+              <EditButton type='button' onClick={onClickEditButton}>수정하기</EditButton>
               <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
             </ButtonLine>
           </ButtonWapper>)}

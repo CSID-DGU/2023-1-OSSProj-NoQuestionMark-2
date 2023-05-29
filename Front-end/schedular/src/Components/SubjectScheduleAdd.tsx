@@ -82,9 +82,9 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
   } = useForm<EventSourceInput>({mode : 'onBlur'});
 
   const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
-  const postSchedule = async ({ title, contents, className, importance, subjectScheduleType, startDate, endDate }:EventSourceInput) => {
+  const postSchedule = async ({ title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate }:EventSourceInput) => {
 		try {
-			const postData = {  title, contents, className, importance, subjectScheduleType, startDate, endDate };
+			const postData = {  title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate };
       console.log(postData);
       startDate < endDate ?
 			await Api.post(`/schedule/subject`, postData).then((res) => {
@@ -115,9 +115,9 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
             placeholder='제목을 입력해주세요.'
             {...register('title', { required: true })}/>
         </InputDiv>
-        <label htmlFor='type'>유형</label>
+        <label htmlFor='scheduleType'>유형</label>
         <InputDiv>
-          <StyledSelect id='type'  {...register('commonScheduleType', { required: true })}>
+          <StyledSelect id='scheduleType'  {...register('scheduleType', { required: true })}>
             <option value='TASK'>TASK</option>
             <option value='SCHEDULE'>SCHEDULE</option>
           </StyledSelect>
@@ -133,12 +133,12 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
         <label htmlFor='className'>과목명</label>
         <InputDiv>
           <StyledSelect id='className' {...register('className', { required: true })}>
-            {subjectList?.map((el)=> <option value={el.subjectName}>{el.subjectName}</option>)}
+            {subjectList?.map((el)=> <option key={el} value={el}>{el}</option>)}
           </StyledSelect>
         </InputDiv>
-        <label htmlFor='scheduleType'>일정 종류</label>
+        <label htmlFor='subjectScheduleType'>일정 종류</label>
         <InputDiv>
-          <StyledSelect id='scheduleType' {...register('subjectScheduleType', { required: true })}>
+          <StyledSelect id='subjectScheduleType' {...register('subjectScheduleType', { required: true })}>
             <option value='ASSIGNMENT'>ASSIGNMENT</option>
             <option value='TEST'>TEST</option>
             <option value='PRESENTATION'>PRESENTATION</option>
