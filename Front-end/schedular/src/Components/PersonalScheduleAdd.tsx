@@ -94,7 +94,7 @@ const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => 
         handleModalToggle('personal');
         if (date) {
           const [month, year] = date;
-          getApi?.(year, month, true);
+          getApi?.(year, month);
         }
 			}) : alert('마감날짜를 다시 설정해주세요.');
 		} catch (e) {

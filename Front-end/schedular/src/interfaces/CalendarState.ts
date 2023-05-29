@@ -1,9 +1,11 @@
+import {Subjects} from './homeSchedule';
+
 interface ModalToggle{
     handleModalToggle: (value: string) => void;
     id? : string;
-    subjectList?: string[];
+    subjectList?: Subjects;
     event?:EventSourceInput;
-    getApi?: (year: string, month: string, post?:boolean) => void;
+    getApi?: (year: string, month: string) => void;
     date?:string[]|undefined;
 }
 //commonScheduleType : task, schedule (개인), 
