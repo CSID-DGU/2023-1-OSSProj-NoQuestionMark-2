@@ -82,11 +82,11 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
   } = useForm<EventSourceInput>({mode : 'onBlur'});
 
   const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
-  const postSchedule = async ({ title, contents, className, subjectScheduleType, startDate, endDate }:EventSourceInput) => {
+  const postSchedule = async ({ title, contents, className, importance, subjectScheduleType, startDate, endDate }:EventSourceInput) => {
 		try {
-			const postData = {  title, contents, className, subjectScheduleType, startDate, endDate };
+			const postData = {  title, contents, className, importance, subjectScheduleType, startDate, endDate };
       console.log(postData);
-      startDate < endDate! ?
+      startDate < endDate ?
 			await Api.post(`/schedule/subject`, postData).then((res) => {
         console.log(res);
         alert('정상적으로 일정이 등록되었습니다.');
@@ -133,7 +133,7 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
         <label htmlFor='className'>과목명</label>
         <InputDiv>
           <StyledSelect id='className' {...register('className', { required: true })}>
-            {subjectList?.map((el)=> <option value={el}>{el}</option>)}
+            {subjectList?.map((el)=> <option value={el.subjectName}>{el.subjectName}</option>)}
           </StyledSelect>
         </InputDiv>
         <label htmlFor='scheduleType'>일정 종류</label>
