@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import background_image from '../Assets/Images/logo.png'
 import { Subjects } from 'interfaces/homeSchedule';
 import { Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 const Container = styled.div`
   width: 50%
@@ -57,8 +58,8 @@ const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) =
   const myClass = subjects
     .map((classes, index) => {
       const {subjectName,subjectId}= classes;
-      return (<ListWapper>
-        <MyList key={index}>{subjectName}</MyList>
+      return (<ListWapper key={uuidv4()}>
+        <MyList>{subjectName}</MyList>
         <ClassButton to={`/eclass/${subjectId}`}>강의실 가기</ClassButton>
       </ListWapper>)})
     ;
