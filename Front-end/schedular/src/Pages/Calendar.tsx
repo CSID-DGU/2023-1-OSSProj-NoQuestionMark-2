@@ -10,13 +10,12 @@ import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
 import SubjectDetailProf from 'Components/SubjectDetailProf';
 import { EventSourceInput } from 'interfaces/CalendarState';
-import { subjects } from 'interfaces/homeSchedule';
+import { Subjects,subjects, schedules, Schedules } from 'interfaces/homeSchedule';
 import Icon from 'Assets/Images/check.png';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { userInfoState, EventState } from 'recoil/Atom';
 import { v4 as uuidv4 } from 'uuid';
 import * as Api from 'lib/Api';
-import { co } from '@fullcalendar/core/internal-common';
 
 const Container = styled.div`
   width : 80%;
@@ -108,7 +107,8 @@ const getTodayYear = () => {
 
 
 const Calendar = () =>{
-  const [subjectList, setSubjectList] =useState<string[]>([]);
+  const [subjectList, setSubjectList] =useState<Subjects>([]);
+  const [scheduleList, setScheduleList] = useState<Schedules>([]);
   const [postModal, setpostModal] = useState({ personalPost: false, subjectPost: false});
   const [readModal, setReadModal] = useState({ personalRead: false, subjectRead: false});
   const [evt, setEvents] = useState<EventSourceInput>();
@@ -116,17 +116,11 @@ const Calendar = () =>{
   const [month, setMonth] = useState(getTodayMonth);
   const [year, setYear] = useState(getTodayYear);
   const [evtState,setEvtState]= useRecoilState(EventState);
-  const [visitedMonths, setVisitedMonths] = useState<string[]>([]);
   const calendarRef = useRef<FullCalendar>(null);
 
   useEffect(() =>{
     (async () => {
       try {
-        await Api.get('/home').then((res)=>{
-          const result = res.data.result
-          const {subjects} = result;
-          setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
-        });
         await performGetRequest(year,month);
       } catch (error) {
         console.error(error);
@@ -138,41 +132,45 @@ const Calendar = () =>{
     performGetRequest(year,month);
   },[month,year]);
 
-  const filterDuplicateEvents = (newEventList: EventSourceInput[]) => {
-    const filteredEvents = newEventList.filter((newEvent) =>
-      evtState.every((prevEvent) => prevEvent.scheduleId !== newEvent.scheduleId)
-    );  
-    return filteredEvents;
-  };
+  const reloadTaskList = async(refresh?:string) => {
+    await Api.get('/home').then((res)=>{
+      const result = res.data.result
+      const {schedule,subjects} = result;
+      setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
+      setScheduleList([...schedule.map((el:schedules)=> { return {'title': el.title,'dday': String(el.dday)}})])
+    });
+  }
+
+  const reloadCalendarEvents =async (year:string, month:string) => {
+    const visitedMonth = `${year}-${month}`;
+    const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
+    const {commonSchedule,subjectSchedule} = response.data.result;
+    console.log(commonSchedule, subjectSchedule);
+
+    commonSchedule.forEach((s: EventSourceInput) => {
+      const idx = IMPORTANCE.indexOf(s.importance);
+      s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+      s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+    });
+
+    subjectSchedule.forEach((s: EventSourceInput) => {
+      const idx = IMPORTANCE.indexOf(s.importance);
+      s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+      s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+    });
+
+    const newEventList = [...commonSchedule, ...subjectSchedule];  
+    setEvtState([...newEventList.map(event =>({
+      ...event,
+      'start': event.startDate,
+      'end': event.endDate
+    }))]); 
+  }
 
   const performGetRequest = async (year: string, month: string) => {
     try {
-      const visitedMonth = `${year}-${month}`;
-      if (!visitedMonths.includes(visitedMonth)) {
-        const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
-        const {commonSchedule,subjectSchedule} = response.data.result;
-
-        commonSchedule.forEach((s: EventSourceInput) => {
-          const idx = IMPORTANCE.indexOf(s.importance);
-          s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
-          s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-        });
-
-        subjectSchedule.forEach((s: EventSourceInput) => {
-          const idx = IMPORTANCE.indexOf(s.importance);
-          s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-          s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
-        });
-
-        const newEventList = [...commonSchedule, ...subjectSchedule];  
-        const filteredEvents = filterDuplicateEvents(newEventList)
-        setEvtState([...evtState, ...filteredEvents.map(event => ({
-          ...event,
-          'start': event.startDate,
-          'end': event.endDate
-        }))]);
-        setVisitedMonths(prevVisitedMonths => [...prevVisitedMonths, visitedMonth]);
-      }
+      reloadTaskList();
+      reloadCalendarEvents(year, month);
     } 
     catch (error) {
       console.error('Error:', error);
@@ -315,12 +313,9 @@ const Calendar = () =>{
             <TodoList>
               <Subheading>해야할 일</Subheading>
               {
-                evtState.map((el) => {  
-                  if( el.scheduleType === 'TASK') {
-                    const {title, dday, endDate} = el;                    
-                    if(new Date().toISOString()< endDate ) {
-                      return <TodoTask key={uuidv4()}><span>{title}</span><Dday>D{dday}</Dday></TodoTask>}
-                  }
+                scheduleList.map((el) => {  
+                  const {title,dday} = el;
+                  return <TodoTask key={uuidv4()}><span>{title}</span><Dday>D{dday}</Dday></TodoTask>
                 })
               }
             </TodoList>

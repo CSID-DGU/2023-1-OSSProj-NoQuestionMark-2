@@ -1,6 +1,5 @@
 import {useState} from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
@@ -119,7 +118,9 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const SubjectDetailProf = ({handleModalToggle,subjectList,id}: ModalToggle) => {
+const SubjectDetailProf = ({handleModalToggle,subjectList,event,id}: ModalToggle) => {
+  const formData = {...event};
+
   const [edited, setEdited] = useState(false)
 
   const onClickEditButton = () => {
@@ -159,6 +160,7 @@ const SubjectDetailProf = ({handleModalToggle,subjectList,id}: ModalToggle) => {
           <StyledInput
             id='title'
             type='text'
+            value={formData.title}
             placeholder='제목을 입력해주세요.'
             {...register('title', { required: true })} 
             readOnly={edited ? false : true}/>
@@ -167,30 +169,31 @@ const SubjectDetailProf = ({handleModalToggle,subjectList,id}: ModalToggle) => {
         <InputDiv>
           <StyledTextarea 
             id='contents' 
+            value={formData.contents}
             placeholder='상세내용을 입력해주세요.'
             readOnly={edited ? false : true}/>
         </InputDiv>
-        <label htmlFor='subject'>과목명</label>
+        <label htmlFor='className'>과목명</label>
         <InputDiv>
-          <StyledSelect id='subject' {...register('className', { required: true })} disabled={edited ? false : true}>
-            {subjectList?.map((el)=> <option value={el}>{el}</option>)}
+          <StyledSelect id='className' value={formData.className} {...register('className', { required: true })} disabled={edited ? false : true}>
+            {subjectList?.map((el)=> <option value={el.subjectName}>{el.subjectName}</option>)}
           </StyledSelect>
         </InputDiv>
         <label htmlFor='importance'>일정 종류</label>
         <InputDiv>
-          <StyledSelect id='importance'  {...register('importance', { required: true })} disabled={edited ? false : true}>
-            <option value='과제'>과제</option>
-            <option value='시험'>시험</option>
-            <option value='발표'>발표</option>
+          <StyledSelect id='importance' value={formData.scheduleType} {...register('importance', { required: true })} disabled={edited ? false : true}>
+            <option value='ASSIGNMENT'>ASSIGNMENT</option>
+            <option value='PRESENTATION'>PRESENTATION</option>
+            <option value='TEST'>TEST</option>
           </StyledSelect>
         </InputDiv>
         <label>시작 날짜</label>
         <InputDiv>
-          <input type='datetime-local' {...register('startDate', { required: true })} readOnly={edited ? false : true}></input>
+          <input type='datetime-local' value={formData.startDate} {...register('startDate', { required: true })} readOnly={edited ? false : true}></input>
         </InputDiv>
         <label>마감 날짜</label>
         <InputDiv>
-          <input type='datetime-local' readOnly={edited ? false : true}></input>
+          <input type='datetime-local' value={formData.endDate}  readOnly={edited ? false : true}></input>
         </InputDiv>
         </Grid>
         {edited ? ( 

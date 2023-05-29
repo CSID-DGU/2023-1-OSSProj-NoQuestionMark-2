@@ -18,7 +18,7 @@ const AppRouter = () =>{
                 {/* <Route path="/calendar" element={<MemberRoute><Calendar /></MemberRoute>}/> */}
                 <Route path="/calendar" element={<Calendar />}/>
                 <Route path="/notfound" element={<NotFound />} />
-                <Route path="/eclass" element={<EclassSubject />} />
+                <Route path="/eclass/:id" element={<EclassSubject />} />
                 <Route path="/eclass/detail" element={<EclassSubjectDetail />} />
                 <Route path="/eclass/add" element={<EclassSubjectAdd />} />
             </Routes>
