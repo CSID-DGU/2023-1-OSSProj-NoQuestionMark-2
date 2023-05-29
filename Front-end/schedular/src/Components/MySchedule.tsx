@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import background_image from '../Assets/Images/logo.png'
 import { Schedules } from 'interfaces/homeSchedule';
+import { v4 as uuidv4 } from 'uuid';
 const Container = styled.div`
   width: 50%;
 `;
@@ -76,9 +77,9 @@ const MySchedule = ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean
 
   const mySchedule = schedule
     .map((schedules, index) => 
-    <ListWapper>
-      <MyList key={index}>{schedules.title}</MyList>
-      <DdayList key={index}>D-{schedules.dday}</DdayList>
+    <ListWapper key={uuidv4()}>
+      <MyList>{schedules.title}</MyList>
+      <DdayList>D-{schedules.dday}</DdayList>
     </ListWapper>)
     ;
 
