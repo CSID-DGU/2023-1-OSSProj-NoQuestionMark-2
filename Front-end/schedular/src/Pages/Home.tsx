@@ -35,7 +35,6 @@ const Home = () => {
       (async () =>{
         await Api.get('/home').then( (res) => {
           const {schedule,subjects} = res.data.result;
-          
           setSchedule([...schedule]);
           setSubjects([...subjects]);
         });

@@ -55,11 +55,12 @@ const ClassButton = styled(Link)`
 const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) => {
 
   const myClass = subjects
-    .map((classes, index) => 
-    <ListWapper>
-      <MyList key={index}>{classes.subjectName}</MyList>
-      <ClassButton to="/eclass">강의실 가기</ClassButton>
-    </ListWapper>)
+    .map((classes, index) => {
+      const {subjectName,subjectId}= classes;
+      return (<ListWapper>
+        <MyList key={index}>{subjectName}</MyList>
+        <ClassButton to={`/eclass/${subjectId}`}>강의실 가기</ClassButton>
+      </ListWapper>)})
     ;
 
   return (

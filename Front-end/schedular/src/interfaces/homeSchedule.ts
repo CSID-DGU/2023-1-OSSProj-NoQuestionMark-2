@@ -1,5 +1,6 @@
 interface subjects {
     subjectName : string;
+    subjectId: string;
 }
 interface schedules {
     title : string;
