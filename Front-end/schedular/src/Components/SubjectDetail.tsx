@@ -1,7 +1,8 @@
-import {useState, MouseEvent} from 'react';
+import {useState, MouseEvent } from 'react';
 import { useForm, SubmitHandler,Controller } from 'react-hook-form';
-import { AiFillCloseCircle } from 'react-icons/ai';
+import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
+import SubmitButton from './SubmitButton';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
 import * as Api from '../lib/Api';
 
@@ -33,6 +34,22 @@ const CloseButton = styled(AiFillCloseCircle)`
   right: 20px;
   width: 20px;
   height: 20px;
+`;
+const CompleteButton = styled.button`
+  display: block;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  text-align: center; 
+  cursor: pointer;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin : auto;
+  background-color: #228be6;
+  width: 22rem;
+  height: 2rem;
 `;
 const Grid = styled.div`
   display: grid;
@@ -106,22 +123,6 @@ const CDButton = styled.button`
   width: 10rem;
   height: 2rem;
 `;
-const CompleteButton = styled.button`
-  display: block;
-  outline: none;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  font-weight: bold;
-  text-align: center; 
-  cursor: pointer;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  margin : auto;
-  background-color: #228be6;
-  width: 22rem;
-  height: 2rem;
-`;
 const ButtonLine = styled.div`
   display: flex;
   padding-top: 0.5rem;
@@ -133,8 +134,8 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalToggle)  => {
-  const formData = {...event}
+const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}: ModalToggle) => {
+  const formData = {...event};
 
   const [edited, setEdited] = useState(false)
 
@@ -142,7 +143,6 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
     event.preventDefault();
     setEdited(true);
   };
-
 
   const onClickReadButton = () => {
     setEdited(false);
@@ -157,29 +157,28 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
   } = useForm<EventSourceInput>({mode : 'onBlur'})
 
   const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
-  const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
+  const putSchedule = async ({ title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate  }:EventSourceInput) => {
 		try {
-      const commonScheduleType = scheduleType;
-			const putData = { title, contents,commonScheduleType, importance, startDate, endDate  };
-      console.log('putData',putData);
+			const putData = {title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate};
+      console.log("putData",putData);
       startDate < endDate ?
-				await Api.put(`/schedule/common/${id}`, putData).then((res) => {
+			await Api.put(`schedule/subject/${id}`, putData).then((res) => {
         alert('정상적으로 일정이 수정되었습니다.');
 				if (date) {
           const [month, year] = date;
           getApi?.(year, month);
-        }        
+        }
 			}): alert('마감날짜를 다시 설정해주세요.');
-      handleModalToggle('personal');
+      handleModalToggle('subject');
 		} catch (e) {
 			alert(e);
 		}
 	};
-
+  
   const delSchedule = async() => {
-    await Api.delete(`/schedule/common/${id}`).then((res) => {
+    await Api.delete(`/schedule/subject/${id}`).then((res) => {
       window.confirm('삭제하시겠습니까?');
-      handleModalToggle('personal');
+      handleModalToggle('subject');
       if (date) {
         const [month, year] = date;
         getApi?.(year, month);
@@ -188,50 +187,50 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
   }
 
   return (
-    <ModalConatiner>
+    <ModalConatiner>      
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <h1>개인 일정 상세보기</h1>
-        <CloseButton onClick={()=>handleModalToggle('personal')}/>
+        <h1>과목 일정 상세보기</h1>
+        <CloseButton onClick ={()=>handleModalToggle('subject')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
         <InputDiv>
           <Controller
-            control={control}
-            name='title'
-            defaultValue={formData.title}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <StyledInput 
-                id='title' 
-                type='text'
-                value={field.value}
-                placeholder='제목을 입력해주세요.'
-                {...register('title', { required: true })} 
-                readOnly={!edited }
-              />
-            )}
+              control={control}
+              name='title'
+              defaultValue={formData.title}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <StyledInput 
+                  id='title' 
+                  type='text'
+                  value={field.value}
+                  placeholder='제목을 입력해주세요.'
+                  {...register('title', { required: true })} 
+                  readOnly={!edited }
+                />
+              )}
           />
         </InputDiv>
         <label htmlFor='scheduleType'>유형</label>
-          <InputDiv>
-            <Controller
-              control={control}
-              name='scheduleType'
-              defaultValue={formData.scheduleType}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <StyledSelect 
-                  id='scheduleType' 
-                  value={field.value}
-                  placeholder='제목을 입력해주세요.'
-                  {...register('scheduleType', { required: true })}
-                  disabled={!edited }
-                >
-                <option value='TASK'>TASK</option>
-                <option value='SCHEDULE'>SCHEDULE</option>
-              </StyledSelect>
-              )}
-            />
+        <InputDiv>
+          <Controller
+            control={control}
+            name='scheduleType'
+            defaultValue={formData.scheduleType}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <StyledSelect 
+                id='scheduleType' 
+                value={field.value}
+                placeholder='제목을 입력해주세요.'
+                {...register('scheduleType', { required: true })}
+                disabled={!edited}
+              >
+              <option value='TASK'>TASK</option>
+              <option value='SCHEDULE'>SCHEDULE</option>
+            </StyledSelect>
+            )}
+          />
         </InputDiv>
         <label htmlFor='contents'>상세내용</label>
         <InputDiv>
@@ -249,6 +248,36 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
               {...register('contents', { required: true })} 
               />
             )}
+          />
+        </InputDiv>
+        <label htmlFor='className'>과목명</label>
+        <InputDiv>
+          <Controller
+              control={control}
+              name='className'
+              defaultValue={formData.className}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <StyledSelect id='className' value={field.value} {...register('className', { required: true })} disabled={!edited}>
+                {subjectList?.map((el)=> <option value={el}>{el}</option>)}
+              </StyledSelect>
+              )}
+          /> 
+        </InputDiv>
+        <label htmlFor='subjectScheduleType'>일정 종류</label>
+        <InputDiv>
+          <Controller
+              control={control}
+              name='subjectScheduleType'
+              defaultValue={formData.subjectScheduleType}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <StyledSelect id='subjectScheduleType' value={field.value} {...register('subjectScheduleType', { required: true })} disabled={!edited}>
+                  <option value='ASSIGNMENT'>ASSIGNMENT</option>
+                  <option value='PRESENTATION'>PRESENTATION</option>
+                  <option value='TEST'>TEST</option>
+                </StyledSelect>
+              )}
           />
         </InputDiv>
         <label htmlFor='importance'>중요도</label>
@@ -323,4 +352,4 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
   )
 }
 
-export default PersonalScheduleDetail
+export default SubjectDetailProf

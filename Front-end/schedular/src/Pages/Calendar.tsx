@@ -8,7 +8,7 @@ import koLocale from '@fullcalendar/core/locales/ko';
 import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
 import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
-import SubjectDetailProf from 'Components/SubjectDetailProf';
+import SubjectDetailProf from 'Components/SubjectDetail';
 import { EventSourceInput } from 'interfaces/CalendarState';
 import { Subjects,subjects, schedules, Schedules } from 'interfaces/homeSchedule';
 import Icon from 'Assets/Images/check.png';
@@ -107,7 +107,7 @@ const getTodayYear = () => {
 
 
 const Calendar = () =>{
-  const [subjectList, setSubjectList] =useState<Subjects>([]);
+  const [subjectList, setSubjectList] =useState<string[]>([]);
   const [scheduleList, setScheduleList] = useState<Schedules>([]);
   const [postModal, setpostModal] = useState({ personalPost: false, subjectPost: false});
   const [readModal, setReadModal] = useState({ personalRead: false, subjectRead: false});
@@ -132,9 +132,10 @@ const Calendar = () =>{
     performGetRequest(year,month);
   },[month,year]);
 
-  const reloadTaskList = async(refresh?:string) => {
+  const reloadTaskList = async() => {
     await Api.get('/home').then((res)=>{
       const result = res.data.result
+      console.log(result);
       const {schedule,subjects} = result;
       setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
       setScheduleList([...schedule.map((el:schedules)=> { return {'title': el.title,'dday': String(el.dday)}})])
@@ -143,9 +144,11 @@ const Calendar = () =>{
 
   const reloadCalendarEvents =async (year:string, month:string) => {
     const visitedMonth = `${year}-${month}`;
+
     const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
-    const {commonSchedule,subjectSchedule} = response.data.result;
-    console.log(commonSchedule, subjectSchedule);
+    const {commonSchedule,subjectSchedule,officialSchedule} = response.data.result;
+    console.log(commonSchedule,subjectSchedule);
+    // console.log(commonSchedule, subjectSchedule,officialSchedule);
 
     commonSchedule.forEach((s: EventSourceInput) => {
       const idx = IMPORTANCE.indexOf(s.importance);
@@ -155,11 +158,15 @@ const Calendar = () =>{
 
     subjectSchedule.forEach((s: EventSourceInput) => {
       const idx = IMPORTANCE.indexOf(s.importance);
+      s['color'] = `rgba(0,255,0,${ALPHA[idx]})`;
       s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-      s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
     });
 
-    const newEventList = [...commonSchedule, ...subjectSchedule];  
+    officialSchedule.forEach((s: EventSourceInput) => {
+      s['color'] = `rgba(0,0,255,1.0)`;
+    });
+
+    const newEventList = [...commonSchedule, ...subjectSchedule,...officialSchedule];  
     setEvtState([...newEventList.map(event =>({
       ...event,
       'start': event.startDate,
@@ -168,9 +175,9 @@ const Calendar = () =>{
   }
 
   const performGetRequest = async (year: string, month: string) => {
-    try {
-      reloadTaskList();
-      reloadCalendarEvents(year, month);
+    try {    
+      reloadTaskList();  
+      reloadCalendarEvents(year, month);      
     } 
     catch (error) {
       console.error('Error:', error);
@@ -188,15 +195,17 @@ const Calendar = () =>{
     let {_def} = info.event;
     let title = _def.title;
     let className = _def.ui.classNames[0];
-    let {contents,startDate, endDate, scheduleId, importance, schedule, scheduleType} = _def.extendedProps;
+    let {contents,startDate, endDate, scheduleId, importance, schedule, scheduleType, subjectScheduleType} = _def.extendedProps;
+    console.log(info.event);
 
     setId(scheduleId);
     if(schedule === 'COMMON'){
-      setEvents({title,contents,startDate, endDate, importance, scheduleType});
+      setEvents({title,contents, startDate, endDate, importance, scheduleType});
       setReadModal({...readModal, personalRead: !readModal.personalRead})
     }
     else {
-      setEvents({title,contents,startDate, endDate, importance, className, scheduleType});
+      console.log(title,contents,startDate, endDate, importance, className, subjectScheduleType, scheduleType);
+      setEvents({title,contents,startDate, endDate, importance, className, subjectScheduleType, scheduleType});
       setReadModal({...readModal, subjectRead : !readModal.subjectRead})
     }
   }
@@ -312,11 +321,12 @@ const Calendar = () =>{
           <TaskBody>
             <TodoList>
               <Subheading>해야할 일</Subheading>
-              {
-                scheduleList.map((el) => {  
+              { scheduleList.length > 0 ?
+                scheduleList.map((el) => {
                   const {title,dday} = el;
                   return <TodoTask key={uuidv4()}><span>{title}</span><Dday>D{dday}</Dday></TodoTask>
                 })
+                : <p>해야할 일이 없습니다.</p>
               }
             </TodoList>
 
@@ -354,6 +364,7 @@ const Calendar = () =>{
         { readModal.subjectRead && 
           <SubjectDetailProf
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
+            getApi ={performGetRequest}
             id = {id}
             date = {[month,year]}
             event = {evt}

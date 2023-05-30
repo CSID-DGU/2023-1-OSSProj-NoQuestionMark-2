@@ -1,9 +1,7 @@
-import {Subjects} from './homeSchedule';
-
 interface ModalToggle{
     handleModalToggle: (value: string) => void;
     id? : string;
-    subjectList?: Subjects;
+    subjectList?: string[];
     event?:EventSourceInput;
     getApi?: (year: string, month: string) => void;
     date?:string[]|undefined;
