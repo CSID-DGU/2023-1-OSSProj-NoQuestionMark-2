@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import background_image from '../Assets/Images/logo.png'
 import { Subjects } from 'interfaces/homeSchedule';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 const Container = styled.div`
@@ -40,7 +40,7 @@ const MyList = styled.span`
   font-size: 15px;
 `;
 
-const ClassButton = styled(Link)`
+const ClassButton = styled.button`
   position: absolute;
   right: 25px;
   margin: 7px 20px;
@@ -54,16 +54,20 @@ const ClassButton = styled(Link)`
 `;
 
 const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) => {
+  const navigate = useNavigate();
 
+  const moveToElass = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const subjectId = (e.target as HTMLButtonElement).value;
+    navigate(`/eclass/${subjectId}`, { state: subjectId })
+  }
   const myClass = subjects
     .map((classes, index) => {
       const {subjectName,subjectId}= classes;
       return (<ListWapper key={uuidv4()}>
         <MyList>{subjectName}</MyList>
-        <ClassButton to={`/eclass/${subjectId}`}>강의실 가기</ClassButton>
+        <ClassButton onClick={moveToElass} value={subjectId}>강의실 가기</ClassButton>
       </ListWapper>)})
     ;
-
   return (
     <>
     { (myClass.length < 1 && !loginCkeck)?
