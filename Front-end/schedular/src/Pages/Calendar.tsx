@@ -8,7 +8,7 @@ import koLocale from '@fullcalendar/core/locales/ko';
 import SubjectScheduleAdd from 'Components/SubjectScheduleAdd';
 import PersonalScheduleAdd from 'Components/PersonalScheduleAdd';
 import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
-import SubjectDetailProf from 'Components/SubjectDetail';
+import SubjectDetail from 'Components/SubjectDetail';
 import { EventSourceInput } from 'interfaces/CalendarState';
 import { Subjects,subjects, schedules, Schedules } from 'interfaces/homeSchedule';
 import Icon from 'Assets/Images/check.png';
@@ -147,6 +147,7 @@ const Calendar = () =>{
     const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
     const {commonSchedule,subjectSchedule,officialSchedule} = response.data.result;
     // console.log(commonSchedule, subjectSchedule,officialSchedule);
+    console.log(commonSchedule,officialSchedule)
 
     commonSchedule.forEach((s: EventSourceInput) => {
       const idx = IMPORTANCE.indexOf(s.importance);
@@ -202,7 +203,7 @@ const Calendar = () =>{
       setReadModal({...readModal, personalRead: !readModal.personalRead})
     }
     else {
-      setEvents({title,contents,startDate, endDate, importance, className, subjectScheduleType, scheduleType});
+      setEvents({title,contents,startDate, endDate, importance, className, subjectScheduleType, schedule, scheduleType});
       setReadModal({...readModal, subjectRead : !readModal.subjectRead})
     }
   }
@@ -364,7 +365,8 @@ const Calendar = () =>{
             handleModalToggle={handlePostModalToggle}
             getApi={performGetRequest}
             date={[month,year]}
-            subjectList={subjectList} />
+            subjectList={subjectList} 
+          />
         }
 
         {/* 일정상세보기모달 */}
@@ -378,7 +380,7 @@ const Calendar = () =>{
           /> 
         }
         { readModal.subjectRead && 
-          <SubjectDetailProf
+          <SubjectDetail
             handleModalToggle={()=> setReadModal({...readModal, subjectRead : !readModal.subjectRead})}
             getApi ={performGetRequest}
             id = {id}

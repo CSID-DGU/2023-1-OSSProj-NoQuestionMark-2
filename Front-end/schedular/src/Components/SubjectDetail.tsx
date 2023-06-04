@@ -2,8 +2,8 @@ import {useState, MouseEvent } from 'react';
 import { useForm, SubmitHandler,Controller } from 'react-hook-form';
 import { AiFillCloseCircle } from "react-icons/ai";
 import styled from 'styled-components';
-import SubmitButton from './SubmitButton';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
+import { v4 as uuidv4 } from 'uuid';
 import * as Api from '../lib/Api';
 
 const ModalConatiner = styled.div`
@@ -134,7 +134,7 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
-const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}: ModalToggle) => {
+const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: ModalToggle) => {
   const formData = {...event};
 
   const [edited, setEdited] = useState(false)
@@ -259,7 +259,7 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
               rules={{ required: true }}
               render={({ field }) => (
                 <StyledSelect id='className' value={field.value} {...register('className', { required: true })} disabled={!edited}>
-                {subjectList?.map((el)=> <option value={el}>{el}</option>)}
+                {subjectList?.map((el)=> <option key={uuidv4()} value={el}>{el}</option>)}
               </StyledSelect>
               )}
           /> 
@@ -335,10 +335,16 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
         </Grid>
         {edited ? ( 
           <ButtonWapper>
-            <ButtonLine>
-              <EditButton type='submit'>수정완료</EditButton>
-              <CDButton type='button' onClick={onClickReadButton}>취소하기</CDButton>
-            </ButtonLine>
+            {formData.schedule ? 
+              <ButtonLine>
+                <button>이클래스로 이동하기</button>
+              </ButtonLine> 
+              :
+              <ButtonLine>
+                <EditButton type='submit'>수정완료</EditButton>
+                <CDButton type='button' onClick={onClickReadButton}>취소하기</CDButton>
+              </ButtonLine>
+            }
           </ButtonWapper> ) : ( 
           <ButtonWapper> 
             {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
@@ -352,4 +358,4 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
   )
 }
 
-export default SubjectDetailProf
+export default SubjectDetail
