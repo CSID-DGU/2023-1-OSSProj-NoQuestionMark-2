@@ -1,8 +1,9 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { EclassInput } from 'interfaces/EclassSchedule';
 import * as Api from '../lib/Api';
-import {EventSourceInput} from 'interfaces/CalendarState';
-import styled from 'styled-components';
 
+import styled from 'styled-components';
 
 const Container = styled.div`
   flex-direction: column;
@@ -10,27 +11,12 @@ const Container = styled.div`
 const StyledH3 = styled.h3`
   text-align: left;
   padding-top: 40px;
-  padding-left: 420px;
+  padding-left: 24rem;
+  font-size: 20px;
 `;
 const Form = styled.form`
   height: 100%;
   width: 100%;
-`;
-const TitleWapper = styled.div`
-  width: 1052px;
-  height: 40px;
-  margin-left: 418px;
-  background-color: #e6e6e6;
-  border: 1.5px solid #cdcdcd;
-`;
-const SubjectTitle = styled.input`
-  height: 33px;
-  width: 700px;
-  padding-left: 10px;
-  margin-top: 3px;
-  margin-right: 335px;
-  background-color: #e6e6e6;
-  border: none;
 `;
 const ContentWapper = styled.div`
   display: inline-flex;
@@ -44,16 +30,7 @@ const SubTitleWapper = styled.div`
 const TypeTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 30px;
-  height: 35px;
-  text-shadow: 1px 1px 1px #506890;
-  background-color: #7c95be;
-  border: 1px solid #6880a6;
-`;
-const DateTitle = styled.div`
-  display:flex;
-  align-items: center;
-  padding-left: 30px;
+  padding-left: 28px;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -73,20 +50,26 @@ const Content = styled.div`
   height: 323px;
   border: 1px solid #cdcdcd;
 `;
+const SubjectTitle = styled.input`
+  height: 32px;
+  width: 98.6%;
+  padding-left: 10px;
+  border: 0.5px solid #cdcdcd;
+`;
 const SubjectType = styled.select`
-  height: 35px;
+  height: 37px;
   width: 100%;
   padding-left: 10px;
   border: 0.5px solid #cdcdcd;
 `;
 const DateWapper = styled.div`
   display: flex;
-  height: 36px;
+  height: 35px;
   background-color: #fff;
   border: 0.5px solid #cdcdcd;
 `;
 const StartDate = styled.input`
-  height: 36px;
+  height: 35px;
   width: 400px;
   margin-left: 8px;
   padding: 0 10px;
@@ -97,7 +80,7 @@ const StyledP = styled.p`
   margin: 6px 36px;
 `;
 const EndDate = styled.input`
-  height: 36px;
+  height: 35px;
   width: 400px;
   padding-left: 10px;
   border: none;
@@ -121,32 +104,52 @@ const SubmitButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
 `;
+const Wapper = styled.div`
+  display: block;
+  margin: 0 auto;
+`;
 
 const EclassSubjectAddForm = () => {
-
+  const location = useLocation();
+  const subjectId = location.state.subjectId;
+  const subjectName = location.state.subjectName;
+  const navigate = useNavigate();
   const {     
     register,
     handleSubmit,
-  } = useForm({mode : 'onBlur'});
-  const onSubmit = () => {
-    console.log();
-  };
+  } = useForm<EclassInput>({mode : 'onBlur'});
+  
+  const onSubmit: SubmitHandler<EclassInput> = data => postData(data);
+  const postData = async ({ title, contents, subjectScheduleType, startDate, endDate}:EclassInput) => {
+		try {
+      const className = subjectName;
+			const postSubject = { title, contents, subjectScheduleType, startDate, endDate, className };
+      console.log(postSubject);
+      startDate <= endDate! ?
+			await Api.post(`/schedule/official`, postSubject).then((res) => {
+        alert('정상적으로 일정이 등록되었습니다.');
+        /*navigate(`/eclass/${subjectId}`);*/ //error
+			}) : alert('마감날짜를 다시 설정해주세요.');
+		} catch (e) {
+			alert(e);
+		}
+	};
 
   return (
     <Container>
       <StyledH3>과목 일정 등록</StyledH3>
       <Form onSubmit={handleSubmit(onSubmit)}>
-          <TitleWapper>
-            <SubjectTitle id='title' type='text' placeholder='제목을 입력해주세요.' {...register('title', { required: true })}/>
-          </TitleWapper>
+        <Wapper>
           <ContentWapper>
             <SubTitleWapper>
+              <TypeTitle>일정 제목</TypeTitle>
               <TypeTitle>일정 종류</TypeTitle>
-              <DateTitle>제출 기간</DateTitle>
+              <TypeTitle>제출 기간</TypeTitle>
               <ContentTitle>상세 내용</ContentTitle>
             </SubTitleWapper>
             <Content>
-              <SubjectType id='subjectType'  {...register('subjectScheduleType', { required: true })}>
+              <SubjectTitle id='title' type='text' placeholder='제목을 입력해주세요.' {...register('title', { required: true })}/>
+              <SubjectType id='subjectScheduleType'  {...register('subjectScheduleType', { required: true })}>
                 <option value='ASSIGNMENT'>ASSIGNMENT</option>
                 <option value='TEST'>TEST</option>
                 <option value='PRESENTATION'>PRESENTATION</option>
@@ -159,7 +162,8 @@ const EclassSubjectAddForm = () => {
               <StyledDetail id='contents' placeholder='상세내용을 입력해주세요.' {...register('contents', { required: true })}/>
             </Content>
           </ContentWapper>
-          <SubmitButton type='submit'>등록하기</SubmitButton>
+        </Wapper>
+        <SubmitButton type='submit'>등록하기</SubmitButton>
       </Form>
     </Container>
   )
