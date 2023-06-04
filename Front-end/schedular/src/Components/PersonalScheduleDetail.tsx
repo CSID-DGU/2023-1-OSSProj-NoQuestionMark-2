@@ -186,6 +186,15 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
       }
     });
   }
+  const completeSchedule = async() => {
+    await Api.post(`/schuedule/${id}`).then((res) => {
+      if (date) {
+        const [month, year] = date;
+        getApi?.(year, month);
+      }
+      alert('일정완료');
+    });
+  }
 
   return (
     <ModalConatiner>
@@ -312,7 +321,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
             </ButtonLine>
           </ButtonWapper> ) : ( 
           <ButtonWapper> 
-            {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
+            {formData.scheduleType==='TASK' && <CompleteButton type='button' onClick={completeSchedule}>일정 완료하기</CompleteButton>}
             <ButtonLine>
               <EditButton type='button' onClick={onClickEditButton}>수정하기</EditButton>
               <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>

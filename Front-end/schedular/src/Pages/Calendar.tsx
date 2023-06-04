@@ -135,10 +135,9 @@ const Calendar = () =>{
   const reloadTaskList = async() => {
     await Api.get('/home').then((res)=>{
       const result = res.data.result
-      console.log(result);
       const {schedule,subjects} = result;
       setSubjectList([...subjects.map((el:subjects)=> el.subjectName)]);
-      setScheduleList([...schedule.map((el:schedules)=> { return {'title': el.title,'dday': String(el.dday)}})])
+      setScheduleList([...schedule.map((el:schedules)=> { return {'title': el.title,'dday': el.dday, 'scheduleId' : el.scheduleId}})])
     });
   }
 
@@ -147,7 +146,6 @@ const Calendar = () =>{
 
     const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
     const {commonSchedule,subjectSchedule,officialSchedule} = response.data.result;
-    console.log(commonSchedule,subjectSchedule);
     // console.log(commonSchedule, subjectSchedule,officialSchedule);
 
     commonSchedule.forEach((s: EventSourceInput) => {
@@ -164,6 +162,7 @@ const Calendar = () =>{
 
     officialSchedule.forEach((s: EventSourceInput) => {
       s['color'] = `rgba(0,0,255,1.0)`;
+      s.scheduleType === 'ASSIGNMENT' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
     });
 
     const newEventList = [...commonSchedule, ...subjectSchedule,...officialSchedule];  
@@ -196,7 +195,6 @@ const Calendar = () =>{
     let title = _def.title;
     let className = _def.ui.classNames[0];
     let {contents,startDate, endDate, scheduleId, importance, schedule, scheduleType, subjectScheduleType} = _def.extendedProps;
-    console.log(info.event);
 
     setId(scheduleId);
     if(schedule === 'COMMON'){
@@ -204,7 +202,6 @@ const Calendar = () =>{
       setReadModal({...readModal, personalRead: !readModal.personalRead})
     }
     else {
-      console.log(title,contents,startDate, endDate, importance, className, subjectScheduleType, scheduleType);
       setEvents({title,contents,startDate, endDate, importance, className, subjectScheduleType, scheduleType});
       setReadModal({...readModal, subjectRead : !readModal.subjectRead})
     }
@@ -212,14 +209,22 @@ const Calendar = () =>{
 
   const eventContent = (arg:any) => {
     const {title} = arg.event;
-    const {color, imageurl} = arg.event.extendedProps;
+    const {color, imageurl, complete} = arg.event.extendedProps;
     return (
       <div className="event" style={color}>
         { imageurl && <img className="event-icon" src={imageurl} alt="이벤트 아이콘" />}
-        <span className="event-title">{title}</span>
+        <span className="event-title" style={{textDecoration: complete === '1' ? 'line-through' : 'none'}}>{title}</span>
       </div>
     );
   };
+  
+  const handleComplete = async(e: React.MouseEvent<HTMLButtonElement>) =>{
+    const scheduleId = (e.target as HTMLButtonElement).value;
+    await Api.post(`/schuedule/${scheduleId}`).then((res) => {
+      performGetRequest(year, month);
+      alert('복원완료');
+    });
+  }
 
   return (
     <>
@@ -332,6 +337,17 @@ const Calendar = () =>{
 
             <CompleteList>
               <Subheading>완료한 일</Subheading>
+              { scheduleList.length > 0 ?
+                scheduleList.map((el) => {
+                  const {title,scheduleId} = el;
+                  return (
+                    <TodoTask key={uuidv4()}>
+                      <span className="event-title" style={{textDecoration: 'line-through'}}>{title}</span>
+                      <button onClick={handleComplete} value={scheduleId}>복원하기</button>
+                    </TodoTask>)
+                })
+                : <p>해야할 일이 없습니다.</p>
+              }
             </CompleteList>
           </TaskBody>
         </CalendarDiv>
