@@ -1,8 +1,9 @@
 import axios from 'axios';
 import {IAuthForm} from '../interfaces/IAuthForm'
 import {EventSourceInput} from '../interfaces/CalendarState'
+import {EclassInput} from 'interfaces/EclassSchedule';
 
-async function post(endpoint:string, data?:IAuthForm|EventSourceInput){
+async function post(endpoint:string, data?:IAuthForm|EventSourceInput|EclassInput){
 	const apiUrl = endpoint;
 	const bodyData = JSON.stringify(data);
 
