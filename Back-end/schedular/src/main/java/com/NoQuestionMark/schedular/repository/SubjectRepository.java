@@ -1,6 +1,6 @@
 package com.NoQuestionMark.schedular.repository;
 
-import com.NoQuestionMark.schedular.model.entity.SubjectEntity;
+import com.NoQuestionMark.schedular.model.SubjectEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

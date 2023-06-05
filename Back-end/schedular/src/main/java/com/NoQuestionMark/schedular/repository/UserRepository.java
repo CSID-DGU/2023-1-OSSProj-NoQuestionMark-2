@@ -1,6 +1,6 @@
 package com.NoQuestionMark.schedular.repository;
 
-import com.NoQuestionMark.schedular.model.entity.UserEntity;
+import com.NoQuestionMark.schedular.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
