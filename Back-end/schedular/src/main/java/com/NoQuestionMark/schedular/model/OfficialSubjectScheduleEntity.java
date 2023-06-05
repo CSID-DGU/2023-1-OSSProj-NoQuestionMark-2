@@ -1,4 +1,4 @@
-package com.NoQuestionMark.schedular.model.entity;
+package com.NoQuestionMark.schedular.model;
 
 import com.NoQuestionMark.schedular.controller.request.OfficialScheduleRequestDto;
 import lombok.Builder;
@@ -6,37 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
 
 @Entity
-@Table(name = "\"official_subject_schedule\"")
 @NoArgsConstructor
 @Getter
-public class OfficialSubjectScheduleEntity {
+@DiscriminatorValue("OFFICIAL_SUBJECT")
+@Table(name = "\"official_subject_schedule\"")
+public class OfficialSubjectScheduleEntity extends ScheduleEntity{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;
-    private String contents;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
     private SubjectScheduleType subjectScheduleType;
-    private Month startMonth;
-    private Month endMonth;
-    private int startYear;
-    private int endYear;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private Timestamp deletedAt;
+
 
     @Builder
     private OfficialSubjectScheduleEntity (OfficialScheduleRequestDto requestDto, SubjectEntity subject, UserEntity user){
@@ -56,7 +38,7 @@ public class OfficialSubjectScheduleEntity {
         return new OfficialSubjectScheduleEntity(requestDto, subject, user);
     }
 
-    public void ScheduleFix(OfficialScheduleRequestDto requestDto){
+    public void scheduleFix(OfficialScheduleRequestDto requestDto){
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
@@ -67,14 +49,4 @@ public class OfficialSubjectScheduleEntity {
         this.endYear = requestDto.getEndDate().getYear();
         this.subjectScheduleType = SubjectScheduleType.returnType(requestDto.getSubjectScheduleType());
     }
-
-    @PrePersist
-    void registeredAt(){
-        this.createdAt = Timestamp.from(Instant.now());
-    }
-    @PreUpdate
-    void updatedAt(){
-        this.updatedAt = Timestamp.from(Instant.now());
-    }
-
 }

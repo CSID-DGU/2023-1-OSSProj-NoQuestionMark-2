@@ -1,9 +1,10 @@
-package com.NoQuestionMark.schedular.model.entity;
+package com.NoQuestionMark.schedular.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
 
 @Entity
 @NoArgsConstructor
@@ -16,4 +17,5 @@ public class SubjectEntity {
     private Long id;
 
     private String subjectName;
+
 }

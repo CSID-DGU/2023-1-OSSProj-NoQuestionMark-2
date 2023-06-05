@@ -1,15 +1,14 @@
-package com.NoQuestionMark.schedular.model.entity;
+package com.NoQuestionMark.schedular.model;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.security.auth.Subject;
-
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "\"user_subject\"")
 public class UserSubject {
 
     @Id
