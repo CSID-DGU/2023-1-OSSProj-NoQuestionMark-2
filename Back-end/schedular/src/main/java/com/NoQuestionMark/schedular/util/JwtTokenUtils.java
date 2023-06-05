@@ -1,6 +1,6 @@
 package com.NoQuestionMark.schedular.util;
 
-import com.NoQuestionMark.schedular.model.entity.UserType;
+import com.NoQuestionMark.schedular.model.UserType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
