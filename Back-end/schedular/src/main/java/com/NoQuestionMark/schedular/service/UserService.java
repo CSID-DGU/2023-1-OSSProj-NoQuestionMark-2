@@ -93,26 +93,7 @@ public class UserService {
 
         // 토큰 생성 과정
         String token = JwtTokenUtils.generateToken(schoolNumber, user.getName(), user.getUserType(), secretKey, expiredTimeMs);
-        List<UserSubjectsResponseDto> userSubjects = new ArrayList<>(userSubjectRepository
-                .findAllByUser(user)
-                .stream()
-                .map(UserSubjectsResponseDto::fromUserSubject).toList());
-        userSubjects.sort(Comparator.comparing(UserSubjectsResponseDto::getSubjectName));
-        List<UserScheduleResponseDto> userSchedule = new ArrayList<>(commonScheduleRepository
-                .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
-                .stream().map(UserScheduleResponseDto::fromCommonSchedule).toList());
-
-        userSchedule.addAll(subjectScheduleRepository
-                .findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(user, LocalDateTime.now())
-                .stream().map(UserScheduleResponseDto::fromSubjectSchedule).toList());
-        for (UserSubjectsResponseDto userSubject : userSubjects) {
-            SubjectEntity subject = subjectRepository.findBySubjectName(userSubject.getSubjectName())
-                    .orElseThrow(() -> new ScheduleException(ErrorCode.SUBJECT_NOT_FOUND, String.format("%s에 해당하는 과목이 존재하지 않습니다.", userSubject.getSubjectName())));
-            userSchedule.addAll(officialSubjectRepository.findAllBySubjectAndStartDateGreaterThanOrderByStartDateAsc(subject, LocalDateTime.now()).stream().map(UserScheduleResponseDto::fromOfficialSchedule).toList());
-        }
-        userSchedule.sort(Comparator.comparingInt(UserScheduleResponseDto::getDDay));
-        if (userSchedule.size() > 5) userSchedule.subList(0,5);
-        return new UserLoginResponseDto(token, user.getName(), user.getSchoolNumber(), user.getUserType().name(), userSubjects, userSchedule);
+        return new UserLoginResponseDto(token, user.getName(), user.getSchoolNumber(), user.getUserType().name());
     }
 
     public UserHomeResponseDto getHome(String schoolNumber) {
