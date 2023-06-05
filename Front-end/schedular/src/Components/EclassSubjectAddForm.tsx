@@ -111,7 +111,6 @@ const Wapper = styled.div`
 
 const EclassSubjectAddForm = () => {
   const location = useLocation();
-  const subjectId = location.state.subjectId;
   const subjectName = location.state.subjectName;
   const navigate = useNavigate();
   const {     
@@ -128,7 +127,7 @@ const EclassSubjectAddForm = () => {
       startDate <= endDate! ?
 			await Api.post(`/schedule/official`, postSubject).then((res) => {
         alert('정상적으로 일정이 등록되었습니다.');
-        /*navigate(`/eclass/${subjectId}`);*/ //error
+        navigate(-1);
 			}) : alert('마감날짜를 다시 설정해주세요.');
 		} catch (e) {
 			alert(e);
