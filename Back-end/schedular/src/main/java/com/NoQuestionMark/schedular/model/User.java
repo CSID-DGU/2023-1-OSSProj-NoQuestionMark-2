@@ -1,8 +1,5 @@
 package com.NoQuestionMark.schedular.model;
 
-import com.NoQuestionMark.schedular.model.entity.UserEntity;
-import com.NoQuestionMark.schedular.model.entity.UserType;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,4 +1,4 @@
-package com.NoQuestionMark.schedular.model.entity;
+package com.NoQuestionMark.schedular.model;
 
 public enum ScheduleType {
     TASK, SCHEDULE;

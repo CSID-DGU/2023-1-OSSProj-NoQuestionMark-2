@@ -1,4 +1,4 @@
-package com.NoQuestionMark.schedular.model.entity;
+package com.NoQuestionMark.schedular.model;
 
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleFixRequestDto;
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
@@ -7,51 +7,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.*;
 
 @Entity
 @Table(name = "\"common_schedule\"")
 @NoArgsConstructor
 @Getter
-public class CommonScheduleEntity {
+@DiscriminatorValue("COMMON")
+public class CommonScheduleEntity extends ScheduleEntity{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String title;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
-    private String contents;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    @Enumerated(EnumType.STRING)
-    private Importance importance;
-    private Month startMonth;
-    private Month endMonth;
-    private int startYear;
-    private int endYear;
     @Enumerated(EnumType.STRING)
     private ScheduleType scheduleType;
-    private boolean complete;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private Timestamp deletedAt;
 
+    @Enumerated(EnumType.STRING)
+    private Importance importance;
 
-    @PrePersist
-    void registeredAt(){
-        this.createdAt = Timestamp.from(Instant.now());
-    }
-    @PreUpdate
-    void updatedAt(){
-        this.updatedAt = Timestamp.from(Instant.now());
-    }
 
     @Builder
     private CommonScheduleEntity(CommonScheduleRequestDto requestDto, UserEntity user){
-        this.title = requestDto.getTitle();
+        super.title = requestDto.getTitle();
         this.user = user;
         this.startMonth = requestDto.getStartDate().getMonth();
         this.endMonth = requestDto.getEndDate().getMonth();
@@ -59,7 +32,6 @@ public class CommonScheduleEntity {
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
-        this.complete = false;
         this.scheduleType = ScheduleType.returnType(requestDto.getCommonScheduleType());
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
@@ -81,6 +53,4 @@ public class CommonScheduleEntity {
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
     }
-
-
 }
