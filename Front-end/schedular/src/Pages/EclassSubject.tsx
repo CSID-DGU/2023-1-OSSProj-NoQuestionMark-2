@@ -114,7 +114,7 @@ const EclassSubject = () =>{
     navigate(`/eclass/detail/${scheduleId}`, { state: { subjectId, subjectName, scheduleId }  })
   }
   const moveToAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/eclass/add`, {  state: { subjectId, subjectName } })
+    navigate(`/eclass/add`, {  state: { subjectName } })
   }
   
   const scheduleList = [...data];
@@ -123,7 +123,7 @@ const EclassSubject = () =>{
       const {subjectScheduleType, title, endDate, dday, scheduleId} = data;
       return(<ScheduleWapper key={uuidv4()}>
         <ScheduleType>{subjectScheduleType}</ScheduleType>
-        <Title onClick={moveToDetail} value={subjectName} data-subject-id={scheduleId}>{title}</Title>
+        <Title onClick={moveToDetail} value={subjectName}>{title}</Title>
         <EndDate>{endDate}</EndDate>
         <DDay>{dday}</DDay>
       </ScheduleWapper>)
