@@ -30,7 +30,6 @@ public class CommonScheduleResponseDto {
                 schedule.getScheduleType().name(),
                 schedule.getStartDate(),
                 schedule.getEndDate(),
-                schedule.getEndDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth()
-        );
+                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());
     }
 }

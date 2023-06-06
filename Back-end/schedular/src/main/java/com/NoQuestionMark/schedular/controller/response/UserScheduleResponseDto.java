@@ -29,7 +29,7 @@ public class UserScheduleResponseDto {
                 CommonScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
                 schedule.getScheduleType().name(),
                 "",
-                schedule.getEndDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth()
+                 LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth()
                 );
     }
 
@@ -41,7 +41,7 @@ public class UserScheduleResponseDto {
                 SubjectScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
                 schedule.getSubjectScheduleType().name(),
                 schedule.getSubject().getSubjectName(),
-                schedule.getEndDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth());
+                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());
     }
 
     public static UserScheduleResponseDto fromOfficialSchedule(OfficialSubjectScheduleEntity schedule){
@@ -52,6 +52,5 @@ public class UserScheduleResponseDto {
                 OfficialSubjectScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
                 schedule.getSubjectScheduleType().name(),
                 schedule.getSubject().getSubjectName(),
-                schedule.getEndDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth());
-    }
+                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());    }
 }
