@@ -79,7 +79,7 @@ const MySchedule = ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean
     .map((schedules, index) => 
     <ListWapper key={uuidv4()}>
       <MyList>{schedules.title}</MyList>
-      <DdayList>D-{schedules.dday}</DdayList>
+      <DdayList>D{schedules.dday}</DdayList>
     </ListWapper>)
     ;
 
