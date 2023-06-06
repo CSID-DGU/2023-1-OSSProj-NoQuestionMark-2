@@ -21,18 +21,17 @@ public class OfficialScheduleResponseDto {
     private LocalDateTime endDate;
     private int dDay;
 
-    public static OfficialScheduleResponseDto officialScheduleResponseDto(OfficialSubjectScheduleEntity entity){
+    public static OfficialScheduleResponseDto officialScheduleResponseDto(OfficialSubjectScheduleEntity schedule){
         return new OfficialScheduleResponseDto(
-                entity.getId(),
-                entity.getTitle(),
-                entity.getSubject().getSubjectName(),
-                entity.getContents(),
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getSubject().getSubjectName(),
+                schedule.getContents(),
                 OfficialSubjectScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
-                entity.getSubjectScheduleType().name(),
-                entity.getStartDate(),
-                entity.getEndDate(),
-                entity.getEndDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth());
-
+                schedule.getSubjectScheduleType().name(),
+                schedule.getStartDate(),
+                schedule.getEndDate(),
+                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());
     }
 
 }

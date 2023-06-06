@@ -21,18 +21,18 @@ public class SubjectScheduleResponseDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int dDay;
-    public static SubjectScheduleResponseDto fromSubjectSchedule(SubjectScheduleEntity subjectSchedule){
+    public static SubjectScheduleResponseDto fromSubjectSchedule(SubjectScheduleEntity schedule){
         return new SubjectScheduleResponseDto(
-                subjectSchedule.getId(),
-                subjectSchedule.getTitle(),
-                subjectSchedule.getSubject().getSubjectName(),
-                subjectSchedule.getContents(),
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getSubject().getSubjectName(),
+                schedule.getContents(),
                 SubjectScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
-                subjectSchedule.getSubjectScheduleType().name(),
-                subjectSchedule.getScheduleType().name(),
-                subjectSchedule.getImportance().name(),
-                subjectSchedule.getStartDate(),
-                subjectSchedule.getEndDate(),
-                subjectSchedule.getEndDate().getDayOfMonth() - LocalDateTime.now().getDayOfMonth());
+                schedule.getSubjectScheduleType().name(),
+                schedule.getScheduleType().name(),
+                schedule.getImportance().name(),
+                schedule.getStartDate(),
+                schedule.getEndDate(),
+                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());
     }
 }
