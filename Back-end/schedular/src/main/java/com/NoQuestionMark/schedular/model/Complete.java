@@ -36,4 +36,16 @@ public class Complete {
     public static Complete newAssignmentFromOfficial(UserEntity listener, ScheduleEntity schedule) {
         return new Complete(listener, schedule);
     }
+
+    public static Complete fromPersonalSchedule(ScheduleEntity schedule){
+        return new Complete(schedule);
+    }
+
+    public void updateCompleteStatus() {
+        if(!this.complete) {
+            this.complete = true;
+            return;
+        }
+        this.complete = false;
+    }
 }
