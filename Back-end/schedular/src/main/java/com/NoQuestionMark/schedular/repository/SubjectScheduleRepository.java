@@ -3,6 +3,7 @@ package com.NoQuestionMark.schedular.repository;
 import com.NoQuestionMark.schedular.model.SubjectScheduleEntity;
 import com.NoQuestionMark.schedular.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,4 +13,7 @@ public interface SubjectScheduleRepository extends JpaRepository<SubjectSchedule
     List<SubjectScheduleEntity> findAllByUserAndStartDateGreaterThanOrderByStartDateAsc(UserEntity user, LocalDateTime standard);
 
     Optional<SubjectScheduleEntity> findByUserAndId(UserEntity user, Long scheduleId);
+
+    @Query(value = "select e from SubjectScheduleEntity e where e.user = :user and e.startDate > :now and e.scheduleType = 'TASK' order by e.startDate asc")
+    List<SubjectScheduleEntity> findSubjectToDoList(UserEntity user, LocalDateTime now);
 }
