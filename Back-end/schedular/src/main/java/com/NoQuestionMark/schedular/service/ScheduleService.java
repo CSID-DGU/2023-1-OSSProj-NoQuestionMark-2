@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -243,5 +245,19 @@ public class ScheduleService {
                 .stream()
                 .map(OfficialScheduleResponseDto::officialScheduleResponseDto)
                 .toList());
+    }
+
+    public List<ToDoListResponseDto> getTodoList(String schoolNumber) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        List<UserSubject> userSubject = userSubjectRepository.findAllByUser(user);
+        List<ToDoListResponseDto> toDoList = new ArrayList<>(commonScheduleRepository.findCommonToDoList(user, LocalDateTime.now()).stream().map(ToDoListResponseDto::fromCommon).toList());
+        toDoList.addAll(subjectScheduleRepository.findSubjectToDoList(user, LocalDateTime.now()).stream().map(ToDoListResponseDto::fromSubject).toList());
+        for(UserSubject subject : userSubject){
+            toDoList.addAll(officialSubjectRepository.findOfficialToDoList(subject.getSubject(), LocalDateTime.now()).stream().map(ToDoListResponseDto::fromOfficial).toList());
+        }
+        toDoList.sort(Comparator.comparing(ToDoListResponseDto::getDDay));
+        return toDoList;
     }
 }
