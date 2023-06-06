@@ -1,6 +1,7 @@
 import {useState, MouseEvent } from 'react';
 import { useForm, SubmitHandler,Controller } from 'react-hook-form';
 import { AiFillCloseCircle } from "react-icons/ai";
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
 import { v4 as uuidv4 } from 'uuid';
@@ -91,6 +92,19 @@ const StyledTextarea = styled.textarea`
   border-radius: 5px;
   padding: 10px 12px;
 `;
+const EclassBtn = styled.button`
+  display: block;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  text-align: center; 
+  cursor: pointer;
+  background-color: #228be6;
+  height: 2rem;
+  padding-top: 0.5rem;
+`;
 const EditButton = styled.button`
   display: block;
   outline: none;
@@ -135,6 +149,7 @@ const ButtonWapper = styled.div`
 `;
 
 const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: ModalToggle) => {
+  const navigate = useNavigate();
   const formData = {...event};
 
   const [edited, setEdited] = useState(false)
@@ -185,11 +200,19 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
       }
     });
   }
+  const moveToElass = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const subjectId = (e.target as HTMLButtonElement).value;
+    const subjectName = (e.target as HTMLButtonElement).getAttribute('data-subject-name');
+    navigate(`/eclass/${subjectId}`, { state: { subjectId, subjectName } })
+  }
+  const IsOfficial = () =>{
+    return formData.schedule ==='OFFICIAL_SUBJECT';
+  }
 
   return (
     <ModalConatiner>      
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <h1>과목 일정 상세보기</h1>
+        <h1>{IsOfficial()? '공식일정 상세보기' : '과목일정 상세보기'}</h1>
         <CloseButton onClick ={()=>handleModalToggle('subject')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
@@ -211,6 +234,7 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
               )}
           />
         </InputDiv>
+        {!IsOfficial() &&  <>
         <label htmlFor='scheduleType'>유형</label>
         <InputDiv>
           <Controller
@@ -232,6 +256,7 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
             )}
           />
         </InputDiv>
+        </>}
         <label htmlFor='contents'>상세내용</label>
         <InputDiv>
           <Controller
@@ -280,6 +305,8 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
               )}
           />
         </InputDiv>
+        {!IsOfficial() &&  
+        <>
         <label htmlFor='importance'>중요도</label>
         <InputDiv>
           <Controller
@@ -296,6 +323,7 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
             )}
           />
         </InputDiv>
+        </>}
         <label>시작 날짜</label>
         <Controller
             control={control}
@@ -334,25 +362,28 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
           />
         </Grid>
         {edited ? ( 
-          <ButtonWapper>
-            {formData.schedule ? 
-              <ButtonLine>
-                <button>이클래스로 이동하기</button>
-              </ButtonLine> 
-              :
-              <ButtonLine>
-                <EditButton type='submit'>수정완료</EditButton>
-                <CDButton type='button' onClick={onClickReadButton}>취소하기</CDButton>
-              </ButtonLine>
-            }
-          </ButtonWapper> ) : ( 
-          <ButtonWapper> 
-            {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
+          <ButtonWapper>      
             <ButtonLine>
-              <EditButton type='button' onClick={onClickEditButton}>수정하기</EditButton>
-              <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
-            </ButtonLine>
-          </ButtonWapper>)}
+              <EditButton type='submit'>수정완료</EditButton>
+              <CDButton type='button' onClick={onClickReadButton}>취소하기</CDButton>
+            </ButtonLine>            
+          </ButtonWapper> ) : ( 
+          <>
+          {IsOfficial() ?
+            <ButtonWapper> 
+              <EclassBtn onClick={moveToElass} value={id} data-subject-name={formData.className}>이클래스가기</EclassBtn>
+            </ButtonWapper> 
+            :
+            <ButtonWapper> 
+              {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
+              <ButtonLine> 
+                <EditButton type='button' onClick={onClickEditButton}>수정하기</EditButton>
+                <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
+              </ButtonLine>
+            </ButtonWapper>
+          }
+          </>
+        )}
       </Form>
     </ModalConatiner>
   )
