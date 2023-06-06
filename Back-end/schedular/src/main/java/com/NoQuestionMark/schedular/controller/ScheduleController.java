@@ -8,6 +8,7 @@ import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto
 import com.NoQuestionMark.schedular.controller.response.OfficialScheduleResponseDto;
 import com.NoQuestionMark.schedular.controller.response.Response;
 import com.NoQuestionMark.schedular.controller.response.ScheduleResponseDto;
+import com.NoQuestionMark.schedular.controller.response.ToDoListResponseDto;
 import com.NoQuestionMark.schedular.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -90,8 +91,8 @@ public class ScheduleController {
         return Response.success();
     }
 
-//    @GetMapping("/toDoList")
-//    public Response<List<ToDoListResponseDto>> getTodoList(Authentication authentication){
-//        return Response.success(scheduleService.getTodoList(authentication.getName(), subjectName));
-//    }
+    @GetMapping("/toDoList")
+    public Response<List<ToDoListResponseDto>> getTodoList(Authentication authentication){
+        return Response.success(scheduleService.getTodoList(authentication.getName()));
+    }
 }
