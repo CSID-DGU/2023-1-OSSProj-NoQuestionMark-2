@@ -1,48 +1,46 @@
-import {useState} from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import {useState, useEffect} from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useForm, SubmitHandler} from 'react-hook-form';
 import styled from 'styled-components';
+import * as Api from '../lib/Api';
+import {EclassInput} from 'interfaces/EclassSchedule';
+import { v4 as uuidv4 } from 'uuid';
 
 const Container = styled.div`
   flex-direction: column;
 `;
+const StyledH2 = styled.h2`
+  text-align: left;
+  padding-left: 20rem;
+`;
 const StyledH3 = styled.h3`
   text-align: left;
   padding-top: 40px;
-  padding-left: 420px;
+  padding-left: 24rem;
 `;
 const Form = styled.form`
   height: 100%;
   width: 100%;
 `;
-const EditTitleWapper = styled.div`
-  width: 1052px;
-  height: 40px;
-  margin-left: 418px;
-  background-color: #e6e6e6;
-  border: 1.5px solid #cdcdcd;
-`;
 const EditSubjectTitle = styled.input`
-  height: 33px;
-  width: 700px;
+  height: 32px;
+  width: 98.6%;
   padding-left: 10px;
-  margin-top: 3px;
-  margin-right: 335px;
-  background-color: #e6e6e6;
-  border: none;
+  border: 0.5px solid #cdcdcd;
 `;
 const EditContentWapper = styled.div`
   display: inline-flex;
 `;
 const EditSubTitleWapper = styled.div`
-  width: 120px;
+  width: 7rem;
   margin-left: 200px;
-  font-size: 15px;
+  font-size: 0.9rem;
   color: white;
 `;
 const EditTypeTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 30px;
+  padding-left: 1.6rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -51,7 +49,7 @@ const EditTypeTitle = styled.div`
 const EditDateTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 30px;
+  padding-left: 1.6rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -60,7 +58,7 @@ const EditDateTitle = styled.div`
 const EditContentTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 30px;
+  padding-left: 1.6rem;
   height: 250px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -68,12 +66,13 @@ const EditContentTitle = styled.div`
 `;
 const EditContent = styled.div`
   flex-direction: column;
-  height: 323px;
+  height: 359px;
+  width: 55rem;
   border: 1px solid #cdcdcd;
 `;
 const EditSubjectType = styled.select`
   height: 35px;
-  width: 100%;
+  width: 55rem;
   padding-left: 10px;
   border: 0.5px solid #cdcdcd;
 `;
@@ -102,23 +101,23 @@ const EditEndDate = styled.input`
 `;
 const EditStyledDetail = styled.textarea`
   height: 238px;
-  width: 920px;
+  width: 54.25rem;
   padding-left: 10px;
   padding-top: 10px;
   border: 0.5px solid #cdcdcd;
 `;
 const TitleWapper = styled.div`
-  width: 1050px;
+  width: 61.8rem;
   height: 40px;
-  margin-left: 419px;
+  margin-left: 24.4rem;
   background-color: #e6e6e6;
   border: 1.5px solid #cdcdcd;
 `;
 const SubjectTitle = styled.div`
-  display:flex;
+  display: flex;
   align-items: center;
   height: 33px;
-  width: 698px;
+  width: 7rem;
   padding-left: 10px;
   margin-top: 3px;
   margin-right: 335px;
@@ -129,15 +128,15 @@ const ContentWapper = styled.div`
   display: inline-flex;
 `;
 const SubTitleWapper = styled.div`
-  width: 120px;
-  margin-left: 200px;
-  font-size: 15px;
+  width: 7rem;
+  margin-left: 11.8rem;
+  font-size: 0.9rem;
   color: white;
 `;
 const TypeTitle = styled.div`
-  display:flex;
+  display: flex;
   align-items: center;
-  padding-left: 30px;
+  padding-left: 1.6rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -146,7 +145,7 @@ const TypeTitle = styled.div`
 const DateTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 30px;
+  padding-left: 1.6rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -155,7 +154,7 @@ const DateTitle = styled.div`
 const ContentTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 30px;
+  padding-left: 1.6rem;
   height: 250px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -164,6 +163,7 @@ const ContentTitle = styled.div`
 const Content = styled.div`
   flex-direction: column;
   height: 323px;
+  width: 54.9rem;
   font-size: 13px;
   border: 1px solid #cdcdcd;
 `;
@@ -171,17 +171,18 @@ const SubjectType = styled.div`
   display: flex;
   align-items: center;
   height: 34px;
-  width: 920px;
+  width: 54.3rem;
   padding-left: 10px;
   border: 0.5px solid #cdcdcd;
 `;
 const DateWapper = styled.div`
   display:flex;
   align-items: center;
-  height: 35px;
+  height: 35.5px;
+  width: 54.3rem;
   padding-left: 10px;
   background-color: #fff;
-  border: 0.5px solid #cdcdcd;
+  border: 1px solid #cdcdcd;
 `;
 const StyledP = styled.p`
   height: 20px;
@@ -190,7 +191,7 @@ const StyledP = styled.p`
 const StyledDetail = styled.div`
   text-align: left;
   height: 240px;
-  width: 920px;
+  width: 54.3rem;
   padding-left: 10px;
   padding-top: 10px;
   border: 0.5px solid #cdcdcd;
@@ -198,7 +199,7 @@ const StyledDetail = styled.div`
 const BtnWapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-right: 220px;
+  margin-right: 13rem;
 `;
 const SubmitButton = styled.button`
   margin: 30px 13px;
@@ -211,22 +212,60 @@ const SubmitButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
 `;
-const StyledH2 = styled.h2`
-  text-align: left;
-  padding-left: 300px;
-`;
 
 const EclassDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const subjectName = location.state.subjectName;
+  const scheduleId = location.state.scheduleId;
 
   const {     
     register,
     handleSubmit,
-  } = useForm({mode : 'onBlur'});
-  const onSubmit = () => {
-    console.log();
-  };
+    reset,
+  } = useForm<EclassInput>({mode : 'onBlur'});
 
+
+  useEffect(() => {
+    getData(); // 컴포넌트가 마운트되었을 때 데이터 가져오기
+  }, []);
+
+  const getData = async () => {
+    try {
+      await Api.get(`/schedule/official/${scheduleId}`).then((res) => {
+      const result = res.data.result;
+      setData(result);
+    });
+    } catch (error) {
+      console.error('데이터 가져오기 실패:', error);
+    }
+  };
+  console.log(data);
+
+  const onSubmit: SubmitHandler<EclassInput> = data => putData(data);
+  const putData = async ({ title, contents, subjectScheduleType, startDate, endDate}:EclassInput) => {
+		try {
+      const className = subjectName;
+			const putData = { title, contents, subjectScheduleType, startDate, endDate, className };
+      console.log(putData);
+      startDate <= endDate! ?
+			await Api.put(`/schedule/official/${scheduleId}`, putData).then((res) => {
+        alert('정상적으로 일정이 수정되었습니다.');
+        window.location.reload();
+			}) : alert('마감날짜를 다시 설정해주세요.');
+		} catch (e) {
+			alert(e);
+		}
+	};
+
+  const delSchedule = async() => {
+    await Api.delete(`/schedule/official/${scheduleId}`).then((res) => {
+      window.confirm('삭제하시겠습니까?');
+      navigate(-1);
+    });
+  }
 
   return (
     <>
@@ -235,17 +274,16 @@ const EclassDetail = () => {
         <Container>
           <StyledH3>과목 일정 수정</StyledH3>
           <Form onSubmit={handleSubmit(onSubmit)}>
-              <EditTitleWapper>
-                <EditSubjectTitle id='title' type='text' placeholder='제목을 입력해주세요.' {...register('title', { required: true })}/>
-              </EditTitleWapper>
               <EditContentWapper>
                 <EditSubTitleWapper>
+                  <EditTypeTitle>일정 제목</EditTypeTitle>
                   <EditTypeTitle>일정 종류</EditTypeTitle>
                   <EditDateTitle>제출 기간</EditDateTitle>
                   <EditContentTitle>상세 내용</EditContentTitle>
                 </EditSubTitleWapper>
                 <EditContent>
-                  <EditSubjectType id='subjectType'  {...register('subjectScheduleType', { required: true })}>
+                  <EditSubjectTitle id='title' type='text' placeholder='제목을 입력해주세요.' {...register('title', { required: true })}/>
+                  <EditSubjectType id='subjectType' {...register('subjectScheduleType', { required: true })}>
                     <option value='ASSIGNMENT'>ASSIGNMENT</option>
                     <option value='TEST'>TEST</option>
                     <option value='PRESENTATION'>PRESENTATION</option>
@@ -255,16 +293,16 @@ const EclassDetail = () => {
                     <EditStyledP>~</EditStyledP>
                     <EditEndDate id='endDate' type='datetime-local' {...register('endDate', { required: true })}/>
                   </EditDateWapper>
-                  <EditStyledDetail id='contents' placeholder='상세내용을 입력해주세요.' {...register('contents', { required: true })}/>
+                    <EditStyledDetail id='contents' placeholder='상세내용을 입력해주세요.' {...register('contents', { required: true })}/>
                 </EditContent>
               </EditContentWapper>
               <BtnWapper>
                 <SubmitButton type='button' onClick={()=>{setIsEditing(false)}}>취소하기</SubmitButton>
                 <SubmitButton type='submit'>수정완료</SubmitButton>
               </BtnWapper>
-              
           </Form>
         </Container></>) : (<>
+        {data !== null && (
         <Container>
           <StyledH3>과목 일정 상세보기</StyledH3>
           <Form>
@@ -285,10 +323,10 @@ const EclassDetail = () => {
               </ContentWapper>
               <BtnWapper>
                 <SubmitButton type='button' onClick={()=>{setIsEditing(true)}}>수정하기</SubmitButton>
-                <SubmitButton type='button'>삭제하기</SubmitButton>
+                <SubmitButton type='button' onClick={delSchedule}>삭제하기</SubmitButton>
               </BtnWapper>
           </Form>
-        </Container></>)}
+        </Container>)}</>)}
     </>
   )
 }
