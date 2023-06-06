@@ -4,12 +4,14 @@ import background_image from '../Assets/Images/visual_img_large01.jpg'
 
 const BgImage = styled.div`
   height: 180px;
+  width: 88%;
+  margin-left: 11.9rem;
   background-size: cover;
 `;
 const SubjectName = styled.span`
   display: inline-block;
   margin-top: 50px;
-  margin-left: 10rem;
+  margin-right: 4rem;
   color: #fff;
   font-size: 50px;
   font-weight: bolder;
