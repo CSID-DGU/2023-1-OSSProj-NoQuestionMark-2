@@ -17,8 +17,11 @@ public class SubjectScheduleEntity extends ScheduleEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
+    @Enumerated(EnumType.STRING)
     private SubjectScheduleType subjectScheduleType;
+    @Enumerated(EnumType.STRING)
     private ScheduleType scheduleType;
+    @Enumerated(EnumType.STRING)
     private Importance importance;
 
 
