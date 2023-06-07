@@ -109,16 +109,24 @@ const Wapper = styled.div`
   margin: 0 auto;
 `;
 
+// memo정민: 이클래스 공식 과목 일정 등록 Component
 const EclassSubjectAddForm = () => {
-  const location = useLocation();
-  const subjectName = location.state.subjectName;
+  // memo정민: 페이지 이동을 위한 navigate 함수
   const navigate = useNavigate();
+  // memo정민: 현재 경로와 상태를 가져오는 location 객체
+  const location = useLocation();
+  // memo정민: location으로 가져온 subjectName
+  const subjectName = location.state.subjectName;
+
+  // memo정민: react-hook-form을 사용하여 폼 상태를 관리
   const {     
     register,
     handleSubmit,
   } = useForm<EclassInput>({mode : 'onBlur'});
   
+  // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EclassInput> = data => postData(data);
+  // memo정민: 일정 등록 함수, 시작일과 종료일을 비교하여 유효성을 검사, 시작일이 종료일보다 큰 경우에는 경고창을 표시, 일정 등록 후 강의실 페이지로 이동
   const postData = async ({ title, contents, subjectScheduleType, startDate, endDate}:EclassInput) => {
 		try {
       const className = subjectName;
