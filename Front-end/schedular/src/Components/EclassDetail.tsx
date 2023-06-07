@@ -1,10 +1,9 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useForm, SubmitHandler} from 'react-hook-form';
+import { useForm, SubmitHandler, Controller} from 'react-hook-form';
 import styled from 'styled-components';
 import * as Api from '../lib/Api';
-import {EclassInput} from 'interfaces/EclassSchedule';
-import { v4 as uuidv4 } from 'uuid';
+import { EclassInput } from 'interfaces/EclassSchedule';
 
 const Container = styled.div`
   flex-direction: column;
@@ -107,8 +106,8 @@ const EditStyledDetail = styled.textarea`
   border: 0.5px solid #cdcdcd;
 `;
 const TitleWapper = styled.div`
-  width: 61.8rem;
-  height: 40px;
+  width: 61.9rem;
+  height: 39px;
   margin-left: 24.4rem;
   background-color: #e6e6e6;
   border: 1.5px solid #cdcdcd;
@@ -117,10 +116,11 @@ const SubjectTitle = styled.div`
   display: flex;
   align-items: center;
   height: 33px;
-  width: 7rem;
+  width: 50rem;
   padding-left: 10px;
   margin-top: 3px;
   margin-right: 335px;
+  font-size: 15px;
   background-color: #e6e6e6;
   border: none;
 `;
@@ -213,29 +213,39 @@ const SubmitButton = styled.button`
   cursor: pointer;
 `;
 
+//memo정민: 이클래스 공식 과목 일정 상세보기(교수) Component
 const EclassDetail = () => {
+  //memo정민: 수정 모드 여부를 관리하는 상태
   const [isEditing, setIsEditing] = useState(false);
-  const [data, setData] = useState([]);
+  //memo정민: 데이터를 저장하는 상태
+  const [data, setData] = useState<EclassInput>();
+  //memo정민: 페이지 이동을 위한 navigate 함수
   const navigate = useNavigate();
+  //memo정민: 현재 경로와 상태를 가져오는 location 객체
   const location = useLocation();
+  //memo정민: location으로 가져온 subjectName과 scheduleId
   const subjectName = location.state.subjectName;
   const scheduleId = location.state.scheduleId;
 
+  //memo정민: react-hook-form을 사용하여 폼 상태를 관리
   const {     
     register,
     handleSubmit,
     reset,
+    control,
   } = useForm<EclassInput>({mode : 'onBlur'});
 
-
+  //memo정민: 컴포넌트가 마운트되었을 때 데이터 가져오기
   useEffect(() => {
-    getData(); // 컴포넌트가 마운트되었을 때 데이터 가져오기
+    getData();
   }, []);
 
+  //memo정민: 일정 데이터를 가져오고, 실패 시 error message를 console에 출력
   const getData = async () => {
     try {
       await Api.get(`/schedule/official/${scheduleId}`).then((res) => {
       const result = res.data.result;
+      console.log(result);
       setData(result);
     });
     } catch (error) {
@@ -244,7 +254,9 @@ const EclassDetail = () => {
   };
   console.log(data);
 
+  //memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EclassInput> = data => putData(data);
+  //memo정민: 일정 수정 함수, 시작일과 종료일을 비교하여 유효성을 검사, 시작일이 종료일보다 큰 경우에는 경고창을 표시, 수정완료 후 페이지 reload
   const putData = async ({ title, contents, subjectScheduleType, startDate, endDate}:EclassInput) => {
 		try {
       const className = subjectName;
@@ -260,12 +272,19 @@ const EclassDetail = () => {
 		}
 	};
 
+  //memo정민: 일정 삭제 함수, 일정 삭제 후 강의실 페이지로 이동
   const delSchedule = async() => {
     await Api.delete(`/schedule/official/${scheduleId}`).then((res) => {
       window.confirm('삭제하시겠습니까?');
       navigate(-1);
     });
   }
+
+  //memo정민: 수정 취소 버튼 클릭 시, 수정 모드를 바꾸고 값을 reset
+  const onClickCancleBtn = () => {
+    setIsEditing(false)
+    reset({...data});
+  };
 
   return (
     <>
@@ -274,40 +293,77 @@ const EclassDetail = () => {
         <Container>
           <StyledH3>과목 일정 수정</StyledH3>
           <Form onSubmit={handleSubmit(onSubmit)}>
+            {data && (
               <EditContentWapper>
                 <EditSubTitleWapper>
-                  <EditTypeTitle>일정 제목</EditTypeTitle>
+                  <EditTypeTitle>제목</EditTypeTitle>
                   <EditTypeTitle>일정 종류</EditTypeTitle>
                   <EditDateTitle>제출 기간</EditDateTitle>
                   <EditContentTitle>상세 내용</EditContentTitle>
                 </EditSubTitleWapper>
                 <EditContent>
-                  <EditSubjectTitle id='title' type='text' placeholder='제목을 입력해주세요.' {...register('title', { required: true })}/>
-                  <EditSubjectType id='subjectType' {...register('subjectScheduleType', { required: true })}>
+                <Controller
+                  control={control}
+                  name='title'
+                  defaultValue={data.title}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                  <EditSubjectTitle 
+                    id='title' type='text' value={field.value} placeholder='제목을 입력해주세요.' 
+                    {...register('title', { required: true })}/>
+                  )}/>
+                <Controller
+                  control={control}
+                  name='subjectScheduleType'
+                  defaultValue={data.subjectScheduleType}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                  <EditSubjectType id='subjectScheduleType' value={field.value} {...register('subjectScheduleType', { required: true })}>
                     <option value='ASSIGNMENT'>ASSIGNMENT</option>
                     <option value='TEST'>TEST</option>
                     <option value='PRESENTATION'>PRESENTATION</option>
-                  </EditSubjectType>
+                  </EditSubjectType>)}/>
                   <EditDateWapper>
-                    <EditStartDate id='startDate' type='datetime-local' {...register('startDate', { required: true })}/>
+                    <Controller
+                      control={control}
+                      name='startDate'
+                      defaultValue={data.startDate}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                      <EditStartDate id='startDate' type='datetime-local' value={field.value}
+                        {...register('startDate', { required: true })}/>)}/>
                     <EditStyledP>~</EditStyledP>
-                    <EditEndDate id='endDate' type='datetime-local' {...register('endDate', { required: true })}/>
+                    <Controller
+                      control={control}
+                      name='endDate'
+                      defaultValue={data.endDate}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                      <EditEndDate id='endDate' type='datetime-local' value={field.value}
+                        {...register('endDate', { required: true })}/>)}/>
                   </EditDateWapper>
-                    <EditStyledDetail id='contents' placeholder='상세내용을 입력해주세요.' {...register('contents', { required: true })}/>
+                  <Controller
+                      control={control}
+                      name='contents'
+                      defaultValue={data.contents}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                    <EditStyledDetail id='contents' placeholder='상세내용을 입력해주세요.' value={field.value}
+                      {...register('contents', { required: true })}/>)}/>
                 </EditContent>
-              </EditContentWapper>
+              </EditContentWapper>)}
               <BtnWapper>
-                <SubmitButton type='button' onClick={()=>{setIsEditing(false)}}>취소하기</SubmitButton>
+                <SubmitButton type='button' onClick={onClickCancleBtn}>취소하기</SubmitButton>
                 <SubmitButton type='submit'>수정완료</SubmitButton>
               </BtnWapper>
           </Form>
         </Container></>) : (<>
-        {data !== null && (
+        {data && (
         <Container>
           <StyledH3>과목 일정 상세보기</StyledH3>
           <Form>
               <TitleWapper>
-                <SubjectTitle>제목</SubjectTitle>
+                <SubjectTitle>{data.title}</SubjectTitle>
               </TitleWapper>
               <ContentWapper>
                 <SubTitleWapper>
@@ -316,9 +372,9 @@ const EclassDetail = () => {
                   <ContentTitle>상세 내용</ContentTitle>
                 </SubTitleWapper>
                 <Content>
-                  <SubjectType>일정종류</SubjectType>
-                  <DateWapper>시작날짜<StyledP>~</StyledP>마감날짜</DateWapper>
-                  <StyledDetail>상세내용</StyledDetail>
+                  <SubjectType>{data.subjectScheduleType}</SubjectType>
+                  <DateWapper>{data.startDate}<StyledP>~</StyledP>{data.endDate}</DateWapper>
+                  <StyledDetail>{data.contents}</StyledDetail>
                 </Content>
               </ContentWapper>
               <BtnWapper>
