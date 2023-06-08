@@ -60,8 +60,8 @@ const DdayList = styled.span`
 `;
 const ScheduleBox = styled.div`
   overflow-y: scroll;
-  height: 195px;
-  width: 490px;
+  height: 190px;
+  width: 485px;
   &::-webkit-scrollbar{
     width: 10px;
     height: 10px;
