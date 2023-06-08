@@ -98,6 +98,7 @@ const SignIn = () => {
 		try {
 			const loginData = { schoolNumber, password} ;
 			await Api.post(`/login`, loginData).then((res) => {
+  
 				const {schoolNumber,userName,userType,token,schedule,subjects} = res.data.result;
         localStorage.setItem('token',token);
         localStorage.setItem('userType',userType);
@@ -108,6 +109,7 @@ const SignIn = () => {
 			});
 		} catch (e) {
 			if(axios.isAxiosError(e)){
+        console.log(e.response);
         alert(e.response?.data);
       }
 		}
@@ -116,6 +118,7 @@ const SignIn = () => {
     logout();
     setLoginCheck(!loginCheck);
     setUserInfo({schoolNumber: null,userName : null,userType: null});
+    reset();
     navigate('/');
   }
   return (

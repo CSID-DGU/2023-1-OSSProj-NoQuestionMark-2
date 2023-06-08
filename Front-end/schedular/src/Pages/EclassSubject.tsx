@@ -8,22 +8,12 @@ import { userInfoState } from 'recoil/Atom'
 import * as Api from '../lib/Api';
 import { v4 as uuidv4 } from 'uuid';
 
-const StyledLink = styled.button`
-  text-align: center;
-  color: #fff;
-  padding: 9px 18px;
-  border: none;
-  border-radius: 3px;
-  background-color: #228be6;
-  font-size: 13px;
-  cursor: pointer;
-`;
 const ListTitleWapper = styled.div`
   display: flex;
   justify-content: center;
-  margin: 60px 0 15px 350px;
-  width: 1200px;
-  font-size: 15px;
+  margin: 40px 0 0 21rem;
+  width: 70rem;
+  font-size: 0.9rem;
   font-weight: bold;
   color: #fff;
   background-color: #13487c;
@@ -44,13 +34,13 @@ const StyledDday = styled.div`
   width: 100px;
   margin: 10px 25px;
 `;
-const ScheduleWapper = styled.div`
+const ScheduleList = styled.div`
   display: flex;
   justify-content: center;
-  width: 1200px;
-  margin: 15px 0 15px 350px;
+  width: 70rem;
+  margin: 15px 0;
   padding: 0 0 15px 0;
-  font-size: 15px;
+  font-size: 0.9rem;
   border-bottom: 1px solid #000;
 `;
 const ScheduleType = styled.span`
@@ -76,6 +66,22 @@ const EndDate = styled.span`
 const DDay = styled.span`
   width: 100px;
   margin: 0 25px;
+`;
+const ScheduleWapper = styled.div`
+  height: 520px;
+  width: 70rem;
+  margin-left: 21rem;
+`;
+const AddButton = styled.button`
+  text-align: center;
+  color: #fff;
+  padding: 9px 18px;
+  margin: 10px 0 0 70rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #228be6;
+  font-size: 13px;
+  cursor: pointer;
 `;
 
 const isStudent = (userType:string|null):boolean => {
@@ -121,14 +127,13 @@ const EclassSubject = () =>{
   const subjects = scheduleList
     .map((data) => {
       const {subjectScheduleType, title, endDate, dday, scheduleId} = data;
-      return(<ScheduleWapper key={uuidv4()}>
+      return(<ScheduleList key={uuidv4()}>
         <ScheduleType>{subjectScheduleType}</ScheduleType>
-        <Title onClick={moveToDetail} value={subjectName}>{title}</Title>
+        <Title onClick={moveToDetail} value={subjectName} data-subject-id={scheduleId}>{title}</Title>
         <EndDate>{endDate}</EndDate>
-        <DDay>{dday}</DDay>
-      </ScheduleWapper>)
+        <DDay>D{dday}</DDay>
+      </ScheduleList>)
     })
-  
 
   return (
     <>
@@ -140,11 +145,12 @@ const EclassSubject = () =>{
         <StyledDate>마감 날짜</StyledDate>
         <StyledDday>D-day</StyledDday>
       </ListTitleWapper>
-      {subjects}
+      <ScheduleWapper>
+        {subjects}
+      </ScheduleWapper>
       <div>
-      { STUDENT ? '' : <StyledLink onClick={moveToAdd} value={subjectId} data-subject-name={subjectName}>과목 일정 등록</StyledLink>}
+      { STUDENT ? '' : <AddButton onClick={moveToAdd} value={subjectId} data-subject-name={subjectName}>과목 일정 등록</AddButton>}
       </div>
-      
     </>
   )
 }

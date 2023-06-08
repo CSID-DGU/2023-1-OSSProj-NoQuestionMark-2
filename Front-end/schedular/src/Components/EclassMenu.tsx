@@ -3,7 +3,7 @@ import { useState} from "react";
 
 const Menu = styled.div`
   position: absolute;
-  height: 90%;
+  height: 93.2%;
   background-color: #ebebeb;
 `;
 const MenuItem = styled.div`
