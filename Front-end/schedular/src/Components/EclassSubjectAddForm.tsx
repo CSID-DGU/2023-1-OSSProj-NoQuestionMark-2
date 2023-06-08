@@ -12,7 +12,6 @@ const StyledH3 = styled.h3`
   text-align: left;
   padding-top: 40px;
   padding-left: 24rem;
-  font-size: 20px;
 `;
 const Form = styled.form`
   height: 100%;
@@ -22,15 +21,15 @@ const ContentWapper = styled.div`
   display: inline-flex;
 `;
 const SubTitleWapper = styled.div`
-  width: 120px;
+  width: 7rem;
   margin-left: 200px;
-  font-size: 15px;
+  font-size: 0.9rem;
   color: white;
 `;
 const TypeTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 28px;
+  padding-left: 1.6rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -39,7 +38,7 @@ const TypeTitle = styled.div`
 const ContentTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 30px;
+  padding-left: 1.6rem;
   height: 250px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -47,7 +46,8 @@ const ContentTitle = styled.div`
 `;
 const Content = styled.div`
   flex-direction: column;
-  height: 323px;
+  height: 359px;
+  width: 55rem;
   border: 1px solid #cdcdcd;
 `;
 const SubjectTitle = styled.input`
@@ -58,7 +58,7 @@ const SubjectTitle = styled.input`
 `;
 const SubjectType = styled.select`
   height: 37px;
-  width: 100%;
+  width: 55rem;
   padding-left: 10px;
   border: 0.5px solid #cdcdcd;
 `;
@@ -86,15 +86,15 @@ const EndDate = styled.input`
   border: none;
 `;
 const StyledDetail = styled.textarea`
-  height: 238px;
-  width: 920px;
+  height: 237px;
+  width: 54.25rem;
   padding-left: 10px;
   padding-top: 10px;
   border: 0.5px solid #cdcdcd;
 `;
 const SubmitButton = styled.button`
   margin: 30px;
-  margin-left: 1180px;
+  margin-left: 68rem;
   font-size: 13px;
   height: 25px;
   width: 75px;
