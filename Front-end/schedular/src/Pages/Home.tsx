@@ -88,7 +88,9 @@ const LeftBannerWapper = styled.div`
 `;
 const LeftBannerTitle = styled.span`
   display: block;
-  margin-bottom: 10px;
+  margin: 5px 0 10px 0;
+  font-size: 15px;
+  font-weight: bold;
   color: #fff;
 `;
 const LeftBannerS = styled.div`
@@ -96,6 +98,8 @@ const LeftBannerS = styled.div`
   height: 50px;
   line-height: 50px;
   margin: 5px 0;
+  font-size: 14px;
+  font-weight: bold;
   background-color: #edc219;
 `;
 const LeftBannerJ = styled.div`
@@ -103,6 +107,8 @@ const LeftBannerJ = styled.div`
   height: 50px;
   line-height: 50px;
   margin: 5px 0;
+  font-size: 14px;
+  font-weight: bold;
   background-color: #eb9332;
 `;
 const LeftBannerC = styled.div`
@@ -110,6 +116,8 @@ const LeftBannerC = styled.div`
   height: 50px;
   line-height: 50px;
   margin: 5px 0;
+  font-size: 14px;
+  font-weight: bold;
   background-color: #e15e39;
 `;
 const LeftBanenrSpan = styled.span`
