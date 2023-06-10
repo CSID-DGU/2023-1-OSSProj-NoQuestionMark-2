@@ -15,6 +15,7 @@ import Icon from 'Assets/Images/check.png';
 import { useRecoilState } from 'recoil';
 import { EventState } from 'recoil/Atom';
 import { v4 as uuidv4 } from 'uuid';
+import { AiOutlineBorder,AiOutlineCheckSquare } from "react-icons/ai";
 import * as Api from 'lib/Api';
 
 const Container = styled.div`
@@ -40,7 +41,7 @@ const PostBtn = styled.button<ButtonProps>`
 
   width : 9.5rem;
   height : 2.8rem;
-  background-color : ${props => props.btnName === 'personal'? '#6ED746': 'orange'};
+  background-color : ${props => props.btnName === 'personal'? 'orange':'#6ED746' };
   border:none;
   border-radius: 5px;
   color: white;
@@ -60,36 +61,48 @@ const TaskBody = styled.div`
   width: 22%;
   margin-left: 3%;
 `
-const TodoList = styled.div`
-  height: 60%;
+const TaskBodyStyle= styled.div`
   text-align: left;
-  padding-left: 1.0rem;
-  border: 2px solid orange;
-  border-radius: 5px;
-`;
-const TodoTask = styled.button`
-  display: flex;
-  justify-content: space-between;
-  margin : 0.2rem 1.2rem 0.2rem 0.2rem;
-  border: 0;
-  background-color: transparent;
-`;
-const CompleteList = styled.div`
-  text-align: left;
-  margin-top: 1rem;
   padding-left: 1rem;
-  border: 2px solid orange;
   border-radius: 5px;
+  border: 2px solid #c9b087;
+`
+const TodoList = styled(TaskBodyStyle)`
+  height: 60%;
+`;
+const CompleteList = styled(TaskBodyStyle)`
+  margin-top: 1rem;
   height : 37%;
 `
-const Subheading = styled.h3`
+const TodoTask = styled.div`
+  display: flex;
+  justify-content: space-between;
+  border: 0;
+  background-color: transparent;
+  margin-top: 0.5rem;
+`;
+
+const Subheading = styled.p`
   display: block;
-  margin-bottom: 2rem;
+  margin: 0.7rem 1rem 1.5rem 0;
+  background-color:#c9b087;
+  border-radius : 0.5rem;
+  height: 2rem;
+  color:white;
+  text-align: center;
+  font-weight: 600;
+  vertical-align: middle;
+  padding-top:0.5rem;
 `
 const Dday = styled.div`
   background-color: #12314f;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 0.5rem;
+  margin-right: 1.5rem;
+  font-size: 0.5rem;
+  text-align: center;
+  padding : 0.2rem 0;
+  width: 2.5rem;
 `
 const MainFilter = styled.div`
   display:flex;
@@ -100,10 +113,34 @@ const RightAlign = styled.div`
   justify-content : flex-end;
   margin-top : 2rem;
 `;
-const PostBtns =styled(RightAlign)`
-`
+const PostBtns =styled(RightAlign)``
 const SubFilter = styled(RightAlign)`
   margin-bottom: 2rem;
+`
+const RestoreBtn = styled.button`
+  background-color: #A69D8F;
+  border:none;
+  border-radius: 0.5rem;
+  margin-right: 1.5rem;
+  padding: 0.05rem 0.02rem;
+  width: 5rem;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-align: center;
+`
+const TaskTitle = styled.span`
+  display:block;
+  width:80%;
+  margin-left: 0.5rem;
+  tex-align: left;
+`
+const CompleteTitle = styled(TaskTitle)`
+  text-decoration: line-through;
+  color:#737373;
+`
+const TaskIconConatiner = styled.div`
+  padding-top: 0.1rem;
 `
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   btnName: string;
@@ -213,7 +250,7 @@ const Calendar = () =>{
       
       if(subFilter === 'ALL') return;
       await Api.get(`/schedule/select/subject?subject=${subFilter}&month=${visitedMonth}`).then((res)=>{
-        console.log("2차필터", res.data.result);
+        console.log('2차필터', res.data.result);
         const filteringResult:Events = res.data.result;
         filteringResult.forEach((s: EventSourceInput) => {
         if(s.schedule === 'SUBJECT'){
@@ -287,17 +324,17 @@ const Calendar = () =>{
   const reloadTaskList = async() => {
     await Api.get('/schedule/toDoList').then((res)=>{
       const result = res.data.result;
-      console.log("todo:",result);
+      console.log('todo:',result);
       setTaskList([
         ...result
         .filter((task:schedules) => task.complete === 'FALSE')
-        .map((el:schedules)=> { return {'title': el.title,'dday': el.dday, 'scheduleId' : el.scheduleId, "schedule" : el.schedule}})
+        .map((el:schedules)=> { return {'title': el.title,'dday': el.dday, 'scheduleId' : el.scheduleId, 'schedule' : el.schedule}})
       ]);
 
       setCompleteList([
         ...result
         .filter((task:schedules) => task.complete === 'TRUE')
-        .map((el:schedules)=> { return {'title': el.title,'dday': el.dday, 'scheduleId' : el.scheduleId, "schedule" : el.schedule}})
+        .map((el:schedules)=> { return {'title': el.title,'dday': el.dday, 'scheduleId' : el.scheduleId, 'schedule' : el.schedule}})
       ])
       // setTaskList([...result.map((el:schedules)=> { return {'title': el.title,'dday': el.dday, 'scheduleId' : el.scheduleId}})])
     });
@@ -522,7 +559,11 @@ const Calendar = () =>{
               { taskList.length > 0 ?
                 taskList.map((el) => {
                   const {title,dday,scheduleId} = el;
-                  return <TodoTask key={uuidv4()} onClick={()=>handleTodoComplete(scheduleId)}><span>{title}</span><Dday>D{dday}</Dday></TodoTask>
+                  return <TodoTask key={uuidv4()} onClick={()=>handleTodoComplete(scheduleId)}>
+                    <TaskIconConatiner><AiOutlineBorder /></TaskIconConatiner>
+                    <TaskTitle>{title}</TaskTitle>
+                    <Dday><span>D{dday}</span></Dday>
+                  </TodoTask>
                 })
                 : <p>해야할 일이 없습니다.</p>
               }
@@ -535,8 +576,9 @@ const Calendar = () =>{
                   const {title,scheduleId,schedule} = el;
                   return (
                     <TodoTask key={uuidv4()}>
-                      <span className='event-title' style={{textDecoration: 'line-through'}}>{title}</span>
-                      <button onClick={()=>handleComplete(scheduleId,schedule)}>복원하기</button>
+                      <TaskIconConatiner><AiOutlineCheckSquare /></TaskIconConatiner>
+                      <CompleteTitle>{title}</CompleteTitle>
+                      <RestoreBtn onClick={()=>handleComplete(scheduleId,schedule)}>복원하기</RestoreBtn>
                     </TodoTask>)
                 })
                 : <p>완료한 일이 없습니다.</p>
