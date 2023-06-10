@@ -60,7 +60,7 @@ const Grid = styled.div`
   text-align: left;
   font-size: 13px;
   width: 80%;
-  margin: 2rem auto;
+  margin: auto;
   padding: 2rem 2rem;
 `;
 const InputDiv = styled.div`
@@ -102,8 +102,8 @@ const EclassBtn = styled.button`
   text-align: center; 
   cursor: pointer;
   background-color: #228be6;
+  width: 100%;
   height: 2rem;
-  padding-top: 0.5rem;
 `;
 const EditButton = styled.button`
   display: block;
@@ -147,6 +147,9 @@ const ButtonWapper = styled.div`
   padding-bottom: 0.5rem;
   width: 22rem;
 `;
+const Heading = styled.h1`
+  margin-bottom: 0.2rem;
+`
 
 const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: ModalToggle) => {
   const navigate = useNavigate();
@@ -225,7 +228,7 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
   return (
     <ModalConatiner>      
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <h1>{IsOfficial()? '공식일정 상세보기' : '과목일정 상세보기'}</h1>
+        <Heading>{IsOfficial()? '공식일정 상세보기' : '과목일정 상세보기'}</Heading>
         <CloseButton onClick ={()=>handleModalToggle('subject')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
