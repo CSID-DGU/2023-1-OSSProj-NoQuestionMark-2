@@ -2,6 +2,7 @@ package com.NoQuestionMark.schedular.controller.response;
 
 import com.NoQuestionMark.schedular.model.CommonScheduleEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.DiscriminatorValue;
@@ -18,18 +19,23 @@ public class CommonScheduleResponseDto {
     private String scheduleType;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String complete;
     private int dDay;
 
-    public static CommonScheduleResponseDto fromCommonSchedule(CommonScheduleEntity schedule) {
-        return new CommonScheduleResponseDto(
-                schedule.getId(),
-                schedule.getTitle(),
-                schedule.getContents(),
-                schedule.getImportance().name(),
-                CommonScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
-                schedule.getScheduleType().name(),
-                schedule.getStartDate(),
-                schedule.getEndDate(),
-                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());
+    @Builder
+    public CommonScheduleResponseDto(CommonScheduleEntity schedule){
+        this.scheduleId = schedule.getId();
+        this.title = schedule.getTitle();
+        this.contents = schedule.getContents();
+        this.importance = schedule.getImportance().name();
+        this.schedule = CommonScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value();
+        this.scheduleType = schedule.getScheduleType().name();
+        this.startDate = schedule.getStartDate();
+        this.endDate = schedule.getEndDate();
+        this.complete = schedule.getComplete().name();
+        this.dDay = LocalDateTime.now().getDayOfYear() - schedule.getEndDate().getDayOfYear();
+    }
+    public static CommonScheduleResponseDto fromSchedule(CommonScheduleEntity schedule) {
+        return new CommonScheduleResponseDto(schedule);
     }
 }
