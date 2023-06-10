@@ -260,4 +260,17 @@ public class ScheduleService {
         toDoList.sort(Comparator.comparing(ToDoListResponseDto::getDDay).reversed());
         return toDoList;
     }
+
+    public OfficialScheduleDetailResponseDto getOfficialScheduleDetail(String schoolNumber, Long scheduleId) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        OfficialSubjectScheduleEntity schedule = officialSubjectRepository.findById(scheduleId).orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND));
+        String complete = userOfficialScheduleRepository
+                .findByScheduleAndUser(schedule, user)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_TYPE_PROBLEM))
+                .getComplete().name();
+        return OfficialScheduleDetailResponseDto.officialScheduleResponseDto(schedule, complete);
+    }
+    
 }
