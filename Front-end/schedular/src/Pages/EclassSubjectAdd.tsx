@@ -8,6 +8,7 @@ const StyledH2 = styled.h2`
   padding-left: 20rem;
 `;
 
+// memo정민: 이클래스 공식 과목 일정 등록 페이지
 const EclassSubjectAdd = () =>{
 
   return (

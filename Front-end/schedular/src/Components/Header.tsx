@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 const HeaderWapper = styled.div`
   height: 100px;
   display: flex;
+  margin-left: 5rem;
 `;
 const EclassLogo = styled(Link)`
   position: relative;

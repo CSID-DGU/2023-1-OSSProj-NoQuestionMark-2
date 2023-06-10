@@ -1,3 +1,4 @@
+// memo정민: 이클래스 공식 과목 일정 input interface
 interface EclassInput{
   title: string, 
   startDate: string, 
