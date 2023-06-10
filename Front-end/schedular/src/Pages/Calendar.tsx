@@ -394,7 +394,7 @@ const Calendar = () =>{
           <SubFilter>
             {
               mainFilter === 'SUBJECT' && 
-              <select name='detail-filter' id='subfilter' onChange={handleSubFilter}>
+              <select name='detail-filter' id='subfilter' value={subFilter} onChange={handleSubFilter}>
                 <option value='ALL'>--전체보기--</option>
                 {
                   subjectList.map((subject) => <option key={uuidv4()} value={subject}>{subject}</option>)
