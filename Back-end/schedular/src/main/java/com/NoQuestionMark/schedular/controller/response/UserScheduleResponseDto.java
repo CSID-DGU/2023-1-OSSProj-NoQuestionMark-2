@@ -21,7 +21,7 @@ public class UserScheduleResponseDto {
 
     private int dDay;
 
-    public static UserScheduleResponseDto fromCommonSchedule(CommonScheduleEntity schedule){
+    public static UserScheduleResponseDto fromCommonSchedule(CommonScheduleEntity schedule) {
         return new UserScheduleResponseDto(
                 schedule.getId(),
                 schedule.getTitle(),
@@ -29,11 +29,11 @@ public class UserScheduleResponseDto {
                 CommonScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
                 schedule.getScheduleType().name(),
                 "",
-                 LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth()
-                );
+                LocalDateTime.now().getDayOfYear() - schedule.getEndDate().getDayOfYear()
+        );
     }
 
-    public static UserScheduleResponseDto fromSubjectSchedule(SubjectScheduleEntity schedule){
+    public static UserScheduleResponseDto fromSubjectSchedule(SubjectScheduleEntity schedule) {
         return new UserScheduleResponseDto(
                 schedule.getId(),
                 schedule.getTitle(),
@@ -41,10 +41,11 @@ public class UserScheduleResponseDto {
                 SubjectScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
                 schedule.getSubjectScheduleType().name(),
                 schedule.getSubject().getSubjectName(),
-                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());
+                LocalDateTime.now().getDayOfYear() - schedule.getEndDate().getDayOfYear()
+        );
     }
 
-    public static UserScheduleResponseDto fromOfficialSchedule(OfficialSubjectScheduleEntity schedule){
+    public static UserScheduleResponseDto fromOfficialSchedule(OfficialSubjectScheduleEntity schedule) {
         return new UserScheduleResponseDto(
                 schedule.getId(),
                 schedule.getTitle(),
@@ -52,5 +53,6 @@ public class UserScheduleResponseDto {
                 OfficialSubjectScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
                 schedule.getSubjectScheduleType().name(),
                 schedule.getSubject().getSubjectName(),
-                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());    }
+                LocalDateTime.now().getDayOfYear() - schedule.getEndDate().getDayOfYear());
+    }
 }

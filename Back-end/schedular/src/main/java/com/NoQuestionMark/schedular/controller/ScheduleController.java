@@ -71,6 +71,28 @@ public class ScheduleController {
         return Response.success(scheduleService.getAllSchedule(month, year, authentication.getName()));
     }
 
+    @GetMapping("/{scheduleId}")
+    public Response<ScheduleDetailResponseDto> getSchedule(Authentication authentication, @PathVariable Long scheduleId){
+        return Response.success(scheduleService.getScheduleDetail(authentication.getName(), scheduleId));
+    }
+
+    @GetMapping("/select")
+    public Response<List<SelectedScheduleResponseDto>> getSelectedSchedule(@RequestParam("month") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth ,
+                                                                           @RequestParam("schedule") String schedule,
+                                                                           Authentication authentication){
+        Month month = yearMonth.getMonth();
+        int year = yearMonth.getYear();
+        return Response.success(scheduleService.getSelectedSchedule(month, year, authentication.getName(), schedule));
+    }
+
+    @GetMapping("/select/subject")
+    public Response<List<SelectedScheduleResponseDto>> getTwiceSelectedSchedule(@RequestParam("month") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth ,
+                                                                                @RequestParam("subject") String subject, Authentication authentication){
+        Month month = yearMonth.getMonth();
+        int year = yearMonth.getYear();
+        return Response.success(scheduleService.getTwiceSelectedSchedule(month, year, subject, authentication.getName()));
+    }
+
     @GetMapping("/official")
     public Response<List<EclassOfficialScheduleResponseDto>> getSchedule(@RequestParam("subjectName") String subjectName, Authentication authentication){
         return Response.success(scheduleService.getOfficialSchedules(authentication.getName(), subjectName));
