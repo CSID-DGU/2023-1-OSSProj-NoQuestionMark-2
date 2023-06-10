@@ -6,7 +6,8 @@ interface schedules {
     title : string;
     dday : string;
     scheduleId : string;
-    complete?: string;
+    complete? : string;
+    schedule : string;
 }
 interface Subjects extends Array<subjects> {};
 interface Schedules extends Array<schedules> {};
