@@ -1,38 +1,32 @@
 package com.NoQuestionMark.schedular.controller.response;
 
-
 import com.NoQuestionMark.schedular.model.OfficialSubjectScheduleEntity;
-import com.NoQuestionMark.schedular.model.SubjectScheduleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.persistence.DiscriminatorValue;
 import java.time.LocalDateTime;
 
-@Getter
 @AllArgsConstructor
-public class OfficialScheduleResponseDto {
+@Getter
+public class OfficialScheduleDetailResponseDto {
     private Long scheduleId;
     private String title;
-    private String className;
-    private String contents;
-    private String schedule;
     private String subjectScheduleType;
+    private String contents;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int dDay;
     private String complete;
-    public static OfficialScheduleResponseDto fromOfficialSchedule(OfficialSubjectScheduleEntity schedule, String complete){
-        return new OfficialScheduleResponseDto(
+
+    public static OfficialScheduleDetailResponseDto officialScheduleResponseDto(OfficialSubjectScheduleEntity schedule, String complete){
+        return new OfficialScheduleDetailResponseDto(
                 schedule.getId(),
                 schedule.getTitle(),
-                schedule.getSubject().getSubjectName(),
-                schedule.getContents(),
-                OfficialSubjectScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value(),
                 schedule.getSubjectScheduleType().name(),
+                schedule.getContents(),
                 schedule.getStartDate(),
                 schedule.getEndDate(),
-                LocalDateTime.now().getDayOfYear() - schedule.getEndDate().getDayOfYear(),
+                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth(),
                 complete
         );
     }
