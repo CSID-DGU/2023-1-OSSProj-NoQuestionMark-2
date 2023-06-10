@@ -208,6 +208,19 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
   const IsOfficial = () =>{
     return formData.schedule ==='OFFICIAL_SUBJECT';
   }
+  
+  const completeSchedule = async() => {
+    const schedule = formData.schedule;
+    console.log(schedule)
+    await Api.post(`/complete/${id}`, schedule).then((res) => {
+      handleModalToggle('personal');
+      if (date) {
+        const [month, year] = date;
+        getApi?.(year, month);
+      }
+      alert('일정완료');
+    });
+  }
 
   return (
     <ModalConatiner>      
@@ -375,7 +388,7 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
             </ButtonWapper> 
             :
             <ButtonWapper> 
-              {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
+              {formData.scheduleType==='TASK' && <CompleteButton type='button' onClick={completeSchedule}>일정 완료하기</CompleteButton>}
               <ButtonLine> 
                 <EditButton type='button' onClick={onClickEditButton}>수정하기</EditButton>
                 <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
