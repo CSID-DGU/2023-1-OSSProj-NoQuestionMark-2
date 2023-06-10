@@ -148,22 +148,22 @@ const SubmitButton = styled.button`
   cursor: pointer;
 `;
 
-//memo정민: 이클래스 공식 과목 일정 상세보기(학생) Component
+// memo정민: 이클래스 공식 과목 일정 상세보기(학생) Component
 const EclassDetailStudent = () => {
   const [submit, setSubmit] = useState(false);
-  //memo정민: 데이터를 저장하는 상태
+  // memo정민: 데이터를 저장하는 상태
   const [data, setData] = useState<EclassInput>();
-  //memo정민: 현재 경로와 상태를 가져오는 location 객체
+  // memo정민: 현재 경로와 상태를 가져오는 location 객체
   const location = useLocation();
-  //memo정민: location으로 가져온 scheduleId
+  // memo정민: location으로 가져온 scheduleId
   const scheduleId = location.state.scheduleId;
 
-  //memo정민: 컴포넌트가 마운트되었을 때 데이터 가져오기
+  // memo정민: 컴포넌트가 마운트되었을 때 데이터 가져오기
   useEffect(() => {
     getData();
   }, []);
 
-  //memo정민: 일정 데이터를 가져오고, 실패 시 error message를 console에 출력
+  // memo정민: 일정 데이터를 가져오고, 실패 시 error message를 console에 출력
   const getData = async () => {
     try {
       await Api.get(`/schedule/official/${scheduleId}`).then((res) => {

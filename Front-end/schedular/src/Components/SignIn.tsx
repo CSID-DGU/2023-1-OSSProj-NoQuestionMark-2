@@ -62,6 +62,9 @@ const SignUpButton = styled(Link)`
 const LogoutWapper = styled.div`
   display:flex;
   align-items: center;
+  padding-left: 20px;
+  font-size: 15px;
+  font-weight: bold;
 `;
 const LogoutButton = styled.button`
   margin: 0 20px;
