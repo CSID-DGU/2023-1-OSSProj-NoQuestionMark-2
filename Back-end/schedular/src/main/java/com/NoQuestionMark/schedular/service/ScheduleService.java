@@ -336,5 +336,40 @@ public class ScheduleService {
         return ScheduleDetailResponseDto.fromOfficialSchedule((OfficialSubjectScheduleEntity) schedule, complete);
     }
 
-    
+    public List<SelectedScheduleResponseDto> getTwiceSelectedSchedule(Month month, int year, String subjectName, String schoolNumber) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        SubjectEntity subject = subjectRepository.findBySubjectName(subjectName)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.SUBJECT_NOT_FOUND));
+        List<SelectedScheduleResponseDto> oSchedules = new ArrayList<>(em
+                .createQuery("select c from SubjectScheduleEntity c where c.user = :user and(c.startYear = :startYear or c.endYear = : endYear) and (c.startMonth = :startMonth or c.endMonth = :endMonth) and c.subject = :subject", SubjectScheduleEntity.class)
+                .setParameter("subject", subject)
+                .setParameter("user", user)
+                .setParameter("startYear", year)
+                .setParameter("endYear", year)
+                .setParameter("startMonth", month)
+                .setParameter("endMonth", month)
+                .getResultList()
+                .stream().map(SelectedScheduleResponseDto::fromSubjectSchedule).toList());
+        UserSubject userSubject = userSubjectRepository
+                .findByUserAndSubject(user, subject)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_AUTHORIZED, String.format("%s 는 %s 과목을 수강하고 있지 않습니다. ", user.getName(), subjectName)));
+        List<OfficialSubjectScheduleEntity> officialSchedules = em
+                .createQuery("select c from OfficialSubjectScheduleEntity c where c.subject = :subject and(c.startYear = :startYear or c.endYear = : endYear) and (c.startMonth = :startMonth or c.endMonth = :endMonth)", OfficialSubjectScheduleEntity.class)
+                .setParameter("subject", subject)
+                .setParameter("startYear", year)
+                .setParameter("endYear", year)
+                .setParameter("startMonth", month)
+                .setParameter("endMonth", month)
+                .getResultList();
+        for (OfficialSubjectScheduleEntity oSchedule : officialSchedules) {
+            String complete = userOfficialScheduleRepository
+                    .findByScheduleAndUser(oSchedule, user)
+                    .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_TYPE_PROBLEM))
+                    .getComplete().name();
+            oSchedules.add(SelectedScheduleResponseDto.fromOfficialSchedule(oSchedule, complete));
+        }
+        return oSchedules;
+    }
 }
