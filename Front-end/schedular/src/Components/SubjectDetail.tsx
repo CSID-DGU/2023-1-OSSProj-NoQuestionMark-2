@@ -194,14 +194,17 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
 	};
   
   const delSchedule = async() => {
-    await Api.delete(`/schedule/subject/${id}`).then((res) => {
-      window.confirm('삭제하시겠습니까?');
-      handleModalToggle('subject');
-      if (date) {
-        const [month, year] = date;
-        getApi?.(year, month);
-      }
-    });
+    const yes = window.confirm('삭제하시겠습니까?');
+    if(yes) {
+      await Api.delete(`/schedule/subject/${id}`).then((res) => {
+        window.confirm('삭제하시겠습니까?');
+        handleModalToggle('subject');
+        if (date) {
+          const [month, year] = date;
+          getApi?.(year, month);
+        }
+      });
+    }
   }
   const moveToElass = (e: React.MouseEvent<HTMLButtonElement>) => {
     const subjectId = (e.target as HTMLButtonElement).value;
