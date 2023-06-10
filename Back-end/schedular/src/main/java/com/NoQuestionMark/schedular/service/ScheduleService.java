@@ -318,5 +318,23 @@ public class ScheduleService {
         return oSchedules;
     }
 
+    public ScheduleDetailResponseDto getScheduleDetail(String schoolNumber, Long scheduleId) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND));
+        String scheduleType = scheduleRepository.findScheduleType(scheduleId);
+        if (scheduleType.equals("COMMON"))
+            return ScheduleDetailResponseDto.fromCommonSchedule((CommonScheduleEntity) schedule);
+        if (scheduleType.equals("SUBJECT"))
+            return ScheduleDetailResponseDto.fromSubjectSchedule((SubjectScheduleEntity) schedule);
+        String complete = userOfficialScheduleRepository
+                .findByScheduleAndUser((OfficialSubjectScheduleEntity) schedule, user)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_TYPE_PROBLEM))
+                .getComplete().name();
+        return ScheduleDetailResponseDto.fromOfficialSchedule((OfficialSubjectScheduleEntity) schedule, complete);
+    }
+
     
 }
