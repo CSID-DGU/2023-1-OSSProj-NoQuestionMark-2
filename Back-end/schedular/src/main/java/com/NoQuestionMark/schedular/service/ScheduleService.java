@@ -272,5 +272,51 @@ public class ScheduleService {
                 .getComplete().name();
         return OfficialScheduleDetailResponseDto.officialScheduleResponseDto(schedule, complete);
     }
+
+    public List<SelectedScheduleResponseDto> getSelectedSchedule(Month month, int year, String schoolNumber, String schedule) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        if (schedule.equals("COMMON")) {
+            return new ArrayList<>(em
+                    .createQuery("select c from CommonScheduleEntity c where c.user = :user and(c.startYear = :startYear or c.endYear = : endYear) and (c.startMonth = :startMonth or c.endMonth = :endMonth)", CommonScheduleEntity.class)
+                    .setParameter("user", user)
+                    .setParameter("startYear", year)
+                    .setParameter("endYear", year)
+                    .setParameter("startMonth", month)
+                    .setParameter("endMonth", month)
+                    .getResultList()
+                    .stream().map(SelectedScheduleResponseDto::fromCommonSchedule).toList());
+        }
+        List<SelectedScheduleResponseDto> oSchedules = new ArrayList<>(em
+                .createQuery("select c from SubjectScheduleEntity c where c.user = :user and(c.startYear = :startYear or c.endYear = : endYear) and (c.startMonth = :startMonth or c.endMonth = :endMonth)", SubjectScheduleEntity.class)
+                .setParameter("user", user)
+                .setParameter("startYear", year)
+                .setParameter("endYear", year)
+                .setParameter("startMonth", month)
+                .setParameter("endMonth", month)
+                .getResultList()
+                .stream().map(SelectedScheduleResponseDto::fromSubjectSchedule).toList());
+        List<UserSubject> userSubjects = userSubjectRepository.findAllByUser(user);
+        for (UserSubject userSubject : userSubjects) {
+            List<OfficialSubjectScheduleEntity> officialSchedules = em
+                    .createQuery("select c from OfficialSubjectScheduleEntity c where c.subject = :subject and(c.startYear = :startYear or c.endYear = : endYear) and (c.startMonth = :startMonth or c.endMonth = :endMonth)", OfficialSubjectScheduleEntity.class)
+                    .setParameter("subject", userSubject.getSubject())
+                    .setParameter("startYear", year)
+                    .setParameter("endYear", year)
+                    .setParameter("startMonth", month)
+                    .setParameter("endMonth", month)
+                    .getResultList();
+            for (OfficialSubjectScheduleEntity oSchedule : officialSchedules) {
+                String complete = userOfficialScheduleRepository
+                        .findByScheduleAndUser(oSchedule, user)
+                        .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_TYPE_PROBLEM))
+                        .getComplete().name();
+                oSchedules.add(SelectedScheduleResponseDto.fromOfficialSchedule(oSchedule, complete));
+            }
+        }
+        return oSchedules;
+    }
+
     
 }
