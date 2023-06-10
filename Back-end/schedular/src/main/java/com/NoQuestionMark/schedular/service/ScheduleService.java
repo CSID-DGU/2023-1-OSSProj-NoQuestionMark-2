@@ -111,6 +111,15 @@ public class ScheduleService {
         subjectSchedule.modifySchedule(requestDto, subject, requestDto.getScheduleType());
     }
 
+    public void deleteSubjectSchedule(Long scheduleId, String schoolNumber) {
+        UserEntity user = userRepository
+                .findBySchoolNumber(schoolNumber)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s 학번을 가진 유자가 없습니다.", schoolNumber)));
+        SubjectScheduleEntity subjectSchedule = subjectScheduleRepository
+                .findByUserAndId(user, scheduleId)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND, String.format("%s가 작성한 %d 일정을 확인할 수 없습니다.", schoolNumber, scheduleId)));
+        subjectScheduleRepository.delete(subjectSchedule);
+    }
 
     public void writeCommonSchedule(CommonScheduleRequestDto requestDto, String schoolNumber) {
         UserEntity user = userRepository
