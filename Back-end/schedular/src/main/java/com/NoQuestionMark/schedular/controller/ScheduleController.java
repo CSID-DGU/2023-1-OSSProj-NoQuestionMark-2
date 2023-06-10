@@ -5,10 +5,7 @@ import com.NoQuestionMark.schedular.controller.request.CommonScheduleFixRequestD
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.OfficialScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto;
-import com.NoQuestionMark.schedular.controller.response.OfficialScheduleResponseDto;
-import com.NoQuestionMark.schedular.controller.response.Response;
-import com.NoQuestionMark.schedular.controller.response.ScheduleResponseDto;
-import com.NoQuestionMark.schedular.controller.response.ToDoListResponseDto;
+import com.NoQuestionMark.schedular.controller.response.*;
 import com.NoQuestionMark.schedular.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -75,19 +72,24 @@ public class ScheduleController {
     }
 
     @GetMapping("/official")
-    public Response<List<OfficialScheduleResponseDto>> getSchedule(@RequestParam("subjectName") String subjectName, Authentication authentication){
+    public Response<List<EclassOfficialScheduleResponseDto>> getSchedule(@RequestParam("subjectName") String subjectName, Authentication authentication){
         return Response.success(scheduleService.getOfficialSchedules(authentication.getName(), subjectName));
+    }
+
+    @GetMapping("/official/{scheduleId}")
+    public Response<OfficialScheduleDetailResponseDto> getScheduleDetail(@PathVariable Long scheduleId, Authentication authentication){
+        return Response.success(scheduleService.getOfficialScheduleDetail(authentication.getName(), scheduleId));
     }
 
     @DeleteMapping("/common/{scheduleId}")
     public Response<Void> deleteSchedule(@PathVariable Long scheduleId, Authentication authentication){
-        scheduleService.deleteSchedule(scheduleId, authentication.getName());
+        scheduleService.deleteCommonSchedule(scheduleId, authentication.getName());
         return Response.success();
     }
 
     @PutMapping("/common/{scheduleId}")
     public Response<Void> modifySchedule(@PathVariable Long scheduleId, Authentication authentication, @RequestBody CommonScheduleFixRequestDto requestDto){
-        scheduleService.modifySchedule(scheduleId, authentication.getName(), requestDto);
+        scheduleService.modifyCommonSchedule(scheduleId, authentication.getName(), requestDto);
         return Response.success();
     }
 
