@@ -21,6 +21,7 @@ public class SubjectScheduleResponseDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int dDay;
+    private String complete;
     public static SubjectScheduleResponseDto fromSubjectSchedule(SubjectScheduleEntity schedule){
         return new SubjectScheduleResponseDto(
                 schedule.getId(),
@@ -33,6 +34,8 @@ public class SubjectScheduleResponseDto {
                 schedule.getImportance().name(),
                 schedule.getStartDate(),
                 schedule.getEndDate(),
-                LocalDateTime.now().getDayOfMonth() - schedule.getEndDate().getDayOfMonth());
+                LocalDateTime.now().getDayOfYear() - schedule.getEndDate().getDayOfYear(),
+                schedule.getComplete().name()
+        );
     }
 }

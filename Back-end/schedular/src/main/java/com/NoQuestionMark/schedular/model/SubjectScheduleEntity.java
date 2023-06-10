@@ -23,10 +23,12 @@ public class SubjectScheduleEntity extends ScheduleEntity{
     private ScheduleType scheduleType;
     @Enumerated(EnumType.STRING)
     private Importance importance;
+    @Enumerated(EnumType.STRING)
+    private Complete complete;
 
 
     @Builder
-    private SubjectScheduleEntity(SubjectScheduleRequestDto requestDto, UserEntity user, SubjectEntity subject){
+    private SubjectScheduleEntity(SubjectScheduleRequestDto requestDto, UserEntity user, SubjectEntity subject, String complete){
         this.title = requestDto.getTitle();
         this.user = user;
         this.startMonth = requestDto.getStartDate().getMonth();
@@ -40,13 +42,14 @@ public class SubjectScheduleEntity extends ScheduleEntity{
         this.subjectScheduleType = SubjectScheduleType.returnType(requestDto.getSubjectScheduleType());
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
+        this.complete = Complete.returnType(complete);
     }
 
-    public static SubjectScheduleEntity fromSubjectScheduleDto(SubjectScheduleRequestDto requestDto, UserEntity user, SubjectEntity subject){
-        return new SubjectScheduleEntity(requestDto, user, subject);
+    public static SubjectScheduleEntity fromSubjectScheduleDto(SubjectScheduleRequestDto requestDto, UserEntity user, SubjectEntity subject, String complete){
+        return new SubjectScheduleEntity(requestDto, user, subject, complete);
     }
 
-    public void modifySchedule(SubjectScheduleRequestDto requestDto, SubjectEntity subject) {
+    public void modifySchedule(SubjectScheduleRequestDto requestDto, SubjectEntity subject, String complete) {
         this.title = requestDto.getTitle();
         this.subject = subject;
         this.startMonth = requestDto.getStartDate().getMonth();
@@ -59,6 +62,15 @@ public class SubjectScheduleEntity extends ScheduleEntity{
         this.subjectScheduleType = SubjectScheduleType.returnType(requestDto.getSubjectScheduleType());
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
+        this.complete = Complete.returnType(complete);
+    }
+
+    public void updateSubjectComplete() {
+        if(this.getComplete().name().equals("FALSE")) {
+            this.complete = Complete.TRUE;
+            return;
+        }
+        if(this.getComplete().name().equals("TRUE")) this.complete = Complete.FALSE;
     }
 }
 

@@ -21,6 +21,8 @@ public class CommonScheduleEntity extends ScheduleEntity{
     @Enumerated(EnumType.STRING)
     private Importance importance;
 
+    @Enumerated(EnumType.STRING)
+    private Complete complete;
 
     @Builder
     private CommonScheduleEntity(CommonScheduleRequestDto requestDto, UserEntity user){
@@ -32,16 +34,17 @@ public class CommonScheduleEntity extends ScheduleEntity{
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
-        this.scheduleType = ScheduleType.returnType(requestDto.getCommonScheduleType());
+        this.scheduleType = ScheduleType.returnType(requestDto.getScheduleType());
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
+        this.complete = Complete.returnType(requestDto.getScheduleType());
     }
 
     public static CommonScheduleEntity fromCommonScheduleDto(CommonScheduleRequestDto requestDto, UserEntity user){
         return new CommonScheduleEntity(requestDto, user);
     }
 
-    public void fixSchedule(CommonScheduleFixRequestDto requestDto){
+    public void modifySchedule(CommonScheduleFixRequestDto requestDto, String scheduleType){
         this.title = requestDto.getTitle();
         this.startMonth = requestDto.getStartDate().getMonth();
         this.endMonth = requestDto.getEndDate().getMonth();
@@ -49,8 +52,17 @@ public class CommonScheduleEntity extends ScheduleEntity{
         this.contents = requestDto.getContents();
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
-        this.scheduleType = ScheduleType.returnType(requestDto.getCommonScheduleType());
+        this.scheduleType = ScheduleType.returnType(requestDto.getScheduleType());
         this.startYear = requestDto.getStartDate().getYear();
         this.endYear = requestDto.getEndDate().getYear();
+        this.complete = Complete.returnType(scheduleType);
+    }
+
+    public void updateCommonComplete() {
+        if(this.getComplete().name().equals("FALSE")) {
+            this.complete = Complete.TRUE;
+            return;
+        }
+        if(this.getComplete().name().equals("TRUE")) this.complete = Complete.FALSE;
     }
 }
