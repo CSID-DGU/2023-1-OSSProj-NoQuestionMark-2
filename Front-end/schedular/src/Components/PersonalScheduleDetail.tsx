@@ -159,8 +159,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
   const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
   const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
-      const commonScheduleType = scheduleType;
-			const putData = { title, contents,commonScheduleType, importance, startDate, endDate  };
+			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
       console.log('putData',putData);
       startDate < endDate ?
 				await Api.put(`/schedule/common/${id}`, putData).then((res) => {
@@ -177,17 +176,23 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
 	};
 
   const delSchedule = async() => {
-    await Api.delete(`/schedule/common/${id}`).then((res) => {
-      window.confirm('삭제하시겠습니까?');
+    const yes = window.confirm('삭제하시겠습니까?');
+    if(yes) {
+      await Api.delete(`/schedule/common/${id}`).then((res) => {
+        if (date) {
+          const [month, year] = date;
+          getApi?.(year, month);
+        }
+      })
       handleModalToggle('personal');
-      if (date) {
-        const [month, year] = date;
-        getApi?.(year, month);
-      }
-    });
+    }
+    
   }
   const completeSchedule = async() => {
-    await Api.post(`/schuedule/${id}`).then((res) => {
+    const schedule = formData.schedule;
+    console.log(schedule)
+    await Api.post(`/complete/${id}`, schedule).then((res) => {
+      handleModalToggle('personal');
       if (date) {
         const [month, year] = date;
         getApi?.(year, month);

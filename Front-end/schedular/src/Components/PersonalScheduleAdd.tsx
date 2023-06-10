@@ -84,9 +84,9 @@ const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => 
 
     
   const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
-  const postSchedule = async ({ title, contents,commonScheduleType, importance, startDate, endDate }:EventSourceInput) => {
+  const postSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
-			const postData = { title, contents,commonScheduleType, importance, startDate, endDate  };
+			const postData = { title, contents,scheduleType, importance, startDate, endDate };
       console.log(postData);
       startDate < endDate! ?
 			await Api.post(`/schedule/common`, postData).then((res) => {
@@ -118,7 +118,7 @@ const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => 
         </InputDiv>
         <label htmlFor='type'>유형</label>
         <InputDiv>
-          <StyledSelect id='type'  {...register('commonScheduleType', { required: true })}>
+          <StyledSelect id='type'  {...register('scheduleType', { required: true })}>
             <option value='TASK'>TASK</option>
             <option value='SCHEDULE'>SCHEDULE</option>
           </StyledSelect>

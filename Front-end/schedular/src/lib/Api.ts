@@ -3,7 +3,7 @@ import {IAuthForm} from '../interfaces/IAuthForm'
 import {EventSourceInput} from '../interfaces/CalendarState'
 import {EclassInput} from 'interfaces/EclassSchedule';
 
-async function post(endpoint:string, data?:IAuthForm|EventSourceInput|EclassInput){
+async function post(endpoint:string, data?:IAuthForm|EventSourceInput|EclassInput|string){
 	const apiUrl = endpoint;
 	const bodyData = JSON.stringify(data);
 
@@ -20,14 +20,15 @@ async function post(endpoint:string, data?:IAuthForm|EventSourceInput|EclassInpu
 
 //get
 async function get(endpoint:string) {
-	const apiUrl = endpoint;
-
+	const apiUrl = endpoint; 
 	const res = await axios(apiUrl, {
 		method: 'GET',
 		headers: {
+			'Content-Type': 'application/json;',
 			Authorization: `Bearer ${localStorage.getItem('token')}`,
 		},
 	});
+
 
 	return res;
 }
