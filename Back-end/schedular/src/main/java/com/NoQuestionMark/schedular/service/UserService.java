@@ -121,7 +121,7 @@ public class UserService {
                     .map(UserScheduleResponseDto::fromOfficialSchedule)
                     .toList());
         }
-        userSchedule.sort(Comparator.comparingInt(UserScheduleResponseDto::getDDay));
+        userSchedule.sort(Comparator.comparingInt(UserScheduleResponseDto::getDDay).reversed());
         if (userSchedule.size() > 5) userSchedule.subList(0,5);
         return new UserHomeResponseDto(user.getName(), user.getSchoolNumber(), user.getUserType().name(), userSubjects, userSchedule);
 
