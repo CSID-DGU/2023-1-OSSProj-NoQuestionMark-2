@@ -71,6 +71,11 @@ public class ScheduleController {
         return Response.success(scheduleService.getAllSchedule(month, year, authentication.getName()));
     }
 
+    @GetMapping("/{scheduleId}")
+    public Response<ScheduleDetailResponseDto> getSchedule(Authentication authentication, @PathVariable Long scheduleId){
+        return Response.success(scheduleService.getScheduleDetail(authentication.getName(), scheduleId));
+    }
+
     @GetMapping("/official")
     public Response<List<EclassOfficialScheduleResponseDto>> getSchedule(@RequestParam("subjectName") String subjectName, Authentication authentication){
         return Response.success(scheduleService.getOfficialSchedules(authentication.getName(), subjectName));
