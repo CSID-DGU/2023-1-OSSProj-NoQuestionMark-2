@@ -202,7 +202,6 @@ const Calendar = () =>{
 
   useEffect(() =>{
     performGetRequest(year,month);
-    setMainFilter('ALL')
   },[month,year]);
 
   useEffect(()=>{
@@ -282,6 +281,7 @@ const Calendar = () =>{
       reloadCalendarEvents(year, month);    
       // memo지혜 : 해야 할 일과 완료 한 일에 대한 일정 GET request 함수
       reloadTaskList();
+      setMainFilter('ALL');
     } 
     catch (error) {
       console.error('Error:', error);
