@@ -11,7 +11,7 @@ public class CommonScheduleFixRequestDto {
     private String title;
     private String contents;
     private String importance;
-    private String commonScheduleType;
+    private String scheduleType;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
