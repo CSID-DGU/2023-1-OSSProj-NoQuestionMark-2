@@ -202,6 +202,7 @@ const Calendar = () =>{
 
   useEffect(() =>{
     performGetRequest(year,month);
+    setMainFilter('ALL')
   },[month,year]);
 
   useEffect(()=>{
@@ -264,13 +265,13 @@ const Calendar = () =>{
         };
       });
         
-      setEvtState([...filteringResult.map((event:EventSourceInput) =>({
-        ...event,
-        'start': event.startDate,
-        'end': event.endDate
-      }))
-      ]); 
-
+      setEvtState(
+        [...filteringResult.map((event:EventSourceInput) =>({
+          ...event,
+          'start': event.startDate,
+          'end': event.endDate
+        }))
+        ]); 
       })
     })();
   },[subFilter])
@@ -336,7 +337,6 @@ const Calendar = () =>{
         .filter((task:schedules) => task.complete === 'TRUE')
         .map((el:schedules)=> { return {'title': el.title,'dday': el.dday, 'scheduleId' : el.scheduleId, 'schedule' : el.schedule}})
       ])
-      // setTaskList([...result.map((el:schedules)=> { return {'title': el.title,'dday': el.dday, 'scheduleId' : el.scheduleId}})])
     });
   }
 
@@ -386,7 +386,7 @@ const Calendar = () =>{
     });
   }
 
-  const handleTodoComplete= async(id:string) => {
+  const openModal= async(id:string) => {
     console.log(id);
     await Api.get(`/schedule/${id}`).then(res => {
       const {title, contents, startDate, endDate, importance, scheduleType, className, subjectScheduleType, schedule} = res.data.result;
@@ -422,7 +422,7 @@ const Calendar = () =>{
         <Filter>
           {/* 일정 유형별 필터링 하는 기능 */}
           <MainFilter>
-            <select name='filter' id='mainfilter' onChange={handleMainFilter}>
+            <select name='filter' id='mainfilter' value={mainFilter} onChange={handleMainFilter}>
               <option value='ALL'>--전체보기--</option>
               <option value='SUBJECT'>과목일정보기</option>
               <option value='COMMON'>개인일정보기</option>
@@ -559,7 +559,7 @@ const Calendar = () =>{
               { taskList.length > 0 ?
                 taskList.map((el) => {
                   const {title,dday,scheduleId} = el;
-                  return <TodoTask key={uuidv4()} onClick={()=>handleTodoComplete(scheduleId)}>
+                  return <TodoTask key={uuidv4()} onClick={()=>openModal(scheduleId)}>
                     <TaskIconConatiner><AiOutlineBorder /></TaskIconConatiner>
                     <TaskTitle>{title}</TaskTitle>
                     <Dday><span>D{dday}</span></Dday>
