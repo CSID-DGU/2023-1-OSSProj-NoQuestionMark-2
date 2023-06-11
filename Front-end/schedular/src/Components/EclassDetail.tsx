@@ -105,10 +105,13 @@ const EditStyledDetail = styled.textarea`
   padding-top: 10px;
   border: 0.5px solid #cdcdcd;
 `;
+const Wapper = styled.div`
+  width: 61.9rem;
+  margin-left: 24.4rem;
+`;
 const TitleWapper = styled.div`
   width: 61.9rem;
   height: 39px;
-  margin-left: 24.4rem;
   background-color: #e6e6e6;
   border: 1.5px solid #cdcdcd;
 `;
@@ -119,7 +122,6 @@ const SubjectTitle = styled.div`
   width: 50rem;
   padding-left: 10px;
   margin-top: 3px;
-  margin-right: 335px;
   font-size: 15px;
   background-color: #e6e6e6;
   border: none;
@@ -129,14 +131,13 @@ const ContentWapper = styled.div`
 `;
 const SubTitleWapper = styled.div`
   width: 7rem;
-  margin-left: 11.8rem;
   font-size: 0.9rem;
   color: white;
 `;
 const TypeTitle = styled.div`
   display: flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -145,7 +146,7 @@ const TypeTitle = styled.div`
 const DateTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -154,7 +155,7 @@ const DateTitle = styled.div`
 const ContentTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 250px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -171,7 +172,7 @@ const SubjectType = styled.div`
   display: flex;
   align-items: center;
   height: 34px;
-  width: 54.3rem;
+  width: auto;
   padding-left: 10px;
   border: 0.5px solid #cdcdcd;
 `;
@@ -179,7 +180,7 @@ const DateWapper = styled.div`
   display:flex;
   align-items: center;
   height: 35.5px;
-  width: 54.3rem;
+  width: auto;
   padding-left: 10px;
   background-color: #fff;
   border: 1px solid #cdcdcd;
@@ -191,7 +192,7 @@ const StyledP = styled.p`
 const StyledDetail = styled.div`
   text-align: left;
   height: 240px;
-  width: 54.3rem;
+  width: auto;
   padding-left: 10px;
   padding-top: 10px;
   border: 0.5px solid #cdcdcd;
@@ -363,6 +364,7 @@ const EclassDetail = () => {
         <Container>
           <StyledH3>과목 일정 상세보기</StyledH3>
           <Form>
+            <Wapper>
               <TitleWapper>
                 <SubjectTitle>{data.title}</SubjectTitle>
               </TitleWapper>
@@ -378,10 +380,11 @@ const EclassDetail = () => {
                   <StyledDetail>{data.contents}</StyledDetail>
                 </Content>
               </ContentWapper>
-              <BtnWapper>
-                <SubmitButton type='button' onClick={()=>{setIsEditing(true)}}>수정하기</SubmitButton>
-                <SubmitButton type='button' onClick={delSchedule}>삭제하기</SubmitButton>
-              </BtnWapper>
+            </Wapper>
+            <BtnWapper>
+              <SubmitButton type='button' onClick={()=>{setIsEditing(true)}}>수정하기</SubmitButton>
+              <SubmitButton type='button' onClick={delSchedule}>삭제하기</SubmitButton>
+            </BtnWapper>
           </Form>
         </Container>)}</>)}
     </>
