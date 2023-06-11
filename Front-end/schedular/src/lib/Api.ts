@@ -3,6 +3,8 @@ import {IAuthForm} from '../interfaces/IAuthForm'
 import {EventSourceInput} from '../interfaces/CalendarState'
 import {EclassInput} from 'interfaces/EclassSchedule';
 
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+
 async function post(endpoint:string, data?:IAuthForm|EventSourceInput|EclassInput|string){
 	const apiUrl = endpoint;
 	const bodyData = JSON.stringify(data);
