@@ -2,7 +2,7 @@
   "name": "schedular",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://43.200.59.134",
+  "proxy": " https://api.donggukschedule.com",
   "dependencies": {
     "@fullcalendar/core": "^6.1.6",
     "@fullcalendar/daygrid": "^6.1.6",
