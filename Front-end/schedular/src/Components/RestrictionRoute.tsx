@@ -5,7 +5,7 @@ type Props = {
 	children: JSX.Element;
 }
 
-// 비로그인 상태일 때만 페이지 이동
+// memo지혜 : 비로그인 상태일 때만 페이지 이동
 const NonMemberRoute : React.FC<Props> = ({ children }) => {
 	if (isLogin()) {
 		return <Navigate to="/notfound" />;
@@ -14,7 +14,7 @@ const NonMemberRoute : React.FC<Props> = ({ children }) => {
 	}
 };
 
-// 로그인 상태일 때만 페이지 이동
+// memo지혜 : 로그인 상태일 때만 페이지 이동
 const MemberRoute : React.FC<Props> = ({ children }) => {
 	if (isLogin()) {
 		return children;

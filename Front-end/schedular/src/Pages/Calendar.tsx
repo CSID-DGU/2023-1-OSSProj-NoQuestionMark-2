@@ -198,82 +198,70 @@ const Calendar = () =>{
         console.error(error);
       }
     })();
-  },[])
-
-  useEffect(() =>{
-    performGetRequest(year,month);
-  },[month,year]);
+  },[year,month])
 
   useEffect(()=>{
-    (async () =>{
-      const visitedMonth = `${year}-${month}`;
-      if ( mainFilter === 'ALL'){
-        reloadCalendarEvents(year, month); 
-        return;
-      }
-      await Api.get(`/schedule/select?schedule=${mainFilter}&month=${visitedMonth}`).then((res)=> {
-        const filteringResult:Events = res.data.result;
-        console.log( res.data.result);
+  (async () =>{
+    const visitedMonth = `${year}-${month}`;
+    if (mainFilter === 'ALL'){
+      reloadCalendarEvents(year, month); 
+      return;
+    }
+    await Api.get(`/schedule/select?schedule=${mainFilter}&month=${visitedMonth}`).then((res)=> {
+      const filteringResult:Events = res.data.result;
+      console.log( res.data.result);
 
-        filteringResult.forEach((s: EventSourceInput) => {
-          // memo지혜 : 중요도에 따른 불투명도 설정 및 TASK일 경우 아이콘 부여
-          if (s.schedule === 'COMMON') {
-            const idx = IMPORTANCE.indexOf(s.importance);
-            s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
-            s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-          }
+      filteringResult.forEach((s: EventSourceInput) => {
+        if (s.schedule === 'COMMON') {
+          const idx = IMPORTANCE.indexOf(s.importance);
+          s['color'] = `rgba(255,0,0,${ALPHA[idx]})`;
+          s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+        } else if (s.schedule === 'SUBJECT') {
+          const idx = IMPORTANCE.indexOf(s.importance);
+          s['color'] = `rgba(0,255,0,${ALPHA[idx]})`;
+          s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+        } else {
+          s['color'] = `rgba(0,0,255,1.0)`;
+          s.scheduleType === 'ASSIGNMENT' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+        }
+      });
 
-          else if(s.schedule === 'SUBJECT'){
-            const idx = IMPORTANCE.indexOf(s.importance);
-            s['color'] = `rgba(0,255,0,${ALPHA[idx]})`;
-            s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-          }
-          else {
-            s['color'] = `rgba(0,0,255,1.0)`;
-            s.scheduleType === 'ASSIGNMENT' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-          };
-        });
-        
-        setEvtState([...filteringResult.map((event:EventSourceInput) =>({
-          ...event,
-          'start': event.startDate,
-          'end': event.endDate
-        }))
-        ]); 
-      })
-    })();
-  },[mainFilter])
+      setEvtState([...filteringResult.map((event:EventSourceInput) =>({
+        ...event,
+        'start': event.startDate,
+        'end': event.endDate
+      }))]);
+    })
+  })();
+  }, [mainFilter, year, month]);
   
   useEffect(()=>{
     (async () =>{
       const visitedMonth = `${year}-${month}`;
-      
+
       if(subFilter === 'ALL') return;
       await Api.get(`/schedule/select/subject?subject=${subFilter}&month=${visitedMonth}`).then((res)=>{
         console.log('2차필터', res.data.result);
         const filteringResult:Events = res.data.result;
         filteringResult.forEach((s: EventSourceInput) => {
-        if(s.schedule === 'SUBJECT'){
-          const idx = IMPORTANCE.indexOf(s.importance);
-          s['color'] = `rgba(0,255,0,${ALPHA[idx]})`;
-          s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-        }
-        else {
-          s['color'] = `rgba(0,0,255,1.0)`;
-          s.scheduleType === 'ASSIGNMENT' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
-        };
-      });
-        
-      setEvtState(
-        [...filteringResult.map((event:EventSourceInput) =>({
+          if(s.schedule === 'SUBJECT'){
+            const idx = IMPORTANCE.indexOf(s.importance);
+            s['color'] = `rgba(0,255,0,${ALPHA[idx]})`;
+            s.scheduleType === 'TASK' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+          } else {
+            s['color'] = `rgba(0,0,255,1.0)`;
+            s.scheduleType === 'ASSIGNMENT' ? (s['imageurl'] = Icon) : (s['imageurl'] = '');
+          }
+        });
+
+        setEvtState([...filteringResult.map((event:EventSourceInput) =>({
           ...event,
           'start': event.startDate,
           'end': event.endDate
-        }))
-        ]); 
+        }))]);
       })
     })();
-  },[subFilter])
+  }, [subFilter, year, month]);
 
   const performGetRequest = async (year: string, month: string) => {
     try { 
@@ -390,9 +378,10 @@ const Calendar = () =>{
     console.log(id);
     await Api.get(`/schedule/${id}`).then(res => {
       const {title, contents, startDate, endDate, importance, scheduleType, className, subjectScheduleType, schedule} = res.data.result;
+      console.log(res.data.result)
       setId(id);
       console.log({title, contents, startDate, endDate, importance, scheduleType, className, subjectScheduleType, schedule});
-          
+      
       if(schedule === 'COMMON'){
         setEvents({title,contents, startDate, endDate, importance, schedule, scheduleType});
         setReadModal({...readModal, personalRead: !readModal.personalRead})
