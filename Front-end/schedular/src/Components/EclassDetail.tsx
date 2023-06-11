@@ -39,7 +39,7 @@ const EditSubTitleWapper = styled.div`
 const EditTypeTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -48,7 +48,7 @@ const EditTypeTitle = styled.div`
 const EditDateTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -57,7 +57,7 @@ const EditDateTitle = styled.div`
 const EditContentTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 250px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -257,7 +257,7 @@ const EclassDetail = () => {
 
   // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EclassInput> = data => putData(data);
-  // memo정민: 일정 수정 함수, 시작일과 종료일을 비교하여 유효성을 검사, 시작일이 종료일보다 큰 경우에는 경고창을 표시, 수정완료 후 페이지 reload
+  // memo정민: 일정 수정 함수, 시작일과 종료일을 비교, 수정 후 강의실 페이지로 이동
   const putData = async ({ title, contents, subjectScheduleType, startDate, endDate}:EclassInput) => {
 		try {
       const className = subjectName;
@@ -266,7 +266,7 @@ const EclassDetail = () => {
       startDate <= endDate! ?
 			await Api.put(`/schedule/official/${scheduleId}`, putData).then((res) => {
         alert('정상적으로 일정이 수정되었습니다.');
-        window.location.reload();
+        navigate(-1);
 			}) : alert('마감날짜를 다시 설정해주세요.');
 		} catch (e) {
 			alert(e);
@@ -298,7 +298,7 @@ const EclassDetail = () => {
             {data && (
               <EditContentWapper>
                 <EditSubTitleWapper>
-                  <EditTypeTitle>제목</EditTypeTitle>
+                  <EditTypeTitle>일정 제목</EditTypeTitle>
                   <EditTypeTitle>일정 종류</EditTypeTitle>
                   <EditDateTitle>제출 기간</EditDateTitle>
                   <EditContentTitle>상세 내용</EditContentTitle>
