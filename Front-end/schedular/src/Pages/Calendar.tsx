@@ -15,8 +15,10 @@ import Icon from 'Assets/Images/check.png';
 import { useRecoilState } from 'recoil';
 import { EventState } from 'recoil/Atom';
 import { v4 as uuidv4 } from 'uuid';
-import { AiOutlineBorder,AiOutlineCheckSquare } from "react-icons/ai";
+import { AiOutlineBorder, AiOutlineCheckSquare, AiOutlineDownCircle } from 'react-icons/ai';
+import moment from 'moment';
 import * as Api from 'lib/Api';
+import { string } from 'yup';
 
 const Container = styled.div`
   width : 80%;
@@ -103,6 +105,7 @@ const Dday = styled.div`
   text-align: center;
   padding : 0.2rem 0;
   width: 2.5rem;
+  height: 1rem;
 `
 const MainFilter = styled.div`
   display:flex;
@@ -303,6 +306,7 @@ const Calendar = () =>{
     });
 
     const newEventList = [...commonSchedule, ...subjectSchedule,...officialSchedule];  
+    console.log('new',newEventList);
     setEvtState([...newEventList.map(event =>({
       ...event,
       'start': event.startDate,
@@ -357,12 +361,17 @@ const Calendar = () =>{
   }
   // memo지혜 : 캘린더에서 일정이 보이는 뷰를 설정하는 함수
   const eventContent = (arg:any) => {
-    const {title} = arg.event;
-    const {color, imageurl, complete} = arg.event.extendedProps;
+    const backgroundColor = arg.backgroundColor;
+    const { title } = arg.event;
+    const { imageurl, complete, startDate, endDate} = arg.event.extendedProps;
+
     return (
-      <div className='event' style={color}>
-        { imageurl && <img className='event-icon' src={imageurl} alt='이벤트 아이콘' />}
-        <span className='event-title' style={{textDecoration: (complete === 'TRUE' ? 'line-through' : 'none')}}>{title}</span>
+      <div className='event'>
+        { imageurl && <AiOutlineDownCircle />}  
+        {  moment(endDate).diff(moment(startDate), 'days') === 0 
+            ? <div style={{display:'flex'}}><div style={{borderRadius: '50%',width: '10px', height: '10px',backgroundColor:backgroundColor}}></div><span>{title}</span></div>
+            :<span className='event-title' style={{textDecoration: (complete === 'TRUE' ? 'line-through' : 'none')}}>{title}</span>
+        }      
       </div>
     );
   };
