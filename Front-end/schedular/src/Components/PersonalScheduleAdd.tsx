@@ -87,7 +87,6 @@ const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => 
   const postSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
 			const postData = { title, contents,scheduleType, importance, startDate, endDate };
-      console.log(postData);
       startDate < endDate! ?
 			await Api.post(`/schedule/common`, postData).then((res) => {
         alert('정상적으로 일정이 등록되었습니다.');

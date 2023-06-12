@@ -85,10 +85,8 @@ const SubjectScheduleAdd = ({handleModalToggle, getApi,date, subjectList}: Modal
   const postSchedule = async ({ title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate }:EventSourceInput) => {
 		try {
 			const postData = {  title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate };
-      console.log(postData);
       startDate < endDate ?
 			await Api.post(`/schedule/subject`, postData).then((res) => {
-        console.log(res);
         alert('정상적으로 일정이 등록되었습니다.');
         handleModalToggle('subject');
 				if (date) {
