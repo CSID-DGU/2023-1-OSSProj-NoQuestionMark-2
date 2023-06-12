@@ -212,7 +212,6 @@ const Calendar = () =>{
     }
     await Api.get(`/schedule/select?schedule=${mainFilter}&month=${visitedMonth}`).then((res)=> {
       const filteringResult:Events = res.data.result;
-      console.log( res.data.result);
 
       filteringResult.forEach((s: EventSourceInput) => {
         if (s.schedule === 'COMMON') {
@@ -244,7 +243,6 @@ const Calendar = () =>{
 
       if(subFilter === 'ALL') return;
       await Api.get(`/schedule/select/subject?subject=${subFilter}&month=${visitedMonth}`).then((res)=>{
-        console.log('2차필터', res.data.result);
         const filteringResult:Events = res.data.result;
         filteringResult.forEach((s: EventSourceInput) => {
           if(s.schedule === 'SUBJECT'){
@@ -285,7 +283,6 @@ const Calendar = () =>{
     const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
     // memo지혜 : 일정은 개인일정, 과목개인일정, 공식일정으로 구성 
     const {commonSchedule,subjectSchedule,officialSchedule} = response.data.result;
-    console.log('캘린더 전체일정:',commonSchedule, subjectSchedule,officialSchedule);
 
     // memo지혜 : 중요도에 따른 불투명도 설정 및 TASK일 경우 아이콘 부여
     commonSchedule.forEach((s: EventSourceInput) => {
@@ -306,7 +303,6 @@ const Calendar = () =>{
     });
 
     const newEventList = [...commonSchedule, ...subjectSchedule,...officialSchedule];  
-    console.log('new',newEventList);
     setEvtState([...newEventList.map(event =>({
       ...event,
       'start': event.startDate,
@@ -317,7 +313,6 @@ const Calendar = () =>{
   const reloadTaskList = async() => {
     await Api.get('/schedule/toDoList').then((res)=>{
       const result = res.data.result;
-      console.log('todo:',result);
       setTaskList([
         ...result
         .filter((task:schedules) => task.complete === 'FALSE')
@@ -384,13 +379,10 @@ const Calendar = () =>{
   }
 
   const openModal= async(id:string) => {
-    console.log(id);
     await Api.get(`/schedule/${id}`).then(res => {
       const {title, contents, startDate, endDate, importance, scheduleType, className, subjectScheduleType, schedule} = res.data.result;
-      console.log(res.data.result)
       setId(id);
-      console.log({title, contents, startDate, endDate, importance, scheduleType, className, subjectScheduleType, schedule});
-      
+  
       if(schedule === 'COMMON'){
         setEvents({title,contents, startDate, endDate, importance, schedule, scheduleType});
         setReadModal({...readModal, personalRead: !readModal.personalRead})
