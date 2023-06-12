@@ -30,8 +30,6 @@ async function get(endpoint:string) {
 			Authorization: `Bearer ${localStorage.getItem('token')}`,
 		},
 	});
-
-
 	return res;
 }
 //patch
@@ -80,21 +78,13 @@ async function put(endpoint:string, data:{}) {
 async function del(endpoint:string) {
 	const apiUrl = endpoint;
 
-	const res = await fetch(apiUrl, {
+	const res = await axios(apiUrl, {
 		method: 'DELETE',
 		headers: {
-			'Content-Type': 'application/json',
+			'Content-Type': 'application/json',			
 			Authorization: `Bearer ${localStorage.getItem('token')}`,
 		},
 	});
-
-	// 응답 코드가 4XX 계열일 때 (400, 403 등)
-	if (!res.ok) {
-		const errorContent = await res.json();
-		const { reason } = errorContent;
-
-		throw new Error(reason);
-	}
 
 	return res;
 }
