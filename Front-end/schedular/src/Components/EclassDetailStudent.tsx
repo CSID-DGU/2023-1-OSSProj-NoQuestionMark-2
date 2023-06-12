@@ -20,12 +20,15 @@ const Form = styled.form`
   height: 100%;
   width: 100%;
 `;
+const Wapper = styled.div`
+  width: 61.8rem;
+  margin-left: 24.4rem;
+`;
 const TitleWapper = styled.div`
   display: flex;
   align-items: center;
   width: 61.8rem;
   height: 40px;
-  margin-left: 24.4rem;
   background-color: #e6e6e6;
   border: 1.5px solid #cdcdcd;
 `;
@@ -68,7 +71,7 @@ const ContentWapper = styled.div`
 `;
 const SubTitleWapper = styled.div`
   width: 7rem;
-  margin-left: 11.8rem;
+  //margin-left: 11.8rem;
   font-size: 0.9rem;
   color: white;
 `;
@@ -183,22 +186,24 @@ const EclassDetailStudent = () => {
       <Form>
         {data && (
           <>
-          <TitleWapper>
-            <SubjectTitle>{data.title}</SubjectTitle>
-            { submit ? <SubmitStateComplete>제출완료</SubmitStateComplete> : <SubmitState>미제출</SubmitState>}
-          </TitleWapper>
-          <ContentWapper>
-            <SubTitleWapper>
-              <TypeTitle>일정 종류</TypeTitle>
-              <DateTitle>제출 기간</DateTitle>
-              <ContentTitle>상세 내용</ContentTitle>
-            </SubTitleWapper>
-            <Content>
-              <SubjectType>{data.subjectScheduleType}</SubjectType>
-              <DateWapper>{data.startDate}<StyledP>~</StyledP>{data.endDate}</DateWapper>
-              <StyledDetail>{data.contents}</StyledDetail>
-            </Content>
-          </ContentWapper>
+          <Wapper>
+            <TitleWapper>
+              <SubjectTitle>{data.title}</SubjectTitle>
+              { submit ? <SubmitStateComplete>제출완료</SubmitStateComplete> : <SubmitState>미제출</SubmitState>}
+            </TitleWapper>
+            <ContentWapper>
+              <SubTitleWapper>
+                <TypeTitle>일정 종류</TypeTitle>
+                <DateTitle>제출 기간</DateTitle>
+                <ContentTitle>상세 내용</ContentTitle>
+              </SubTitleWapper>
+              <Content>
+                <SubjectType>{data.subjectScheduleType}</SubjectType>
+                <DateWapper>{data.startDate}<StyledP>~</StyledP>{data.endDate}</DateWapper>
+                <StyledDetail>{data.contents}</StyledDetail>
+              </Content>
+            </ContentWapper>
+          </Wapper>
           <SubmitButton type='button' onClick={()=>{setSubmit(true)}}>제출하기</SubmitButton>
           </>)}
       </Form>

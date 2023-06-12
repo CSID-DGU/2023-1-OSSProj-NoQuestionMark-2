@@ -4,18 +4,17 @@ import background_image from '../Assets/Images/visual_img_large01.jpg'
 
 const BgImage = styled.div`
   height: 180px;
-  width: 87.5%;
-  margin-left: 12.3rem;
+  width: 100%;
   background-size: cover;
 `;
 const SubjectName = styled.span`
   display: inline-block;
-  margin-top: 54px;
-  margin-right: 4rem;
+  margin-top: 50px;
+  margin-left: 10rem;
   color: #fff;
   font-size: 3rem;
   font-weight: bolder;
-  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-width: 0.1px;
   -webkit-text-stroke-color: #000;
 `;
 

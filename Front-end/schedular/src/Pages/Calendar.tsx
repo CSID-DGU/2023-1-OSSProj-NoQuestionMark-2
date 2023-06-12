@@ -15,8 +15,10 @@ import Icon from 'Assets/Images/check.png';
 import { useRecoilState } from 'recoil';
 import { EventState } from 'recoil/Atom';
 import { v4 as uuidv4 } from 'uuid';
-import { AiOutlineBorder,AiOutlineCheckSquare } from "react-icons/ai";
+import { AiOutlineBorder, AiOutlineCheckSquare, AiOutlineDownCircle } from 'react-icons/ai';
+import moment from 'moment';
 import * as Api from 'lib/Api';
+import { string } from 'yup';
 
 const Container = styled.div`
   width : 80%;
@@ -103,6 +105,7 @@ const Dday = styled.div`
   text-align: center;
   padding : 0.2rem 0;
   width: 2.5rem;
+  height: 1rem;
 `
 const MainFilter = styled.div`
   display:flex;
@@ -209,7 +212,6 @@ const Calendar = () =>{
     }
     await Api.get(`/schedule/select?schedule=${mainFilter}&month=${visitedMonth}`).then((res)=> {
       const filteringResult:Events = res.data.result;
-      console.log( res.data.result);
 
       filteringResult.forEach((s: EventSourceInput) => {
         if (s.schedule === 'COMMON') {
@@ -241,7 +243,6 @@ const Calendar = () =>{
 
       if(subFilter === 'ALL') return;
       await Api.get(`/schedule/select/subject?subject=${subFilter}&month=${visitedMonth}`).then((res)=>{
-        console.log('2차필터', res.data.result);
         const filteringResult:Events = res.data.result;
         filteringResult.forEach((s: EventSourceInput) => {
           if(s.schedule === 'SUBJECT'){
@@ -282,7 +283,6 @@ const Calendar = () =>{
     const response = await Api.get(`/schedule/common?month=${visitedMonth}`);
     // memo지혜 : 일정은 개인일정, 과목개인일정, 공식일정으로 구성 
     const {commonSchedule,subjectSchedule,officialSchedule} = response.data.result;
-    console.log('캘린더 전체일정:',commonSchedule, subjectSchedule,officialSchedule);
 
     // memo지혜 : 중요도에 따른 불투명도 설정 및 TASK일 경우 아이콘 부여
     commonSchedule.forEach((s: EventSourceInput) => {
@@ -313,7 +313,6 @@ const Calendar = () =>{
   const reloadTaskList = async() => {
     await Api.get('/schedule/toDoList').then((res)=>{
       const result = res.data.result;
-      console.log('todo:',result);
       setTaskList([
         ...result
         .filter((task:schedules) => task.complete === 'FALSE')
@@ -357,12 +356,17 @@ const Calendar = () =>{
   }
   // memo지혜 : 캘린더에서 일정이 보이는 뷰를 설정하는 함수
   const eventContent = (arg:any) => {
-    const {title} = arg.event;
-    const {color, imageurl, complete} = arg.event.extendedProps;
+    const backgroundColor = arg.backgroundColor;
+    const { title } = arg.event;
+    const { imageurl, complete, startDate, endDate} = arg.event.extendedProps;
+
     return (
-      <div className='event' style={color}>
-        { imageurl && <img className='event-icon' src={imageurl} alt='이벤트 아이콘' />}
-        <span className='event-title' style={{textDecoration: (complete === 'TRUE' ? 'line-through' : 'none')}}>{title}</span>
+      <div className='event'>
+        { imageurl && <AiOutlineDownCircle />}  
+        {  moment(endDate).diff(moment(startDate), 'days') === 0 
+            ? <div style={{display:'flex'}}><div style={{borderRadius: '50%',width: '10px', height: '10px',backgroundColor:backgroundColor}}></div><span>{title}</span></div>
+            :<span className='event-title' style={{textDecoration: (complete === 'TRUE' ? 'line-through' : 'none')}}>{title}</span>
+        }      
       </div>
     );
   };
@@ -375,13 +379,10 @@ const Calendar = () =>{
   }
 
   const openModal= async(id:string) => {
-    console.log(id);
     await Api.get(`/schedule/${id}`).then(res => {
       const {title, contents, startDate, endDate, importance, scheduleType, className, subjectScheduleType, schedule} = res.data.result;
-      console.log(res.data.result)
       setId(id);
-      console.log({title, contents, startDate, endDate, importance, scheduleType, className, subjectScheduleType, schedule});
-      
+  
       if(schedule === 'COMMON'){
         setEvents({title,contents, startDate, endDate, importance, schedule, scheduleType});
         setReadModal({...readModal, personalRead: !readModal.personalRead})

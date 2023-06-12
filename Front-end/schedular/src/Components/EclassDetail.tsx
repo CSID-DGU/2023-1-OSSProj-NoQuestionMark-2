@@ -39,7 +39,7 @@ const EditSubTitleWapper = styled.div`
 const EditTypeTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -48,7 +48,7 @@ const EditTypeTitle = styled.div`
 const EditDateTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -57,7 +57,7 @@ const EditDateTitle = styled.div`
 const EditContentTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 250px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -105,10 +105,13 @@ const EditStyledDetail = styled.textarea`
   padding-top: 10px;
   border: 0.5px solid #cdcdcd;
 `;
+const Wapper = styled.div`
+  width: 61.9rem;
+  margin-left: 24.4rem;
+`;
 const TitleWapper = styled.div`
   width: 61.9rem;
   height: 39px;
-  margin-left: 24.4rem;
   background-color: #e6e6e6;
   border: 1.5px solid #cdcdcd;
 `;
@@ -119,7 +122,6 @@ const SubjectTitle = styled.div`
   width: 50rem;
   padding-left: 10px;
   margin-top: 3px;
-  margin-right: 335px;
   font-size: 15px;
   background-color: #e6e6e6;
   border: none;
@@ -129,14 +131,13 @@ const ContentWapper = styled.div`
 `;
 const SubTitleWapper = styled.div`
   width: 7rem;
-  margin-left: 11.8rem;
   font-size: 0.9rem;
   color: white;
 `;
 const TypeTitle = styled.div`
   display: flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -145,7 +146,7 @@ const TypeTitle = styled.div`
 const DateTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 35px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -154,7 +155,7 @@ const DateTitle = styled.div`
 const ContentTitle = styled.div`
   display:flex;
   align-items: center;
-  padding-left: 1.6rem;
+  padding-left: 1.7rem;
   height: 250px;
   text-shadow: 1px 1px 1px #506890;
   background-color: #7c95be;
@@ -171,7 +172,7 @@ const SubjectType = styled.div`
   display: flex;
   align-items: center;
   height: 34px;
-  width: 54.3rem;
+  width: auto;
   padding-left: 10px;
   border: 0.5px solid #cdcdcd;
 `;
@@ -179,7 +180,7 @@ const DateWapper = styled.div`
   display:flex;
   align-items: center;
   height: 35.5px;
-  width: 54.3rem;
+  width: auto;
   padding-left: 10px;
   background-color: #fff;
   border: 1px solid #cdcdcd;
@@ -191,7 +192,7 @@ const StyledP = styled.p`
 const StyledDetail = styled.div`
   text-align: left;
   height: 240px;
-  width: 54.3rem;
+  width: auto;
   padding-left: 10px;
   padding-top: 10px;
   border: 0.5px solid #cdcdcd;
@@ -256,7 +257,7 @@ const EclassDetail = () => {
 
   // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EclassInput> = data => putData(data);
-  // memo정민: 일정 수정 함수, 시작일과 종료일을 비교하여 유효성을 검사, 시작일이 종료일보다 큰 경우에는 경고창을 표시, 수정완료 후 페이지 reload
+  // memo정민: 일정 수정 함수, 시작일과 종료일을 비교, 수정 후 강의실 페이지로 이동
   const putData = async ({ title, contents, subjectScheduleType, startDate, endDate}:EclassInput) => {
 		try {
       const className = subjectName;
@@ -265,7 +266,7 @@ const EclassDetail = () => {
       startDate <= endDate! ?
 			await Api.put(`/schedule/official/${scheduleId}`, putData).then((res) => {
         alert('정상적으로 일정이 수정되었습니다.');
-        window.location.reload();
+        navigate(-1);
 			}) : alert('마감날짜를 다시 설정해주세요.');
 		} catch (e) {
 			alert(e);
@@ -297,7 +298,7 @@ const EclassDetail = () => {
             {data && (
               <EditContentWapper>
                 <EditSubTitleWapper>
-                  <EditTypeTitle>제목</EditTypeTitle>
+                  <EditTypeTitle>일정 제목</EditTypeTitle>
                   <EditTypeTitle>일정 종류</EditTypeTitle>
                   <EditDateTitle>제출 기간</EditDateTitle>
                   <EditContentTitle>상세 내용</EditContentTitle>
@@ -363,6 +364,7 @@ const EclassDetail = () => {
         <Container>
           <StyledH3>과목 일정 상세보기</StyledH3>
           <Form>
+            <Wapper>
               <TitleWapper>
                 <SubjectTitle>{data.title}</SubjectTitle>
               </TitleWapper>
@@ -378,10 +380,11 @@ const EclassDetail = () => {
                   <StyledDetail>{data.contents}</StyledDetail>
                 </Content>
               </ContentWapper>
-              <BtnWapper>
-                <SubmitButton type='button' onClick={()=>{setIsEditing(true)}}>수정하기</SubmitButton>
-                <SubmitButton type='button' onClick={delSchedule}>삭제하기</SubmitButton>
-              </BtnWapper>
+            </Wapper>
+            <BtnWapper>
+              <SubmitButton type='button' onClick={()=>{setIsEditing(true)}}>수정하기</SubmitButton>
+              <SubmitButton type='button' onClick={delSchedule}>삭제하기</SubmitButton>
+            </BtnWapper>
           </Form>
         </Container>)}</>)}
     </>
