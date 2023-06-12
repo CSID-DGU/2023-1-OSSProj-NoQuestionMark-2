@@ -62,6 +62,9 @@ const SignUpButton = styled(Link)`
 const LogoutWapper = styled.div`
   display:flex;
   align-items: center;
+  padding-left: 20px;
+  font-size: 15px;
+  font-weight: bold;
 `;
 const LogoutButton = styled.button`
   margin: 0 20px;
@@ -98,6 +101,7 @@ const SignIn = () => {
 		try {
 			const loginData = { schoolNumber, password} ;
 			await Api.post(`/login`, loginData).then((res) => {
+  
 				const {schoolNumber,userName,userType,token,schedule,subjects} = res.data.result;
         localStorage.setItem('token',token);
         localStorage.setItem('userType',userType);
@@ -108,6 +112,7 @@ const SignIn = () => {
 			});
 		} catch (e) {
 			if(axios.isAxiosError(e)){
+        console.log(e.response);
         alert(e.response?.data);
       }
 		}
@@ -116,6 +121,7 @@ const SignIn = () => {
     logout();
     setLoginCheck(!loginCheck);
     setUserInfo({schoolNumber: null,userName : null,userType: null});
+    reset();
     navigate('/');
   }
   return (

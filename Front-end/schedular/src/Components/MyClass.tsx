@@ -44,13 +44,14 @@ const ClassButton = styled.button`
   position: absolute;
   right: 25px;
   margin: 7px 20px;
-  padding: 6px 5px 0 5px;
-  height: 20px;
-  font-size: 10px;
+  padding: 5px 8px;
+  height: 25px;
+  font-size: 10.5px;
   background-color: #12314f;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 4px;
   border: none;
+  cursor: pointer;
 `;
 
 const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) => {
@@ -58,14 +59,15 @@ const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) =
 
   const moveToElass = (e: React.MouseEvent<HTMLButtonElement>) => {
     const subjectId = (e.target as HTMLButtonElement).value;
-    navigate(`/eclass/${subjectId}`, { state: subjectId })
+    const subjectName = (e.target as HTMLButtonElement).getAttribute('data-subject-name');
+    navigate(`/eclass/${subjectId}`, { state: { subjectId, subjectName } })
   }
   const myClass = subjects
     .map((classes, index) => {
       const {subjectName,subjectId}= classes;
       return (<ListWapper key={uuidv4()}>
         <MyList>{subjectName}</MyList>
-        <ClassButton onClick={moveToElass} value={subjectId}>강의실 가기</ClassButton>
+        <ClassButton onClick={moveToElass} value={subjectId} data-subject-name={subjectName}>강의실 가기</ClassButton>
       </ListWapper>)})
     ;
   return (

@@ -1,9 +1,10 @@
 import {useState, MouseEvent } from 'react';
 import { useForm, SubmitHandler,Controller } from 'react-hook-form';
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import SubmitButton from './SubmitButton';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
+import { v4 as uuidv4 } from 'uuid';
 import * as Api from '../lib/Api';
 
 const ModalConatiner = styled.div`
@@ -59,7 +60,7 @@ const Grid = styled.div`
   text-align: left;
   font-size: 13px;
   width: 80%;
-  margin: 2rem auto;
+  margin: auto;
   padding: 2rem 2rem;
 `;
 const InputDiv = styled.div`
@@ -90,6 +91,19 @@ const StyledTextarea = styled.textarea`
   border: 1px solid #666;
   border-radius: 5px;
   padding: 10px 12px;
+`;
+const EclassBtn = styled.button`
+  display: block;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  text-align: center; 
+  cursor: pointer;
+  background-color: #228be6;
+  width: 100%;
+  height: 2rem;
 `;
 const EditButton = styled.button`
   display: block;
@@ -133,8 +147,12 @@ const ButtonWapper = styled.div`
   padding-bottom: 0.5rem;
   width: 22rem;
 `;
+const Heading = styled.h1`
+  margin-bottom: 0.2rem;
+`
 
-const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}: ModalToggle) => {
+const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: ModalToggle) => {
+  const navigate = useNavigate();
   const formData = {...event};
 
   const [edited, setEdited] = useState(false)
@@ -160,7 +178,6 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
   const putSchedule = async ({ title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate  }:EventSourceInput) => {
 		try {
 			const putData = {title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate};
-      console.log("putData",putData);
       startDate < endDate ?
 			await Api.put(`schedule/subject/${id}`, putData).then((res) => {
         alert('정상적으로 일정이 수정되었습니다.');
@@ -176,20 +193,43 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
 	};
   
   const delSchedule = async() => {
-    await Api.delete(`/schedule/subject/${id}`).then((res) => {
-      window.confirm('삭제하시겠습니까?');
-      handleModalToggle('subject');
+    const yes = window.confirm('삭제하시겠습니까?');
+    if(yes) {
+      await Api.delete(`/schedule/subject/${id}`).then((res) => {
+        window.confirm('삭제하시겠습니까?');
+        handleModalToggle('subject');
+        if (date) {
+          const [month, year] = date;
+          getApi?.(year, month);
+        }
+      });
+    }
+  }
+  const moveToElass = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const subjectId = (e.target as HTMLButtonElement).value;
+    const subjectName = (e.target as HTMLButtonElement).getAttribute('data-subject-name');
+    navigate(`/eclass/${subjectId}`, { state: { subjectId, subjectName } })
+  }
+  const IsOfficial = () =>{
+    return formData.schedule ==='OFFICIAL_SUBJECT';
+  }
+  
+  const completeSchedule = async() => {
+    const schedule = formData.schedule;
+    await Api.post(`/complete/${id}`, schedule).then((res) => {
+      handleModalToggle('personal');
       if (date) {
         const [month, year] = date;
         getApi?.(year, month);
       }
+      alert('일정완료');
     });
   }
 
   return (
     <ModalConatiner>      
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <h1>과목 일정 상세보기</h1>
+        <Heading>{IsOfficial()? '공식일정 상세보기' : '과목일정 상세보기'}</Heading>
         <CloseButton onClick ={()=>handleModalToggle('subject')}/>
         <Grid>
         <label htmlFor='title'>제목</label>
@@ -211,6 +251,7 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
               )}
           />
         </InputDiv>
+        {!IsOfficial() &&  <>
         <label htmlFor='scheduleType'>유형</label>
         <InputDiv>
           <Controller
@@ -232,6 +273,7 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
             )}
           />
         </InputDiv>
+        </>}
         <label htmlFor='contents'>상세내용</label>
         <InputDiv>
           <Controller
@@ -259,7 +301,7 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
               rules={{ required: true }}
               render={({ field }) => (
                 <StyledSelect id='className' value={field.value} {...register('className', { required: true })} disabled={!edited}>
-                {subjectList?.map((el)=> <option value={el}>{el}</option>)}
+                {subjectList?.map((el)=> <option key={uuidv4()} value={el}>{el}</option>)}
               </StyledSelect>
               )}
           /> 
@@ -280,6 +322,8 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
               )}
           />
         </InputDiv>
+        {!IsOfficial() &&  
+        <>
         <label htmlFor='importance'>중요도</label>
         <InputDiv>
           <Controller
@@ -296,6 +340,7 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
             )}
           />
         </InputDiv>
+        </>}
         <label>시작 날짜</label>
         <Controller
             control={control}
@@ -334,22 +379,31 @@ const SubjectDetailProf = ({handleModalToggle,getApi,date,subjectList,event,id}:
           />
         </Grid>
         {edited ? ( 
-          <ButtonWapper>
+          <ButtonWapper>      
             <ButtonLine>
               <EditButton type='submit'>수정완료</EditButton>
               <CDButton type='button' onClick={onClickReadButton}>취소하기</CDButton>
-            </ButtonLine>
+            </ButtonLine>            
           </ButtonWapper> ) : ( 
-          <ButtonWapper> 
-            {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
-            <ButtonLine>
-              <EditButton type='button' onClick={onClickEditButton}>수정하기</EditButton>
-              <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
-            </ButtonLine>
-          </ButtonWapper>)}
+          <>
+          {IsOfficial() ?
+            <ButtonWapper> 
+              <EclassBtn onClick={moveToElass} value={id} data-subject-name={formData.className}>이클래스가기</EclassBtn>
+            </ButtonWapper> 
+            :
+            <ButtonWapper> 
+              {formData.scheduleType==='TASK' && <CompleteButton type='button' onClick={completeSchedule}>일정 완료하기</CompleteButton>}
+              <ButtonLine> 
+                <EditButton type='button' onClick={onClickEditButton}>수정하기</EditButton>
+                <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
+              </ButtonLine>
+            </ButtonWapper>
+          }
+          </>
+        )}
       </Form>
     </ModalConatiner>
   )
 }
 
-export default SubjectDetailProf
+export default SubjectDetail

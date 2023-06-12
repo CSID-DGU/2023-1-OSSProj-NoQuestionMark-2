@@ -60,8 +60,8 @@ const DdayList = styled.span`
 `;
 const ScheduleBox = styled.div`
   overflow-y: scroll;
-  height: 195px;
-  width: 490px;
+  height: 190px;
+  width: 485px;
   &::-webkit-scrollbar{
     width: 10px;
     height: 10px;
@@ -79,7 +79,7 @@ const MySchedule = ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean
     .map((schedules, index) => 
     <ListWapper key={uuidv4()}>
       <MyList>{schedules.title}</MyList>
-      <DdayList>D-{schedules.dday}</DdayList>
+      <DdayList>D{schedules.dday}</DdayList>
     </ListWapper>)
     ;
 

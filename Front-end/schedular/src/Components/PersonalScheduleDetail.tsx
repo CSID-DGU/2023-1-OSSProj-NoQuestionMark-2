@@ -159,9 +159,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
   const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
   const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
-      const commonScheduleType = scheduleType;
-			const putData = { title, contents,commonScheduleType, importance, startDate, endDate  };
-      console.log('putData',putData);
+			const putData = { title, contents,scheduleType, importance, startDate, endDate  };
       startDate < endDate ?
 				await Api.put(`/schedule/common/${id}`, putData).then((res) => {
         alert('정상적으로 일정이 수정되었습니다.');
@@ -177,13 +175,27 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
 	};
 
   const delSchedule = async() => {
-    await Api.delete(`/schedule/common/${id}`).then((res) => {
-      window.confirm('삭제하시겠습니까?');
+    const yes = window.confirm('삭제하시겠습니까?');
+    if(yes) {
+      await Api.delete(`/schedule/common/${id}`).then((res) => {
+        if (date) {
+          const [month, year] = date;
+          getApi?.(year, month);
+        }
+      })
+      handleModalToggle('personal');
+    }
+    
+  }
+  const completeSchedule = async() => {
+    const schedule = formData.schedule;
+    await Api.post(`/complete/${id}`, schedule).then((res) => {
       handleModalToggle('personal');
       if (date) {
         const [month, year] = date;
         getApi?.(year, month);
       }
+      alert('일정완료');
     });
   }
 
@@ -312,7 +324,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
             </ButtonLine>
           </ButtonWapper> ) : ( 
           <ButtonWapper> 
-            {formData.scheduleType==='TASK' && <CompleteButton type='button'>일정 완료하기</CompleteButton>}
+            {formData.scheduleType==='TASK' && <CompleteButton type='button' onClick={completeSchedule}>일정 완료하기</CompleteButton>}
             <ButtonLine>
               <EditButton type='button' onClick={onClickEditButton}>수정하기</EditButton>
               <CDButton type='button' onClick={delSchedule}>삭제하기</CDButton>
