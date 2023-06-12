@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle } from 'react-icons/ai';
 import styled from 'styled-components';
 import SubmitButton from '../Components/SubmitButton';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
@@ -107,7 +107,7 @@ const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => 
       <h1>개인 일정 등록</h1>
       <CloseButton onClick ={()=>handleModalToggle('personal')}/>
       <Grid>
-        <label htmlFor="title">제목</label>
+        <label htmlFor='title'>제목</label>
         <InputDiv>
           <StyledInput
             id='title'
@@ -140,11 +140,11 @@ const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => 
         </InputDiv>
         <label>시작 날짜</label>
         <InputDiv>
-          <input type="datetime-local" {...register("startDate", { required: true })}></input>
+          <input type='datetime-local' {...register('startDate', { required: true })}></input>
         </InputDiv>
         <label>마감 날짜</label>
         <InputDiv>
-          <input type="datetime-local" {...register("endDate", { required: true })} ></input>
+          <input type='datetime-local' {...register('endDate', { required: true })} ></input>
         </InputDiv>
         </Grid>
       <SubmitButton name='등록하기' width='15rem' height='3rem' color='#228be6'/>

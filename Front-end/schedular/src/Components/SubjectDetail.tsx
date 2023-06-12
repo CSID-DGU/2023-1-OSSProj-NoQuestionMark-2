@@ -1,6 +1,6 @@
 import {useState, MouseEvent } from 'react';
 import { useForm, SubmitHandler,Controller } from 'react-hook-form';
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
