@@ -1,6 +1,6 @@
 import {useState, MouseEvent } from 'react';
 import { useForm, SubmitHandler,Controller } from 'react-hook-form';
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {ModalToggle, EventSourceInput} from 'interfaces/CalendarState';
@@ -178,7 +178,6 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
   const putSchedule = async ({ title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate  }:EventSourceInput) => {
 		try {
 			const putData = {title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate};
-      console.log("putData",putData);
       startDate < endDate ?
 			await Api.put(`schedule/subject/${id}`, putData).then((res) => {
         alert('정상적으로 일정이 수정되었습니다.');
@@ -217,7 +216,6 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
   
   const completeSchedule = async() => {
     const schedule = formData.schedule;
-    console.log(schedule)
     await Api.post(`/complete/${id}`, schedule).then((res) => {
       handleModalToggle('personal');
       if (date) {

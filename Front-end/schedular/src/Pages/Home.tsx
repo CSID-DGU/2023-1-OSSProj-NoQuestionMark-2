@@ -4,15 +4,15 @@ import MyClass from '../Components/MyClass';
 import MySchedule from '../Components/MySchedule';
 import { useRecoilValue } from 'recoil';
 import { isLoginCheck, EventState} from 'recoil/Atom'
-import * as Api from "lib/Api";
+import * as Api from 'lib/Api';
 import styled from 'styled-components';
-import background_image from '../Assets/Images/IMG_4174.jpeg'
-import QuickMenu_image from '../Assets/Images/quick_banner01.png'
-import QuickMenu_image2 from '../Assets/Images/quick_banner02.png'
-import QuickMenu_image3 from '../Assets/Images/quick_banner03.png'
-import QuickMenu_image4 from '../Assets/Images/quick_banner04.png'
-import QuickMenu_image5 from '../Assets/Images/quick_banner05.png'
-import QuickMenu_image6 from '../Assets/Images/quick_banner06.png'
+import background_image from '../Assets/Images/IMG_4174.jpeg';
+import QuickMenu_image from '../Assets/Images/quick_banner01.png';
+import QuickMenu_image2 from '../Assets/Images/quick_banner02.png';
+import QuickMenu_image3 from '../Assets/Images/quick_banner03.png';
+import QuickMenu_image4 from '../Assets/Images/quick_banner04.png';
+import QuickMenu_image5 from '../Assets/Images/quick_banner05.png';
+import QuickMenu_image6 from '../Assets/Images/quick_banner06.png';
 
 const TopMenu = styled.div`
   display: flex;
@@ -131,9 +131,7 @@ const Home = () => {
   const loginCheck = useRecoilValue(isLoginCheck);
 
   useEffect(() =>{
-    console.log('rerender Test')
     if(loginCheck){
-      console.log(loginCheck);
       (async () =>{
         await Api.get('/home').then( (res) => {
           const {schedule,subjects} = res.data.result;
