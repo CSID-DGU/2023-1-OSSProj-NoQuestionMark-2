@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CompleteService {
     private final UserRepository userRepository;
-    private final ScheduleRepository scheduleRepository;
     private final OfficialSubjectRepository officialSubjectRepository;
     private final CommonScheduleRepository commonScheduleRepository;
     private final SubjectScheduleRepository subjectScheduleRepository;
