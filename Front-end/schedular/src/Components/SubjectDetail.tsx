@@ -196,7 +196,6 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
     const yes = window.confirm('삭제하시겠습니까?');
     if(yes) {
       await Api.delete(`/schedule/subject/${id}`).then((res) => {
-        window.confirm('삭제하시겠습니까?');
         handleModalToggle('subject');
         if (date) {
           const [month, year] = date;
