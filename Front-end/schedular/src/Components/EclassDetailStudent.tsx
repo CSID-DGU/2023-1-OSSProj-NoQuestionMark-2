@@ -177,7 +177,6 @@ const EclassDetailStudent = () => {
       console.error('데이터 가져오기 실패:', error);
     }
   };
-  console.log(data);
 
   return (
     <Container>

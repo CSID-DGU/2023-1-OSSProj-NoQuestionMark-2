@@ -11,14 +11,13 @@ import PersonalScheduleDetail from 'Components/PersonalScheduleDetail';
 import SubjectDetail from 'Components/SubjectDetail';
 import { Events,EventSourceInput } from 'interfaces/CalendarState';
 import { subjects, schedules, Schedules } from 'interfaces/homeSchedule';
-import Icon from 'Assets/Images/check.png';
 import { useRecoilState } from 'recoil';
 import { EventState } from 'recoil/Atom';
 import { v4 as uuidv4 } from 'uuid';
+import Icon from 'Assets/Images/check.png';
 import { AiOutlineBorder, AiOutlineCheckSquare, AiOutlineDownCircle } from 'react-icons/ai';
 import moment from 'moment';
 import * as Api from 'lib/Api';
-import { string } from 'yup';
 
 const Container = styled.div`
   width : 80%;

@@ -73,8 +73,10 @@ const ScheduleBox = styled.div`
 `;
   
 
+// memo정민: 홈 '내 할 일 보기'
 const MySchedule = ({schedule,loginCkeck}:{schedule:Schedules,loginCkeck:boolean}) => {
 
+  // memo정민: 등록된 일정 리스트
   const mySchedule = schedule
     .map((schedules, index) => 
     <ListWapper key={uuidv4()}>

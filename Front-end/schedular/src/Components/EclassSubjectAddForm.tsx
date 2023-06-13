@@ -126,12 +126,11 @@ const EclassSubjectAddForm = () => {
   
   // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EclassInput> = data => postData(data);
-  // memo정민: 일정 등록 함수, 시작일과 종료일을 비교하여 유효성을 검사, 시작일이 종료일보다 큰 경우에는 경고창을 표시, 일정 등록 후 강의실 페이지로 이동
+  // memo정민: 일정 등록, 시작일과 종료일을 비교하여 유효성을 검사, 일정 등록 후 강의실 페이지로 이동
   const postData = async ({ title, contents, subjectScheduleType, startDate, endDate}:EclassInput) => {
 		try {
       const className = subjectName;
 			const postSubject = { title, contents, subjectScheduleType, startDate, endDate, className };
-      console.log(postSubject);
       startDate <= endDate! ?
 			await Api.post(`/schedule/official`, postSubject).then((res) => {
         alert('정상적으로 일정이 등록되었습니다.');

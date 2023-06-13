@@ -1,12 +1,12 @@
-import EclassMenu from './../Components/EclassMenu';
-import EclassClassName from 'Components/EclassClassName';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
+import EclassMenu from './../Components/EclassMenu';
+import EclassClassName from 'Components/EclassClassName';
 import { useRecoilValue } from 'recoil';
 import { userInfoState } from 'recoil/Atom'
 import * as Api from '../lib/Api';
 import { v4 as uuidv4 } from 'uuid';
+import styled from 'styled-components';
 
 const ListTitleWapper = styled.div`
   display: flex;
@@ -116,7 +116,7 @@ const EclassSubject = () =>{
     getData();
   }, []);
 
-  // memo정민: 일정 데이터를 가져오고, 실패 시 error message를 console에 출력
+  // memo정민: 일정 데이터 가져오기
   const getData = async () => {
     try {
       await Api.get(`/schedule/official?subjectName=${subjectName}`).then((res) => {
@@ -139,9 +139,8 @@ const EclassSubject = () =>{
     navigate(`/eclass/add`, {  state: { subjectName } })
   }
 
-  // memo정민: data 배열을 복사하여 scheduleList에 할당
   const scheduleList = [...data];
-  // memo정민: scheduleList 배열의 각 요소에 대해 순회하며 JSX 엘리먼트로 변환
+  // memo정민: 공식 과목 일정 리스트
   const subjects = scheduleList
     .map((data) => {
       // memo정민: 현재 요소에서 필요한 속성을 추출하여 변수에 할당
