@@ -75,10 +75,10 @@ SpringDataJPA , JPA(JPQL) , Recoil
 |이클래스 일정상세조회 - 학생| 이클래스 일정조회,수정,삭제 - 교수|
 |![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/33b85c69-e2ed-4721-b5b5-dd34515d4395)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/36a37cf1-3452-4dac-99d2-ca444f2e4963)|
 |캘린더 일정조회| 캘린더 일정필터링|
-|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/62c56439-dada-4aa1-95dc-d0a4a2fbb739)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/39bc4369-6b02-4641-bc6c-0ef6b617fb16)|
-|캘린더 과목일정등록|해야할 일|
-|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/6f36687e-ee8a-4ed4-a0bb-a5b2157343a8)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/18d4d94c-1e0c-4d39-93b5-06ea1c0665a4)|
-| 캘린더 개인일정등록 | 완료한 일 |
+|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/62c56439-dada-4aa1-95dc-d0a4a2fbb739)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/6f36687e-ee8a-4ed4-a0bb-a5b2157343a8)|
+|캘린더 과목일정등록|캘린더 개인일정등록|
+|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/39bc4369-6b02-4641-bc6c-0ef6b617fb16)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/18d4d94c-1e0c-4d39-93b5-06ea1c0665a4)|
+| 해야할  | 완료한 일 |
 
 <br>
 
