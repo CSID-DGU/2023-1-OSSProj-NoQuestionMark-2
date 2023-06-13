@@ -75,14 +75,16 @@ const Form = styled.form`
   box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 `;
 
-
+// memo정민: 캘린더 개인 일정 등록
 const PersonalScheduleAdd = ({ handleModalToggle,getApi,date}: ModalToggle)  => {
+
+  // memo정민: react-hook-form을 사용하여 폼 상태를 관리
   const {     
     register,
     handleSubmit,
   } = useForm<EventSourceInput>({mode : 'onBlur'})
 
-    
+  // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EventSourceInput> = data => postSchedule(data);
   const postSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {

@@ -150,23 +150,23 @@ const ButtonWapper = styled.div`
 const Heading = styled.h1`
   margin-bottom: 0.2rem;
 `
-
+// memo정민: 캘린더 과목 일정 상세보기
 const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: ModalToggle) => {
   const navigate = useNavigate();
   const formData = {...event};
-
+  // memo정민: 수정 모드 여부를 관리하는 상태
   const [edited, setEdited] = useState(false)
-
+  // memo정민: 수정 버튼 클릭 시 수정 모드 변경
   const onClickEditButton = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setEdited(true);
   };
-
+  // memo정민: 취소 버튼 클릭 시 수정 모드 변경
   const onClickReadButton = () => {
     setEdited(false);
     reset({...formData});
   };
-
+  // memo정민: react-hook-form을 사용하여 폼 상태를 관리
   const {     
     register,
     handleSubmit,
@@ -174,6 +174,7 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
     control
   } = useForm<EventSourceInput>({mode : 'onBlur'})
 
+  // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
   const putSchedule = async ({ title, contents, scheduleType, className, importance, subjectScheduleType, startDate, endDate  }:EventSourceInput) => {
 		try {
@@ -196,7 +197,6 @@ const SubjectDetail = ({handleModalToggle,getApi,date,subjectList,event,id}: Mod
     const yes = window.confirm('삭제하시겠습니까?');
     if(yes) {
       await Api.delete(`/schedule/subject/${id}`).then((res) => {
-        window.confirm('삭제하시겠습니까?');
         handleModalToggle('subject');
         if (date) {
           const [month, year] = date;

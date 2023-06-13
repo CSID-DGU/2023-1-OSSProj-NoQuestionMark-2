@@ -31,7 +31,6 @@ const NotFound = () => {
 			<h1>불가능한 접근입니다.</h1>
 			<BackLinkButton to ='/'>돌아가기</BackLinkButton>
 		</Container>
-
 	);
 };
 

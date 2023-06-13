@@ -16,6 +16,11 @@ https://www.donggukschedule.com/
 
 <br>
 
+## 데모영상
+https://drive.google.com/file/d/1E_4jQ8KfiZIGQTgO5fNpceyHdojDG318/view?usp=drive_link
+
+<br>
+
 ## 프로젝트 소개
 javascript 오픈소스 **fullcalendar**을 이용해 기존 이클래스의 ‘내할일보기’ 탭의 기능을 확장한 학교중심의 일정관리시스템을 구현하였다.
 교수와 학생 모두가 과제,발표,시험등의 학교일정과 개인일정을 한 곳에서 유연하게 관리할 수 있는서비스를 제공하고 
@@ -26,6 +31,7 @@ javascript 오픈소스 **fullcalendar**을 이용해 기존 이클래스의 ‘
 ## 시작가이드
 ### Requirements
 for building and running the application you need,
+TypeScript  es2015
 
 ### installation
 ```
@@ -75,10 +81,10 @@ SpringDataJPA , JPA(JPQL) , Recoil
 |이클래스 일정상세조회 - 학생| 이클래스 일정조회,수정,삭제 - 교수|
 |![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/33b85c69-e2ed-4721-b5b5-dd34515d4395)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/36a37cf1-3452-4dac-99d2-ca444f2e4963)|
 |캘린더 일정조회| 캘린더 일정필터링|
-|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/62c56439-dada-4aa1-95dc-d0a4a2fbb739)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/39bc4369-6b02-4641-bc6c-0ef6b617fb16)|
-|캘린더 과목일정등록|해야할 일|
-|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/6f36687e-ee8a-4ed4-a0bb-a5b2157343a8)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/18d4d94c-1e0c-4d39-93b5-06ea1c0665a4)|
-| 캘린더 개인일정등록 | 완료한 일 |
+|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/62c56439-dada-4aa1-95dc-d0a4a2fbb739)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/6f36687e-ee8a-4ed4-a0bb-a5b2157343a8)|
+|캘린더 과목일정등록|캘린더 개인일정등록|
+|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/39bc4369-6b02-4641-bc6c-0ef6b617fb16)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/18d4d94c-1e0c-4d39-93b5-06ea1c0665a4)|
+| 해야할 일 | 완료한 일 |
 
 <br>
 
@@ -108,17 +114,16 @@ SpringDataJPA , JPA(JPQL) , Recoil
 <br>
 
 ## 아키텍쳐
-
-##
+![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/ffc46079-7336-4666-b097-4639014d99c8)
 
 <br>
 
 ## 개발 팀 소개
-|이름|역할|
-|---|---|
-|이중원|BE, DB설계,클라우드인프라설계,로그인&회원가입기능CRUD기능생성, 과제 및 일정상세보기,UX/UI기획| |
+|이름|역할|email|
+|---|---|---|
+|이중원|BE, DB설계,클라우드인프라설계,로그인&회원가입기능CRUD기능생성, 과제 및 일정상세보기,UX/UI기획|dlwnddnjs96@naver.com |
 |박지혜 @bgs-study |FE, 회원가입, 캘린더 - 월간/주간/일간일정보기,일정등록 및 수정, 상세보기, 해야할 일, 완료한 일, 필터링, UX/UI기획|qkrwlgp235@gmail.com|
-|은정민|FE, 홈화면,로그인일정, 이클래스 일정등록, 수정, 삭제 및 상세보기 , UX/UI기획||
+|은정민|FE, 홈화면,로그인일정, 이클래스 일정등록, 수정, 삭제 및 상세보기 , UX/UI기획|dmswjdals12@naver.com|
 
 <br>
 

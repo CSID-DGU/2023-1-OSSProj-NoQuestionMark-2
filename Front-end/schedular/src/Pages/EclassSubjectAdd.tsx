@@ -10,7 +10,6 @@ const StyledH2 = styled.h2`
 
 // memo정민: 이클래스 공식 과목 일정 등록 페이지
 const EclassSubjectAdd = () =>{
-
   return (
     <>
       <EclassMenu />
