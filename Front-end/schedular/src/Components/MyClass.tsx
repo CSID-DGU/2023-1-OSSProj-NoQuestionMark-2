@@ -54,6 +54,7 @@ const ClassButton = styled.button`
   cursor: pointer;
 `;
 
+// memo정민: 홈 '내 강의실' Component
 const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) => {
   const navigate = useNavigate();
 
@@ -62,6 +63,8 @@ const MyClass = ({subjects,loginCkeck}:{subjects:Subjects,loginCkeck:boolean}) =
     const subjectName = (e.target as HTMLButtonElement).getAttribute('data-subject-name');
     navigate(`/eclass/${subjectId}`, { state: { subjectId, subjectName } })
   }
+
+  // memo정민: 강의명과 '강의실 가기' 버튼
   const myClass = subjects
     .map((classes, index) => {
       const {subjectName,subjectId}= classes;

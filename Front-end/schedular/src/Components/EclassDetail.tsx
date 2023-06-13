@@ -246,23 +246,20 @@ const EclassDetail = () => {
     try {
       await Api.get(`/schedule/official/${scheduleId}`).then((res) => {
       const result = res.data.result;
-      console.log(result);
       setData(result);
     });
     } catch (error) {
       console.error('데이터 가져오기 실패:', error);
     }
   };
-  console.log(data);
 
   // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EclassInput> = data => putData(data);
-  // memo정민: 일정 수정 함수, 시작일과 종료일을 비교, 수정 후 강의실 페이지로 이동
+  // memo정민: 일정 수정, 시작일과 종료일을 비교, 수정 후 강의실 페이지로 이동
   const putData = async ({ title, contents, subjectScheduleType, startDate, endDate}:EclassInput) => {
 		try {
       const className = subjectName;
 			const putData = { title, contents, subjectScheduleType, startDate, endDate, className };
-      console.log(putData);
       startDate <= endDate! ?
 			await Api.put(`/schedule/official/${scheduleId}`, putData).then((res) => {
         alert('정상적으로 일정이 수정되었습니다.');
@@ -273,7 +270,7 @@ const EclassDetail = () => {
 		}
 	};
 
-  // memo정민: 일정 삭제 함수, 일정 삭제 후 강의실 페이지로 이동
+  // memo정민: 일정 삭제, 일정 삭제 후 강의실 페이지로 이동
   const delSchedule = async() => {
     await Api.delete(`/schedule/official/${scheduleId}`).then((res) => {
       window.confirm('삭제하시겠습니까?');
