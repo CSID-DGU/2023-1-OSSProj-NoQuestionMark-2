@@ -1,4 +1,4 @@
-package com.NoQuestionMark.schedular.controller.response;
+package com.NoQuestionMark.schedular.controller.response.userResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

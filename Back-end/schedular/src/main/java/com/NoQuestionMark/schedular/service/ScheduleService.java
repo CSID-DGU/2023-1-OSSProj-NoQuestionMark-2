@@ -5,7 +5,7 @@ import com.NoQuestionMark.schedular.controller.request.CommonScheduleFixRequestD
 import com.NoQuestionMark.schedular.controller.request.CommonScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.OfficialScheduleRequestDto;
 import com.NoQuestionMark.schedular.controller.request.SubjectScheduleRequestDto;
-import com.NoQuestionMark.schedular.controller.response.*;
+import com.NoQuestionMark.schedular.controller.response.scheduleResponseDto.*;
 import com.NoQuestionMark.schedular.exception.ErrorCode;
 import com.NoQuestionMark.schedular.exception.ScheduleException;
 import com.NoQuestionMark.schedular.model.*;

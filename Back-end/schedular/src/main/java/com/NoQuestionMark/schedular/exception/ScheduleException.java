@@ -3,6 +3,9 @@ package com.NoQuestionMark.schedular.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 다양한 예외 발생 시 처리하는 코드
+ */
 @Getter
 @AllArgsConstructor
 public class ScheduleException extends RuntimeException{

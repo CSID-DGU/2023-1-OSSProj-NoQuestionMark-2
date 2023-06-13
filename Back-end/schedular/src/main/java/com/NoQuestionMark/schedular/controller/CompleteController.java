@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 각 스케쥴 별 완료 기능을 위한 api
+ */
+
 @RestController
 @RequiredArgsConstructor
 public class CompleteController {

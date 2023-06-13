@@ -1,8 +1,7 @@
-package com.NoQuestionMark.schedular.controller.response;
+package com.NoQuestionMark.schedular.controller.response.scheduleResponseDto;
 
 
 import com.NoQuestionMark.schedular.model.OfficialSubjectScheduleEntity;
-import com.NoQuestionMark.schedular.model.SubjectScheduleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

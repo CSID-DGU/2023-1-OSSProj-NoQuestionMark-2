@@ -2,7 +2,7 @@ package com.NoQuestionMark.schedular.service;
 
 
 import com.NoQuestionMark.schedular.controller.request.UserJoinRequestDto;
-import com.NoQuestionMark.schedular.controller.response.*;
+import com.NoQuestionMark.schedular.controller.response.userResponseDto.*;
 import com.NoQuestionMark.schedular.exception.ErrorCode;
 import com.NoQuestionMark.schedular.exception.ScheduleException;
 import com.NoQuestionMark.schedular.model.*;
@@ -84,11 +84,11 @@ public class UserService {
         // 회원가입 여부 체크
         UserEntity user = userRepository
                 .findBySchoolNumber(schoolNumber)
-                .orElseThrow(() -> new ScheduleException(ErrorCode.USER_NOT_FOUND, String.format("%s is not founded", schoolNumber)));
+                .orElseThrow(() -> new ScheduleException(ErrorCode.INVALID_LOGIN));
 
         // 비밀번호 체크
         if (!encoder.matches(password, user.getPassword())) {
-            throw new ScheduleException(ErrorCode.INVALID_PASSWORD);
+            throw new ScheduleException(ErrorCode.INVALID_LOGIN);
         }
 
         // 토큰 생성 과정
