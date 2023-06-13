@@ -78,7 +78,7 @@ SpringDataJPA , JPA(JPQL) , Recoil
 |![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/62c56439-dada-4aa1-95dc-d0a4a2fbb739)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/39bc4369-6b02-4641-bc6c-0ef6b617fb16)|
 |캘린더 과목일정등록|해야할 일|
 |![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/6f36687e-ee8a-4ed4-a0bb-a5b2157343a8)|![image](https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2/assets/79756267/18d4d94c-1e0c-4d39-93b5-06ea1c0665a4)|
-| 완료한 일 | 캘린더 개인일정등록 |
+| 캘린더 개인일정등록 | 완료한 일 |
 
 <br>
 
