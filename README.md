@@ -28,6 +28,38 @@ javascript 오픈소스 **fullcalendar**을 이용해 기존 이클래스의 ‘
 
 <br>
 
+## 개발 환경  
+```
+Back-End  
+
+JAVA 17
+Spring Boot 2.6.7
+Spring Security
+JWT Token
+Spring Data JPA
+JPA(JPQL)
+AWS EC2
+RDS PostgreSQL
+AWS ELB(Elastic Load Balencer)
+Route 53
+AMI(Amazon Machine Image)
+AWS Amplify
+ACM(Amazon Certificate Manager)
+```
+
+```
+Front-End
+
+HTML
+CSS
+Javascript
+Typescript
+React
+Recoil
+```
+
+<br>
+
 ## 시작가이드
 ### Requirements
 for building and running the application you need,
@@ -118,14 +150,6 @@ SpringDataJPA , JPA(JPQL) , Recoil
 * 이클래스 일정관리
   * 강의실별 모든 일정 조회   
   * 공식일정 등록, 수정, 삭제 
-
-<br>
-
-## Test Account
-|user|id|pw|
-|---|---|---|
-|PROFESSOR|||
-|STUDENT|||
 
 <br>
 
