@@ -6,7 +6,7 @@ import { useRecoilValue} from 'recoil';
 import { userInfoState } from 'recoil/Atom'
 
 
-
+// memo정민: userType이 학생인지 교수인지 확인
 const isStudent = (userType:string|null):boolean => {
   if(userType === "STUDENT") {
     return true
