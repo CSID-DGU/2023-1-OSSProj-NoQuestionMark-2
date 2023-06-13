@@ -8,7 +8,7 @@ import { userInfoState } from 'recoil/Atom'
 
 
 const isStudent = (userType:string|null):boolean => {
-  if(userType === "STUDENT") {
+  if(userType === 'STUDENT') {
     return true
   } return false;
 }

@@ -170,27 +170,27 @@ const Home = () => {
         <QuickMenuWapper>
           <QuickMenuTitle>QUICK MENU</QuickMenuTitle>
           <QuickMenuContent>
-            <QuickMenuImage src={QuickMenu_image} alt="Quick Menu" />
+            <QuickMenuImage src={QuickMenu_image} alt='Quick Menu' />
             <QuickMenuSpan>동국대학교</QuickMenuSpan>
           </QuickMenuContent>
           <QuickMenuContent>
-            <QuickMenuImage src={QuickMenu_image2} alt="Quick Menu" />
+            <QuickMenuImage src={QuickMenu_image2} alt='Quick Menu' />
             <QuickMenuSpan>uDRIMS</QuickMenuSpan>
           </QuickMenuContent>
           <QuickMenuContent>
-            <QuickMenuImage src={QuickMenu_image3} alt="Quick Menu" />
+            <QuickMenuImage src={QuickMenu_image3} alt='Quick Menu' />
             <QuickMenuSpan>드림패스</QuickMenuSpan>
           </QuickMenuContent>
           <QuickMenuContent>
-            <QuickMenuImage src={QuickMenu_image4} alt="Quick Menu" />
+            <QuickMenuImage src={QuickMenu_image4} alt='Quick Menu' />
             <QuickMenuSpan>교수학습개발센터</QuickMenuSpan>
           </QuickMenuContent>
           <QuickMenuContent>
-            <QuickMenuImage src={QuickMenu_image5} alt="Quick Menu" />
+            <QuickMenuImage src={QuickMenu_image5} alt='Quick Menu' />
             <QuickMenuSpan>카피킬라</QuickMenuSpan>
           </QuickMenuContent>
           <QuickMenuContent>
-            <QuickMenuImage src={QuickMenu_image6} alt="Quick Menu" />
+            <QuickMenuImage src={QuickMenu_image6} alt='Quick Menu' />
             <QuickMenuSpan>중앙도서관</QuickMenuSpan>
           </QuickMenuContent>
         </QuickMenuWapper>
