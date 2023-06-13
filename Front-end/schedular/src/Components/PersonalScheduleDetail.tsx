@@ -133,22 +133,23 @@ const ButtonWapper = styled.div`
   width: 22rem;
 `;
 
+  // memo정민: 캘린더 개인 일정 상세보기
 const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalToggle)  => {
   const formData = {...event}
-
+  // memo정민: 수정 모드 여부를 관리하는 상태
   const [edited, setEdited] = useState(false)
-
+  // memo정민: 수정 버튼 클릭 시 수정 모드 변경
   const onClickEditButton = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setEdited(true);
   };
-
-
+  // memo정민: 취소 버튼 클릭 시 수정 모드 변경
   const onClickReadButton = () => {
     setEdited(false);
     reset({...formData});
   };
 
+   // memo정민: react-hook-form을 사용하여 폼 상태를 관리
   const {     
     register,
     handleSubmit,
@@ -156,6 +157,7 @@ const PersonalScheduleDetail =({ handleModalToggle,getApi,id,date,event}: ModalT
     control
   } = useForm<EventSourceInput>({mode : 'onBlur'})
 
+  // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit: SubmitHandler<EventSourceInput> = data => putSchedule(data);
   const putSchedule = async ({ title, contents,scheduleType, importance, startDate, endDate }:EventSourceInput) => {
 		try {
