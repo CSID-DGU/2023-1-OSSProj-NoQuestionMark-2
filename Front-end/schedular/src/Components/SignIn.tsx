@@ -89,13 +89,15 @@ const SignIn = () => {
     setLoginMessage(`${userInfo.schoolNumber}(${userInfo.userName})`)
   },[loginCheck])
 
+  // memo정민: react-hook-form을 사용하여 폼 상태를 관리
   const {
     register,
     handleSubmit, 
     formState:{isSubmitting},
     reset
   } = useForm<IAuthForm>({ mode: 'onBlur' });
-
+  
+  // memo정민: react-hook-form을 사용한 폼 제출 핸들러 정의
   const onSubmit : SubmitHandler<IAuthForm> = data => login(data);
   const login = async ({ schoolNumber, password}:IAuthForm) => {
 		try {
