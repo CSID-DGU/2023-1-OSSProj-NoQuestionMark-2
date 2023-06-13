@@ -50,7 +50,7 @@ public class ScheduleDetailResponseDto {
         this.title = schedule.getTitle();
         this.contents = schedule.getContents();
         this.importance = schedule.getImportance().name();
-        this.schedule = CommonScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value();
+        this.schedule = SubjectScheduleEntity.class.getAnnotation(DiscriminatorValue.class).value();
         this.scheduleType = schedule.getScheduleType().name();
         this.startDate = schedule.getStartDate();
         this.subjectScheduleType = schedule.getScheduleType().name();

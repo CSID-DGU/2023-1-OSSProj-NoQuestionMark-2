@@ -3,7 +3,6 @@ package com.NoQuestionMark.schedular.repository;
 import com.NoQuestionMark.schedular.model.OfficialSubjectScheduleEntity;
 import com.NoQuestionMark.schedular.model.SubjectEntity;
 import com.NoQuestionMark.schedular.model.UserEntity;
-import com.NoQuestionMark.schedular.model.UserSubject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
