@@ -39,7 +39,23 @@ git clone https://github.com/CSID-DGU/2023-1-OSSProj-NoQuestionMark-2.git
 ```
 ### Backend
 ```
+ ** application.yml 파일에 있는 secret 키를 모두 입력 후 가동 가능  
 
+ spring.datasource  
+ - url: RDS postgreSQL url 정보  
+ - username: postrgreSQL에서 사용하는 username  
+ - password: postrgreSQL에서 사용하는 password  
+ 
+ jwt  
+ - secret-key: 토큰 값을 암호화 하는 키 값  
+ - token.expired-time-ms:  토큰 만료 시간  
+ 
+ bot  
+ - token: 텔레그램 봇에 할당된 token 값  
+ - username: 텔레그램 봇의 이름  
+ - chatId: 텔레그램 채팅방의 아이디  
+ 
+java -jar schedular-0.0.1-SNAPSHOT.jar  
 ```
 
 ### Front-end
