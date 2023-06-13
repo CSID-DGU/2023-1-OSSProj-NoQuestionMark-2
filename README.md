@@ -17,7 +17,7 @@ https://www.donggukschedule.com/
 <br>
 
 ## 데모영상
-https://drive.google.com/file/d/1E_4jQ8KfiZIGQTgO5fNpceyHdojDG318/view?usp=drive_link
+[https://drive.google.com/file/d/1E_4jQ8KfiZIGQTgO5fNpceyHdojDG318/view?usp=drive_link](https://drive.google.com/file/d/1E_4jQ8KfiZIGQTgO5fNpceyHdojDG318/view?usp=sharing)
 
 <br>
 
